@@ -315,7 +315,7 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
           {sortedYears.map((year) => (
             <div key={year}>
               <h3 className="text-[18px] font-bold text-[#1f2937] mb-2">{year}</h3>
-              <ThumbnailGrid items={projectsByYear[year]} />
+              <ThumbnailGrid items={projectsByYear[year] || []} />
             </div>
           ))}
         </div>

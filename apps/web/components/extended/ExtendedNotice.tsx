@@ -134,7 +134,7 @@ export default function ExtendedNotice({ selectedNoticeId }: ExtendedNoticeProps
           const items = groupedNotices[category];
           const paginatedItems = getPaginatedItems(category);
           const totalPages = getTotalPages(category);
-          const page = currentPage[category];
+          const page = currentPage[category] || 1;
           
           if (items.length === 0) return null;
 

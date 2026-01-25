@@ -264,7 +264,7 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
             </div>
 
             {/* 우측: 정보 */}
-            <div className="flex-1 bg-[#f5f5f5] rounded-[12px] p-6">
+            <div className="flex-1 bg-white rounded-[12px] p-6 shadow-sm">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-[14px] font-semibold text-[#6b7280] uppercase tracking-wide">Project Information</h3>
                 {selectedProject.link && (
@@ -448,7 +448,7 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
         ) : null}
 
         {/* 프로젝트 인포메이션 박스 */}
-        <div className="bg-[#f5f5f5] p-6">
+        <div className="bg-white rounded-[12px] p-6 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-[14px] font-semibold text-[#6b7280] uppercase tracking-wide">Project Information</h3>
             {selectedProject.link && (
@@ -506,17 +506,17 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
 
   // 목록 표시
   return (
-    <div className="space-y-8 pt-[60px]">
+    <div className="space-y-6 pt-[60px]">
       {featuredProjects.length > 0 && (
-        <div>
-          <h3 className="text-[18px] font-bold text-[#1f2937] mb-2">Featured</h3>
+        <div className="bg-white rounded-[12px] p-6 shadow-sm">
+          <h3 className="text-[18px] font-bold text-[#1f2937] mb-4">Featured</h3>
           <ThumbnailGrid items={featuredProjects} />
         </div>
       )}
 
       {sortedYears.map((year) => (
-        <div key={year}>
-          <h3 className="text-[18px] font-bold text-[#1f2937] mb-2">{year}</h3>
+        <div key={year} className="bg-white rounded-[12px] p-6 shadow-sm">
+          <h3 className="text-[18px] font-bold text-[#1f2937] mb-4">{year}</h3>
           <ThumbnailGrid items={projectsByYear[year] || []} />
         </div>
       ))}

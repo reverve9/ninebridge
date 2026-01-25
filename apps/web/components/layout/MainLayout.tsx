@@ -34,11 +34,9 @@ export default function MainLayout({ pwaContent, extendedContent, activeMenu = '
           
           {/* 우측 확장 콘텐츠 영역 - 768px 이상에서만 보임, 850px 고정 */}
           <div className="hidden md:block w-[850px] flex-shrink-0 h-screen overflow-y-auto">
-            {/* 콘텐츠 카드 - 상단 20px 마진 */}
+            {/* 콘텐츠 - 패딩만 */}
             <div className="px-[20px] pt-[20px] pb-[20px]">
-              <div className="bg-white rounded-[12px] min-h-[calc(100vh-40px)] p-8 shadow-sm">
-                {extendedContent}
-              </div>
+              {extendedContent}
             </div>
           </div>
           

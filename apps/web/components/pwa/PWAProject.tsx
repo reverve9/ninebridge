@@ -194,19 +194,8 @@ export default function PWAProject({ onProjectSelect, isPreview = false, externa
               </div>
               {/* 내용 */}
               <div className="py-3 pr-3 flex-1 min-w-0 flex flex-col justify-center">
-                {/* 카테고리 배지 */}
-                <div className="flex items-center gap-1">
-                  {project.categories.map((cat) => {
-                    const badge = categoryBadgeMap[cat] || { label: cat, bg: 'bg-[#6b7280]/10', text: 'text-[#4b5563]' };
-                    return (
-                      <span key={cat} className={`text-[11px] font-medium px-2 py-0.5 rounded ${badge.bg} ${badge.text}`}>
-                        {badge.label}
-                      </span>
-                    );
-                  })}
-                </div>
                 {/* 제목 */}
-                <h3 className="text-[16px] font-bold text-[#1f2937] mt-0 truncate">{project.title}</h3>
+                <h3 className="text-[16px] font-bold text-[#1f2937] truncate">{project.title}</h3>
                 {/* 클라이언트 | 날짜 */}
                 <p className="text-[12px] text-[#9ca3af] mt-0">
                   {project.client && <span>{project.client}</span>}

@@ -526,59 +526,102 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
             </div>
           </div>
           <div className="p-5 space-y-4">
-            {featuredProjects.slice(0, 3).map((project) => (
-              <div
-                key={project.id}
-                onClick={() => project.has_detail && setSelectedProject(project)}
-                className={`flex gap-5 p-4 rounded-[8px] border border-[#e5e7eb] transition-all
-                  ${project.has_detail ? 'cursor-pointer hover:bg-[#f9fafb] hover:border-[#3071a5]' : 'cursor-default'}`}
-              >
-                {/* 좌측: 썸네일 16:9 */}
-                <div className="w-[280px] flex-shrink-0">
-                  <div className="aspect-video rounded-[6px] overflow-hidden bg-[#f3f4f6]">
-                    {project.thumbnail ? (
-                      <img
-                        src={project.thumbnail}
-                        alt={project.title}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-[#9ca3af] text-[12px]">
-                        이미지
+            {featuredProjects.slice(0, 3).map((project) => {
+              // 갤러리에서 메인 영상/이미지 찾기
+              const mainGalleryItem = project.gallery?.find(item => item.is_main) || project.gallery?.[0];
+              const youtubeId = mainGalleryItem && (mainGalleryItem.type === 'hor' || mainGalleryItem.type === 'ver') 
+                ? getYoutubeId(mainGalleryItem.url) 
+                : null;
+              const thumbnailUrl = youtubeId 
+                ? `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`
+                : project.thumbnail;
+
+              return (
+                <div
+                  key={project.id}
+                  onClick={() => project.has_detail && setSelectedProject(project)}
+                  className={`flex gap-5 p-4 rounded-[8px] border border-[#e5e7eb] transition-all
+                    ${project.has_detail ? 'cursor-pointer hover:bg-[#f9fafb] hover:border-[#3071a5]' : 'cursor-default'}`}
+                >
+                  {/* 좌측: 썸네일 16:9 + 배지 오버레이 */}
+                  <div className="w-[280px] flex-shrink-0 relative">
+                    <div className="aspect-video rounded-[6px] overflow-hidden bg-[#f3f4f6]">
+                      {thumbnailUrl ? (
+                        <img
+                          src={thumbnailUrl}
+                          alt={project.title}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            if (youtubeId) {
+                              (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`;
+                            }
+                          }}
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-[#9ca3af] text-[12px]">
+                          이미지
+                        </div>
+                      )}
+                      {/* 유튜브 재생 아이콘 */}
+                      {youtubeId && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="w-10 h-10 bg-black/40 rounded-full flex items-center justify-center">
+                            <svg className="w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M8 5v14l11-7z"/>
+                            </svg>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    {/* 카테고리 배지 - 썸네일 우측 상단 */}
+                    <div className="absolute top-2 right-2 flex gap-1">
+                      {project.categories.map((cat) => {
+                        const color = categoryColors[cat] ?? categoryColors.etc;
+                        return (
+                          <span key={cat} className={`px-2 py-0.5 text-[10px] font-medium rounded ${color?.bg || 'bg-[#6b7280]'} ${color?.text || 'text-white'}`}>
+                            {categoryLabels[cat] || cat}
+                          </span>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  {/* 우측: 상세정보 */}
+                  <div className="flex-1 min-w-0 flex flex-col justify-center">
+                    {/* 제목 */}
+                    <h3 className="text-[18px] font-bold text-[#1f2937] mb-1 truncate">{project.title}</h3>
+                    {/* 클라이언트 | 날짜 */}
+                    <p className="text-[13px] text-[#9ca3af] mb-2">
+                      {project.client && <span>{project.client}</span>}
+                      {project.client && project.date_start && <span> | </span>}
+                      {project.date_start && (
+                        <span>{project.date_start}{project.date_end && ` - ${project.date_end}`}</span>
+                      )}
+                    </p>
+                    {/* 설명 */}
+                    {project.description && (
+                      <p className="text-[14px] text-[#6b7280] line-clamp-2 mb-2">{project.description}</p>
+                    )}
+                    {/* 디테일 */}
+                    {project.details && (
+                      <p className="text-[13px] text-[#9ca3af] line-clamp-1 mb-2">{project.details}</p>
+                    )}
+                    {/* 태그 */}
+                    {project.tags && project.tags.length > 0 && (
+                      <div className="flex gap-1.5 flex-wrap">
+                        {project.tags.slice(0, 5).map((tag) => (
+                          <span key={tag} className="text-[12px] text-[#6b7280] bg-[#f3f4f6] px-2 py-0.5 rounded">
+                            #{tag}
+                          </span>
+                        ))}
+                        {project.tags.length > 5 && (
+                          <span className="text-[12px] text-[#9ca3af]">+{project.tags.length - 5}</span>
+                        )}
                       </div>
                     )}
                   </div>
                 </div>
-                {/* 우측: 상세정보 */}
-                <div className="flex-1 min-w-0 flex flex-col justify-center">
-                  {/* 카테고리 배지 */}
-                  <div className="flex gap-1 mb-2">
-                    {project.categories.map((cat) => {
-                      const color = categoryColors[cat] ?? categoryColors.etc;
-                      return (
-                        <span key={cat} className={`px-2 py-0.5 text-[11px] font-medium rounded ${color?.bg || 'bg-[#6b7280]'} ${color?.text || 'text-white'}`}>
-                          {categoryLabels[cat] || cat}
-                        </span>
-                      );
-                    })}
-                  </div>
-                  {/* 제목 */}
-                  <h3 className="text-[18px] font-bold text-[#1f2937] mb-1 truncate">{project.title}</h3>
-                  {/* 클라이언트 | 날짜 */}
-                  <p className="text-[13px] text-[#9ca3af] mb-2">
-                    {project.client && <span>{project.client}</span>}
-                    {project.client && project.date_start && <span> | </span>}
-                    {project.date_start && (
-                      <span>{project.date_start}{project.date_end && ` - ${project.date_end}`}</span>
-                    )}
-                  </p>
-                  {/* 설명 */}
-                  {project.description && (
-                    <p className="text-[14px] text-[#6b7280] line-clamp-2">{project.description}</p>
-                  )}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}

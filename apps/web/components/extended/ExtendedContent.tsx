@@ -18,7 +18,7 @@ export default function ExtendedContent({ activeMenu, selectedProject }: Extende
   const renderContent = () => {
     switch (activeMenu) {
       case 'home':
-        return <ExtendedHome />;
+        return <Maintenance title="HOME 상세" message="메인 페이지를 준비하고 있습니다." />;
       case 'service':
         return <Maintenance title="WORX 상세" message="사업분야 상세 페이지를 준비하고 있습니다." />;
       case 'project':

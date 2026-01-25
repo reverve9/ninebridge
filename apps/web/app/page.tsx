@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import PWAContainer from '@/components/layout/PWAContainer';
-import PWAHome from '@/components/pwa/PWAHome';
+import PWAHomeMaintenance from '@/components/pwa/PWAHomeMaintenance';
 import PWAService from '@/components/pwa/PWAService';
 import PWAProject from '@/components/pwa/PWAProject';
 import PWAContact from '@/components/pwa/PWAContact';
@@ -25,7 +25,7 @@ export default function HomePage() {
   const renderPWAContent = () => {
     switch (activeMenu) {
       case 'home':
-        return <PWAHome onMenuSelect={handleMenuSelect} />;
+        return <PWAHomeMaintenance />;
       case 'service':
         return <PWAService />;
       case 'project':
@@ -33,7 +33,7 @@ export default function HomePage() {
       case 'contact':
         return <PWAContact />;
       default:
-        return <PWAHome onMenuSelect={handleMenuSelect} />;
+        return <PWAHomeMaintenance />;
     }
   };
 

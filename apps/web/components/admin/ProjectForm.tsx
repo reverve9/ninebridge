@@ -164,7 +164,7 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
     setForm(prev => {
       const newGallery = prev.gallery.filter((_, i) => i !== index);
       // 삭제된 게 대표였으면 첫 번째를 대표로
-      if (prev.gallery[index]?.is_main && newGallery.length > 0) {
+      if (prev.gallery[index]?.is_main && newGallery.length > 0 && newGallery[0]) {
         newGallery[0] = { ...newGallery[0], is_main: true };
       }
       return { ...prev, gallery: newGallery };

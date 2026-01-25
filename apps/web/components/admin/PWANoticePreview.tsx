@@ -10,9 +10,9 @@ interface PWANoticePreviewProps {
 }
 
 const categoryLabels: Record<'notice' | 'press' | 'recruit', { label: string; icon: React.ReactNode; color: string }> = {
-  notice: { label: '공지사항', icon: <Megaphone size={12} />, color: 'bg-blue-100 text-blue-700' },
-  press: { label: '보도자료', icon: <FileText size={12} />, color: 'bg-green-100 text-green-700' },
-  recruit: { label: '채용공고', icon: <Briefcase size={12} />, color: 'bg-purple-100 text-purple-700' },
+  notice: { label: '공지사항', icon: <Megaphone size={12} />, color: 'bg-[#3071a5]/10 text-[#3071a5]' },
+  press: { label: '보도자료', icon: <FileText size={12} />, color: 'bg-[#ef4444]/10 text-[#dc2626]' },
+  recruit: { label: '채용공고', icon: <Briefcase size={12} />, color: 'bg-[#eab308]/10 text-[#ca8a04]' },
 };
 
 const categories = [

@@ -3,18 +3,25 @@
 import React, { useState, useEffect } from 'react';
 import { Notice } from '@/lib/types';
 import { getPublishedNotices, incrementViewCount } from '@/lib/notices';
-import { Pin, FileText, Briefcase, Megaphone, Paperclip, ExternalLink, ChevronDown, Eye } from 'lucide-react';
+import { Pin, FileText, Briefcase, Megaphone, Paperclip, ExternalLink, ChevronDown, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const categoryConfig: Record<'notice' | 'press' | 'recruit', { label: string; icon: React.ReactNode; color: string }> = {
-  notice: { label: '공지사항', icon: <Megaphone size={18} />, color: 'text-blue-600' },
-  press: { label: '보도자료', icon: <FileText size={18} />, color: 'text-green-600' },
-  recruit: { label: '채용공고', icon: <Briefcase size={18} />, color: 'text-purple-600' },
+  notice: { label: '공지사항', icon: <Megaphone size={18} />, color: 'text-[#3071a5]' },
+  press: { label: '보도자료', icon: <FileText size={18} />, color: 'text-[#dc2626]' },
+  recruit: { label: '채용공고', icon: <Briefcase size={18} />, color: 'text-[#ca8a04]' },
 };
+
+const ITEMS_PER_PAGE = 7;
 
 export default function ExtendedNotice() {
   const [notices, setNotices] = useState<Notice[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState<Record<string, number>>({
+    notice: 1,
+    press: 1,
+    recruit: 1,
+  });
 
   useEffect(() => {
     loadNotices();
@@ -74,6 +81,22 @@ export default function ExtendedNotice() {
     }
   };
 
+  const getTotalPages = (category: 'notice' | 'press' | 'recruit') => {
+    return Math.ceil(groupedNotices[category].length / ITEMS_PER_PAGE);
+  };
+
+  const getPaginatedItems = (category: 'notice' | 'press' | 'recruit') => {
+    const items = groupedNotices[category];
+    const page = currentPage[category];
+    const start = (page - 1) * ITEMS_PER_PAGE;
+    return items.slice(start, start + ITEMS_PER_PAGE);
+  };
+
+  const handlePageChange = (category: 'notice' | 'press' | 'recruit', page: number) => {
+    setCurrentPage(prev => ({ ...prev, [category]: page }));
+    setExpandedId(null); // 페이지 변경시 확장 닫기
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -88,23 +111,51 @@ export default function ExtendedNotice() {
         {(['notice', 'press', 'recruit'] as const).map((category) => {
           const config = categoryConfig[category];
           const items = groupedNotices[category];
+          const paginatedItems = getPaginatedItems(category);
+          const totalPages = getTotalPages(category);
+          const page = currentPage[category];
           
           if (items.length === 0) return null;
 
           return (
             <div key={category} className="bg-white rounded-[12px] border border-[#e5e7eb] overflow-hidden">
               {/* 카테고리 헤더 */}
-              <div className={`flex items-center gap-2 px-5 py-4 border-b border-[#e5e7eb] bg-[#f9fafb] ${config.color}`}>
-                {config.icon}
-                <h2 className="text-[16px] font-semibold">{config.label}</h2>
-                <span className="text-[13px] text-[#9ca3af] ml-1">({items.length})</span>
+              <div className={`flex items-center justify-between px-5 py-4 border-b border-[#e5e7eb] bg-[#f9fafb]`}>
+                <div className={`flex items-center gap-2 ${config.color}`}>
+                  {config.icon}
+                  <h2 className="text-[16px] font-semibold">{config.label}</h2>
+                  <span className="text-[13px] text-[#9ca3af] ml-1">({items.length})</span>
+                </div>
+                
+                {/* 페이지네이션 - 7개 초과시만 표시 */}
+                {totalPages > 1 && (
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => handlePageChange(category, page - 1)}
+                      disabled={page === 1}
+                      className="p-1 text-[#9ca3af] hover:text-[#3071a5] disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                      <ChevronLeft size={18} />
+                    </button>
+                    <span className="text-[13px] text-[#6b7280] px-2">
+                      {page} / {totalPages}
+                    </span>
+                    <button
+                      onClick={() => handlePageChange(category, page + 1)}
+                      disabled={page === totalPages}
+                      className="p-1 text-[#9ca3af] hover:text-[#3071a5] disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                      <ChevronRight size={18} />
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* 게시글 리스트 */}
               <div>
-                {items.map((notice, index) => {
+                {paginatedItems.map((notice, index) => {
                   const isExpanded = expandedId === notice.id;
-                  const isLast = index === items.length - 1;
+                  const isLast = index === paginatedItems.length - 1;
 
                   return (
                     <div key={notice.id} className={!isLast ? 'border-b border-[#e5e7eb]' : ''}>
@@ -138,15 +189,15 @@ export default function ExtendedNotice() {
                           </span>
                         )}
 
-                        {/* 조회수 */}
-                        <span className="flex items-center gap-1 text-[#9ca3af] flex-shrink-0 w-[60px]">
-                          <Eye size={14} />
-                          <span className="text-[12px]">{notice.view_count || 0}</span>
-                        </span>
-
-                        {/* 날짜 */}
+                        {/* 날짜 (먼저) */}
                         <span className="text-[13px] text-[#9ca3af] flex-shrink-0 w-[140px] text-right">
                           {formatDateTime(notice.created_at)}
+                        </span>
+
+                        {/* 조회수 (나중) */}
+                        <span className="flex items-center gap-1 text-[#9ca3af] flex-shrink-0 w-[50px] justify-end">
+                          <Eye size={14} />
+                          <span className="text-[12px]">{notice.view_count || 0}</span>
                         </span>
                       </button>
 

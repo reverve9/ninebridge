@@ -1,15 +1,15 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import PageTitle from '@/components/common/PageTitle';
 import { Notice } from '@/lib/types';
 import { getPublishedNotices, incrementViewCount } from '@/lib/notices';
 import { Pin, FileText, Briefcase, Megaphone, Paperclip, ExternalLink, X, Eye } from 'lucide-react';
 
 const categoryLabels: Record<'notice' | 'press' | 'recruit', { label: string; icon: React.ReactNode; color: string }> = {
-  notice: { label: '공지사항', icon: <Megaphone size={10} />, color: 'bg-blue-100 text-blue-700' },
-  press: { label: '보도자료', icon: <FileText size={10} />, color: 'bg-green-100 text-green-700' },
-  recruit: { label: '채용공고', icon: <Briefcase size={10} />, color: 'bg-purple-100 text-purple-700' },
+  notice: { label: '공지사항', icon: <Megaphone size={10} />, color: 'bg-[#3071a5]/10 text-[#3071a5]' },
+  press: { label: '보도자료', icon: <FileText size={10} />, color: 'bg-[#ef4444]/10 text-[#dc2626]' },
+  recruit: { label: '채용공고', icon: <Briefcase size={10} />, color: 'bg-[#eab308]/10 text-[#ca8a04]' },
 };
 
 const categories = [
@@ -19,15 +19,24 @@ const categories = [
   { id: 'recruit', label: '채용공고' },
 ];
 
+const ITEMS_PER_PAGE = 5;
+
 export default function PWANotice() {
   const [notices, setNotices] = useState<Notice[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState('all');
   const [selectedNotice, setSelectedNotice] = useState<Notice | null>(null);
+  const [displayCount, setDisplayCount] = useState(ITEMS_PER_PAGE);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   useEffect(() => {
     loadNotices();
   }, []);
+
+  // 카테고리 변경시 displayCount 리셋
+  useEffect(() => {
+    setDisplayCount(ITEMS_PER_PAGE);
+  }, [activeCategory]);
 
   const loadNotices = async () => {
     try {
@@ -50,6 +59,31 @@ export default function PWANotice() {
     if (!a.is_pinned && b.is_pinned) return 1;
     return a.order - b.order;
   });
+
+  const displayedNotices = sortedNotices.slice(0, displayCount);
+  const hasMore = displayCount < sortedNotices.length;
+
+  // 무한 스크롤
+  const handleScroll = useCallback(() => {
+    if (loadingMore || !hasMore) return;
+    
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight;
+    const clientHeight = document.documentElement.clientHeight;
+    
+    if (scrollTop + clientHeight >= scrollHeight - 100) {
+      setLoadingMore(true);
+      setTimeout(() => {
+        setDisplayCount(prev => prev + ITEMS_PER_PAGE);
+        setLoadingMore(false);
+      }, 300);
+    }
+  }, [loadingMore, hasMore]);
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [handleScroll]);
 
   const getCategoryCount = (catId: string) => {
     if (catId === 'all') return notices.length;
@@ -123,53 +157,63 @@ export default function PWANotice() {
         ) : sortedNotices.length === 0 ? (
           <p className="text-[14px] text-[#9ca3af] py-8 text-center">등록된 게시글이 없습니다.</p>
         ) : (
-          sortedNotices.map((notice) => {
-            const cat = categoryLabels[notice.category] || categoryLabels.notice;
-            return (
-              <div
-                key={notice.id}
-                onClick={() => handleNoticeClick(notice)}
-                className="bg-white rounded-[12px] border border-[#e5e7eb] p-4 hover:border-[#3071a5] hover:shadow-sm transition-all cursor-pointer"
-              >
-                {/* 카테고리 배지 + 고정 */}
-                <div className="flex items-center gap-2 mb-2">
-                  <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded ${cat.color}`}>
-                    {cat.icon}
-                    {cat.label}
-                  </span>
-                  {notice.is_pinned && <Pin size={12} className="text-[#f59e0b]" />}
-                  {notice.link && <ExternalLink size={12} className="text-[#9ca3af]" />}
-                </div>
-
-                {/* 타이틀 */}
-                <h3 className="text-[15px] font-medium text-[#1f2937] mb-2 line-clamp-1">
-                  {notice.title}
-                </h3>
-
-                {/* 작성일시 · 조회수 */}
-                <div className="flex items-center gap-3 text-[12px] text-[#9ca3af] mb-2">
-                  <span>{formatDateTime(notice.created_at)}</span>
-                  <span className="flex items-center gap-1">
-                    <Eye size={12} />
-                    {notice.view_count || 0}
-                  </span>
-                  {notice.attachments && notice.attachments.length > 0 && (
-                    <span className="flex items-center gap-1">
-                      <Paperclip size={12} />
-                      {notice.attachments.length}
+          <>
+            {displayedNotices.map((notice) => {
+              const cat = categoryLabels[notice.category];
+              return (
+                <div
+                  key={notice.id}
+                  onClick={() => handleNoticeClick(notice)}
+                  className="bg-white rounded-[12px] border border-[#e5e7eb] p-4 hover:border-[#3071a5] hover:shadow-sm transition-all cursor-pointer"
+                >
+                  {/* 배지 + 제목 + 고정 아이콘 (한 줄) */}
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded flex-shrink-0 ${cat.color}`}>
+                      {cat.icon}
+                      {cat.label}
                     </span>
+                    <h3 className="flex-1 text-[15px] font-medium text-[#1f2937] truncate min-w-0">
+                      {notice.title}
+                    </h3>
+                    {notice.link && <ExternalLink size={14} className="text-[#9ca3af] flex-shrink-0" />}
+                    {notice.is_pinned && <Pin size={14} className="text-[#f59e0b] flex-shrink-0" />}
+                  </div>
+
+                  {/* 작성일시 · 첨부 | 조회수 (우측정렬) */}
+                  <div className="flex items-center justify-between text-[12px] text-[#9ca3af] mb-2">
+                    <div className="flex items-center gap-3">
+                      <span>{formatDateTime(notice.created_at)}</span>
+                      {notice.attachments && notice.attachments.length > 0 && (
+                        <span className="flex items-center gap-1">
+                          <Paperclip size={12} />
+                          {notice.attachments.length}
+                        </span>
+                      )}
+                    </div>
+                    <span className="flex items-center gap-1">
+                      <Eye size={12} />
+                      {notice.view_count || 0}
+                    </span>
+                  </div>
+
+                  {/* 한줄 내용 */}
+                  {notice.content && (
+                    <p className="text-[13px] text-[#6b7280] line-clamp-1">
+                      {notice.content}
+                    </p>
                   )}
                 </div>
-
-                {/* 한줄 내용 */}
-                {notice.content && (
-                  <p className="text-[13px] text-[#6b7280] line-clamp-1">
-                    {notice.content}
-                  </p>
-                )}
-              </div>
-            );
-          })
+              );
+            })}
+            
+            {/* 로딩 더 보기 */}
+            {loadingMore && (
+              <p className="text-[13px] text-[#9ca3af] py-4 text-center">로딩 중...</p>
+            )}
+            {!hasMore && sortedNotices.length > ITEMS_PER_PAGE && (
+              <p className="text-[13px] text-[#9ca3af] py-4 text-center">모든 게시글을 불러왔습니다.</p>
+            )}
+          </>
         )}
       </div>
 
@@ -187,7 +231,7 @@ export default function PWANotice() {
             <div className="sticky top-0 bg-white px-4 py-3 border-b border-[#e5e7eb] flex items-center justify-between z-10">
               <div className="flex items-center gap-2">
                 {(() => {
-                  const cat = categoryLabels[selectedNotice.category] || categoryLabels.notice;
+                  const cat = categoryLabels[selectedNotice.category];
                   return (
                     <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded ${cat.color}`}>
                       {cat.icon}

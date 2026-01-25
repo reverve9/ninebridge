@@ -105,7 +105,6 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
             <span className={`absolute top-2 right-2 px-2 py-0.5 text-[10px] font-medium rounded ${color?.bg || 'bg-[#6b7280]'} ${color?.text || 'text-white'}`}>
               {categoryLabels[mainCategory] || mainCategory}
             </span>
-            </span>
 
             {/* 호버 시 제목 표시 (상세 있는 경우만) */}
             {project.has_detail && (

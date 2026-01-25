@@ -22,18 +22,18 @@ export default function MainLayout({ pwaContent, extendedContent, activeMenu = '
       {/* 데스크탑: PWA + 확장 콘텐츠 (768px~) */}
       
       <div className="flex justify-center h-screen">
-        {/* 전체 컨테이너 - 최대 1280px */}
-        <div className="flex w-full max-w-[1280px]">
+        {/* 전체 컨테이너 - 1280px 고정 */}
+        <div className="flex w-[1280px]">
           
-          {/* 좌측 PWA 영역 - 항상 430px, 독립 스크롤 */}
-          <div id="pwa-wrapper" className="w-full max-w-[430px] h-screen mx-auto md:mx-0 md:flex-shrink-0 overflow-y-auto">
+          {/* 좌측 PWA 영역 - 430px 고정 */}
+          <div id="pwa-wrapper" className="w-[430px] flex-shrink-0 h-screen overflow-y-auto">
             <div className="bg-white min-h-screen shadow-[0_0_40px_rgba(0,0,0,0.08)] relative overflow-x-hidden">
               {pwaContent}
             </div>
           </div>
           
-          {/* 우측 확장 콘텐츠 영역 - 768px 이상에서만 보임, 독립 스크롤 */}
-          <div className="hidden md:block flex-1 h-screen overflow-y-auto">
+          {/* 우측 확장 콘텐츠 영역 - 850px 고정 */}
+          <div className="hidden md:block w-[850px] flex-shrink-0 h-screen overflow-y-auto">
             {/* 콘텐츠 카드 - 상단 20px 마진 */}
             <div className="px-[20px] pt-[20px] pb-[20px]">
               <div className="bg-white rounded-[12px] min-h-[calc(100vh-40px)] p-8 shadow-sm">

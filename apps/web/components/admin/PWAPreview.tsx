@@ -22,7 +22,7 @@ const categories = [
 const categoryBadgeMap: Record<string, { label: string; bg: string; text: string }> = {
   platform: { label: '플랫폼', bg: 'bg-[#3071a5]/10', text: 'text-[#3071a5]' },
   marketing: { label: '마케팅', bg: 'bg-[#ef4444]/10', text: 'text-[#dc2626]' },
-  contents: { label: '콘텐츠', bg: 'bg-[#f59e0b]/10', text: 'text-[#d97706]' },
+  contents: { label: '콘텐츠', bg: 'bg-[#eab308]/10', text: 'text-[#ca8a04]' },
   etc: { label: '기타', bg: 'bg-[#6b7280]/10', text: 'text-[#4b5563]' },
 };
 
@@ -45,6 +45,11 @@ export default function PWAPreview({ projects, selectedProject, onSelectProject 
     if (!start) return '';
     if (!end) return start;
     return `${start} - ${end}`;
+  };
+
+  // 유튜브 ID 추출
+  const getYoutubeId = (url: string) => {
+    return url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?]+)/)?.[1];
   };
 
   return (
@@ -189,11 +194,28 @@ export default function PWAPreview({ projects, selectedProject, onSelectProject 
                 )}
                 
                 {/* 갤러리 */}
-                {selectedProject.images && selectedProject.images.length > 0 && (
+                {selectedProject.gallery && selectedProject.gallery.length > 0 && (
                   <div className="grid grid-cols-2 gap-2 mt-4">
-                    {selectedProject.images.map((img, idx) => (
-                      <img key={idx} src={img} alt={`갤러리 ${idx + 1}`} className="w-full h-[100px] object-cover rounded-[8px]" />
-                    ))}
+                    {selectedProject.gallery.map((item, idx) => {
+                      const youtubeId = item.type === 'youtube' ? getYoutubeId(item.url) : null;
+                      return (
+                        <div key={idx} className="relative">
+                          {item.type === 'youtube' && youtubeId ? (
+                            <img 
+                              src={`https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`}
+                              alt={item.title || `갤러리 ${idx + 1}`} 
+                              className="w-full h-[100px] object-cover rounded-[8px]" 
+                            />
+                          ) : (
+                            <img 
+                              src={item.url} 
+                              alt={item.title || `갤러리 ${idx + 1}`} 
+                              className="w-full h-[100px] object-cover rounded-[8px]" 
+                            />
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
                 

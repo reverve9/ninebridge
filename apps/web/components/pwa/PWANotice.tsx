@@ -5,6 +5,7 @@ import PageTitle from '@/components/common/PageTitle';
 import { Notice } from '@/lib/types';
 import { getPublishedNotices, incrementViewCount } from '@/lib/notices';
 import { Pin, Paperclip, ExternalLink, X, Eye } from 'lucide-react';
+import MarkdownRenderer from '@/components/common/MarkdownRenderer';
 
 const categoryLabels: Record<'notice' | 'press' | 'recruit', { label: string; color: string }> = {
   notice: { label: '공지사항', color: 'bg-[#ef4444]/10 text-[#dc2626]' },
@@ -294,10 +295,10 @@ export default function PWANotice({ onSelectNotice, selectedNoticeId, isPreview 
                 </span>
               </div>
 
-              {/* 내용 */}
+              {/* 내용 - 마크다운 렌더링 */}
               {selectedNotice.content && (
-                <div className="text-[14px] text-[#374151] whitespace-pre-wrap leading-relaxed mb-4">
-                  {selectedNotice.content}
+                <div className="mb-4">
+                  <MarkdownRenderer content={selectedNotice.content} />
                 </div>
               )}
 

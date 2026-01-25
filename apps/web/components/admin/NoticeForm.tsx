@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Notice, NoticeInsert, Attachment } from '@/lib/types';
 import { createNotice, updateNotice, uploadNoticeThumbnail, uploadAttachment, deleteAttachment } from '@/lib/notices';
-import { ArrowLeft, Upload, X, Paperclip, FileText, Briefcase, Megaphone } from 'lucide-react';
+import { ArrowLeft, Upload, X, Paperclip, Image } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import PWANoticePreview from '@/components/admin/PWANoticePreview';
 
@@ -22,6 +22,8 @@ const categoryOptions: { id: 'notice' | 'press' | 'recruit'; label: string }[] =
 export default function NoticeForm({ notice, isEdit = false }: NoticeFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [imageUploading, setImageUploading] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [form, setForm] = useState({
     category: notice?.category || 'notice',
     title: notice?.title || '',
@@ -71,6 +73,42 @@ export default function NoticeForm({ notice, isEdit = false }: NoticeFormProps) 
     } catch (error) {
       console.error('썸네일 업로드 실패:', error);
       alert('썸네일 업로드에 실패했습니다.');
+    }
+  };
+
+  // 본문에 이미지 삽입
+  const handleContentImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setImageUploading(true);
+    try {
+      const url = await uploadNoticeThumbnail(file); // 같은 버킷 사용
+      
+      // 현재 커서 위치에 마크다운 이미지 삽입
+      const textarea = textareaRef.current;
+      if (textarea) {
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const text = form.content;
+        const imageMarkdown = `\n![이미지](${url})\n`;
+        const newContent = text.substring(0, start) + imageMarkdown + text.substring(end);
+        setForm(prev => ({ ...prev, content: newContent }));
+        
+        // 커서 위치 업데이트
+        setTimeout(() => {
+          textarea.selectionStart = textarea.selectionEnd = start + imageMarkdown.length;
+          textarea.focus();
+        }, 0);
+      } else {
+        // textarea ref 없으면 끝에 추가
+        setForm(prev => ({ ...prev, content: prev.content + `\n![이미지](${url})\n` }));
+      }
+    } catch (error) {
+      console.error('이미지 업로드 실패:', error);
+      alert('이미지 업로드에 실패했습니다.');
+    } finally {
+      setImageUploading(false);
     }
   };
 
@@ -201,14 +239,32 @@ export default function NoticeForm({ notice, isEdit = false }: NoticeFormProps) 
                 />
               </div>
               <div>
-                <label className="block text-[14px] text-[#374151] mb-1">내용</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-[14px] text-[#374151]">내용 (마크다운 지원)</label>
+                  <label className={`inline-flex items-center gap-1 px-3 py-1.5 text-[13px] rounded-[6px] cursor-pointer transition-colors
+                    ${imageUploading 
+                      ? 'bg-[#e5e7eb] text-[#9ca3af] cursor-not-allowed' 
+                      : 'bg-[#f3f4f6] text-[#6b7280] hover:bg-[#e5e7eb]'}`}
+                  >
+                    <Image size={14} />
+                    {imageUploading ? '업로드 중...' : '이미지 삽입'}
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      onChange={handleContentImageUpload} 
+                      disabled={imageUploading}
+                      className="hidden" 
+                    />
+                  </label>
+                </div>
                 <textarea
+                  ref={textareaRef}
                   name="content"
                   value={form.content}
                   onChange={handleChange}
-                  rows={8}
-                  className="w-full px-4 py-3 border border-[#e5e7eb] rounded-[8px] text-[14px] focus:outline-none focus:border-[#3071a5] resize-none"
-                  placeholder="게시글 내용을 입력하세요"
+                  rows={12}
+                  className="w-full px-4 py-3 border border-[#e5e7eb] rounded-[8px] text-[14px] focus:outline-none focus:border-[#3071a5] resize-none font-mono"
+                  placeholder="마크다운 문법을 사용할 수 있습니다.&#10;&#10;# 제목&#10;## 소제목&#10;**굵게** *기울임*&#10;- 목록&#10;![이미지설명](이미지URL)"
                 />
               </div>
               <div>
@@ -223,29 +279,6 @@ export default function NoticeForm({ notice, isEdit = false }: NoticeFormProps) 
                 />
               </div>
             </div>
-          </div>
-
-          {/* 썸네일 */}
-          <div className="bg-white rounded-[12px] p-6">
-            <h2 className="text-[16px] font-semibold text-[#1f2937] mb-4">썸네일</h2>
-            {form.thumbnail ? (
-              <div className="relative w-[200px] h-[120px] rounded-[8px] overflow-hidden">
-                <img src={form.thumbnail} alt="썸네일" className="w-full h-full object-cover" />
-                <button
-                  type="button"
-                  onClick={() => setForm(prev => ({ ...prev, thumbnail: '' }))}
-                  className="absolute top-2 right-2 p-1 bg-black/50 text-white rounded-full hover:bg-black/70"
-                >
-                  <X size={14} />
-                </button>
-              </div>
-            ) : (
-              <label className="flex flex-col items-center justify-center w-[200px] h-[120px] border-2 border-dashed border-[#e5e7eb] rounded-[8px] cursor-pointer hover:border-[#3071a5] transition-colors">
-                <Upload size={24} className="text-[#9ca3af] mb-2" />
-                <span className="text-[13px] text-[#9ca3af]">이미지 업로드</span>
-                <input type="file" accept="image/*" onChange={handleThumbnailUpload} className="hidden" />
-              </label>
-            )}
           </div>
 
           {/* 첨부파일 */}

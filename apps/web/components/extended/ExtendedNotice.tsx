@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Notice } from '@/lib/types';
 import { getPublishedNotices, incrementViewCount } from '@/lib/notices';
 import { Pin, Paperclip, ExternalLink, ChevronDown, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
+import MarkdownRenderer from '@/components/common/MarkdownRenderer';
 
 const categoryConfig: Record<'notice' | 'press' | 'recruit', { label: string; color: string }> = {
   notice: { label: '공지사항', color: 'text-[#dc2626]' },
@@ -226,10 +227,10 @@ export default function ExtendedNotice({ selectedNoticeId }: ExtendedNoticeProps
                       {/* 펼침 내용 */}
                       {isExpanded && (
                         <div className="px-5 pb-5 pt-2 bg-[#fafafa] border-t border-[#e5e7eb]">
-                          {/* 내용 */}
+                          {/* 내용 - 마크다운 렌더링 */}
                           {notice.content && (
-                            <div className="text-[14px] text-[#374151] whitespace-pre-wrap leading-relaxed mb-4">
-                              {notice.content}
+                            <div className="mb-4">
+                              <MarkdownRenderer content={notice.content} />
                             </div>
                           )}
 

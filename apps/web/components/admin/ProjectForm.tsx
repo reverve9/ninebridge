@@ -409,6 +409,18 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
                 />
               </div>
             </div>
+            {/* 링크 */}
+            <div className="mt-4">
+              <label className="block text-[14px] text-[#374151] mb-1">바로가기 링크 (선택)</label>
+              <input
+                type="text"
+                name="link"
+                value={form.link}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-[#e5e7eb] rounded-[8px] text-[14px] focus:outline-none focus:border-[#3071a5]"
+                placeholder="https://example.com"
+              />
+            </div>
           </div>
 
           {/* 썸네일 (리스트용) */}

@@ -328,7 +328,7 @@ export default function PWAProject({ onProjectSelect }: PWAProjectProps) {
                 {/* PC에서 확인 안내 */}
                 <div className="bg-[#f5f5f5] rounded-[8px] p-3 text-center">
                   <p className="text-[13px] text-[#6b7280]">
-                    더 자세한 내용은 PC에서 확인하세요
+                    더 자세한 내용은 데스크탑 (width 1280px 이상)에서 확인하실 수 있습니다
                   </p>
                 </div>
               </div>

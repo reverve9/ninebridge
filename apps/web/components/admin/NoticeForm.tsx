@@ -13,7 +13,7 @@ interface NoticeFormProps {
   isEdit?: boolean;
 }
 
-const categoryOptions = [
+const categoryOptions: { id: 'notice' | 'press' | 'recruit'; label: string; icon: React.ReactNode }[] = [
   { id: 'notice', label: '공지사항', icon: <Megaphone size={16} /> },
   { id: 'press', label: '보도자료', icon: <FileText size={16} /> },
   { id: 'recruit', label: '채용공고', icon: <Briefcase size={16} /> },

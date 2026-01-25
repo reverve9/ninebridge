@@ -108,7 +108,7 @@ export default function ExtendedNotice({ selectedNoticeId }: ExtendedNoticeProps
 
   const getPaginatedItems = (category: 'notice' | 'press' | 'recruit') => {
     const items = groupedNotices[category];
-    const page = currentPage[category];
+    const page = currentPage[category] || 1;
     const start = (page - 1) * ITEMS_PER_PAGE;
     return items.slice(start, start + ITEMS_PER_PAGE);
   };

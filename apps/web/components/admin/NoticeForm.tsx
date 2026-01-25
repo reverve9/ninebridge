@@ -4,7 +4,7 @@ import React, { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Notice, NoticeInsert, Attachment } from '@/lib/types';
 import { createNotice, updateNotice, uploadNoticeThumbnail, uploadAttachment, deleteAttachment } from '@/lib/notices';
-import { ArrowLeft, Upload, X, Paperclip, Image } from 'lucide-react';
+import { ArrowLeft, Upload, X, Paperclip, Image, HelpCircle } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import PWANoticePreview from '@/components/admin/PWANoticePreview';
 
@@ -23,6 +23,7 @@ export default function NoticeForm({ notice, isEdit = false }: NoticeFormProps) 
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [imageUploading, setImageUploading] = useState(false);
+  const [showGuide, setShowGuide] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [form, setForm] = useState({
     category: notice?.category || 'notice',
@@ -240,7 +241,17 @@ export default function NoticeForm({ notice, isEdit = false }: NoticeFormProps) 
               </div>
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="text-[14px] text-[#374151]">내용 (마크다운 지원)</label>
+                  <div className="flex items-center gap-2">
+                    <label className="text-[14px] text-[#374151]">내용 (마크다운 지원)</label>
+                    <button
+                      type="button"
+                      onClick={() => setShowGuide(true)}
+                      className="p-1 text-[#9ca3af] hover:text-[#3071a5] transition-colors"
+                      title="마크다운 가이드"
+                    >
+                      <HelpCircle size={16} />
+                    </button>
+                  </div>
                   <label className={`inline-flex items-center gap-1 px-3 py-1.5 text-[13px] rounded-[6px] cursor-pointer transition-colors
                     ${imageUploading 
                       ? 'bg-[#e5e7eb] text-[#9ca3af] cursor-not-allowed' 
@@ -356,6 +367,83 @@ export default function NoticeForm({ notice, isEdit = false }: NoticeFormProps) 
             </button>
           </div>
         </form>
+
+        {/* 마크다운 가이드 모달 */}
+        {showGuide && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowGuide(false)}>
+            <div className="bg-white rounded-[12px] w-[500px] max-h-[80vh] overflow-hidden" onClick={e => e.stopPropagation()}>
+              <div className="flex items-center justify-between px-6 py-4 border-b border-[#e5e7eb]">
+                <h3 className="text-[18px] font-bold text-[#1f2937]">마크다운 가이드</h3>
+                <button onClick={() => setShowGuide(false)} className="p-1 text-[#9ca3af] hover:text-[#1f2937]">
+                  <X size={20} />
+                </button>
+              </div>
+              <div className="p-6 overflow-y-auto max-h-[60vh]">
+                <table className="w-full text-[14px]">
+                  <thead>
+                    <tr className="border-b border-[#e5e7eb]">
+                      <th className="text-left py-2 text-[#6b7280] font-medium">입력</th>
+                      <th className="text-left py-2 text-[#6b7280] font-medium">결과</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#f3f4f6]">
+                    <tr>
+                      <td className="py-3 font-mono text-[#374151]"># 제목</td>
+                      <td className="py-3 text-[20px] font-bold">제목</td>
+                    </tr>
+                    <tr>
+                      <td className="py-3 font-mono text-[#374151]">## 소제목</td>
+                      <td className="py-3 text-[18px] font-bold">소제목</td>
+                    </tr>
+                    <tr>
+                      <td className="py-3 font-mono text-[#374151]">### 작은제목</td>
+                      <td className="py-3 text-[16px] font-semibold">작은제목</td>
+                    </tr>
+                    <tr>
+                      <td className="py-3 font-mono text-[#374151]">**굵게**</td>
+                      <td className="py-3"><strong>굵게</strong></td>
+                    </tr>
+                    <tr>
+                      <td className="py-3 font-mono text-[#374151]">*기울임*</td>
+                      <td className="py-3"><em>기울임</em></td>
+                    </tr>
+                    <tr>
+                      <td className="py-3 font-mono text-[#374151]">~~취소선~~</td>
+                      <td className="py-3"><s>취소선</s></td>
+                    </tr>
+                    <tr>
+                      <td className="py-3 font-mono text-[#374151]">[링크](URL)</td>
+                      <td className="py-3"><span className="text-[#3071a5] underline">링크</span></td>
+                    </tr>
+                    <tr>
+                      <td className="py-3 font-mono text-[#374151]">- 목록</td>
+                      <td className="py-3">• 목록</td>
+                    </tr>
+                    <tr>
+                      <td className="py-3 font-mono text-[#374151]">1. 번호목록</td>
+                      <td className="py-3">1. 번호목록</td>
+                    </tr>
+                    <tr>
+                      <td className="py-3 font-mono text-[#374151]">&gt; 인용문</td>
+                      <td className="py-3 border-l-4 border-[#3071a5] pl-2 text-[#6b7280]">인용문</td>
+                    </tr>
+                    <tr>
+                      <td className="py-3 font-mono text-[#374151]">---</td>
+                      <td className="py-3"><hr className="border-[#e5e7eb]" /></td>
+                    </tr>
+                    <tr>
+                      <td className="py-3 font-mono text-[#374151] text-[12px]">![설명](이미지URL)</td>
+                      <td className="py-3 text-[#6b7280]">이미지 삽입</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p className="mt-4 text-[13px] text-[#9ca3af]">
+                  💡 이미지는 상단의 "이미지 삽입" 버튼으로 쉽게 추가할 수 있습니다.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </AdminLayout>
   );

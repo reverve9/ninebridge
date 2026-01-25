@@ -70,12 +70,12 @@ export default function AdminLayout({ children, preview, showPreview = true, act
         </div>
       </div>
 
-      <div className="flex justify-center">
+      <div className="flex justify-center h-[calc(100vh-60px)]">
         <div className="flex w-full max-w-[1280px]">
           
           {/* 좌측 PWA 미리보기 */}
           {showPreview && (
-            <div className="w-[430px] min-h-screen flex-shrink-0 sticky top-[60px] h-[calc(100vh-60px)] overflow-hidden">
+            <div className="w-[430px] flex-shrink-0 h-full overflow-hidden">
               <div className="h-full bg-[#e5e7eb] p-4">
                 <p className="text-[12px] text-[#6b7280] mb-2 text-center">미리보기</p>
                 <div className="bg-white h-[calc(100%-24px)] rounded-[12px] shadow-lg overflow-hidden">
@@ -91,8 +91,8 @@ export default function AdminLayout({ children, preview, showPreview = true, act
             </div>
           )}
           
-          {/* 우측 어드민 콘텐츠 */}
-          <div className={`flex-1 min-h-screen ${showPreview ? '' : 'max-w-[1280px] mx-auto'}`}>
+          {/* 우측 어드민 콘텐츠 - 독립 스크롤 */}
+          <div className={`flex-1 h-full overflow-y-auto ${showPreview ? '' : 'max-w-[1280px] mx-auto'}`}>
             {children}
           </div>
           

@@ -6,12 +6,12 @@ import AdminLayout from '@/components/admin/AdminLayout';
 import PWANoticePreview from '@/components/admin/PWANoticePreview';
 import { Notice } from '@/lib/types';
 import { getAllNotices, deleteNotice, swapNoticeOrder } from '@/lib/notices';
-import { Plus, Edit, Trash2, ChevronUp, ChevronDown, Pin, ExternalLink, FileText, Briefcase, Megaphone } from 'lucide-react';
+import { Plus, Edit, Trash2, ChevronUp, ChevronDown, Pin, ExternalLink } from 'lucide-react';
 
-const categoryLabels: Record<'notice' | 'press' | 'recruit', { label: string; icon: React.ReactNode; color: string }> = {
-  notice: { label: '공지사항', icon: <Megaphone size={14} />, color: 'bg-[#ef4444]/10 text-[#dc2626]' },
-  press: { label: '언론자료', icon: <FileText size={14} />, color: 'bg-[#3071a5]/10 text-[#3071a5]' },
-  recruit: { label: '기타', icon: <Briefcase size={14} />, color: 'bg-[#eab308]/10 text-[#ca8a04]' },
+const categoryLabels: Record<'notice' | 'press' | 'recruit', { label: string; color: string }> = {
+  notice: { label: '공지사항', color: 'bg-[#ef4444]/10 text-[#dc2626]' },
+  press: { label: '언론자료', color: 'bg-[#3071a5]/10 text-[#3071a5]' },
+  recruit: { label: '기타', color: 'bg-[#eab308]/10 text-[#ca8a04]' },
 };
 
 export default function AdminNoticesPage() {
@@ -165,8 +165,7 @@ export default function AdminNoticesPage() {
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        <span className={`inline-flex items-center gap-1 px-2 py-1 text-[12px] rounded ${cat.color}`}>
-                          {cat.icon}
+                        <span className={`inline-flex items-center px-2 py-1 text-[12px] rounded ${cat.color}`}>
                           {cat.label}
                         </span>
                       </td>

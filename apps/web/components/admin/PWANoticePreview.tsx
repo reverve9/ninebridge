@@ -3,16 +3,16 @@
 import React, { useState } from 'react';
 import { Notice } from '@/lib/types';
 import PageTitle from '@/components/common/PageTitle';
-import { Pin, FileText, Briefcase, Megaphone, Paperclip } from 'lucide-react';
+import { Pin, Paperclip } from 'lucide-react';
 
 interface PWANoticePreviewProps {
   notices: Notice[];
 }
 
-const categoryLabels: Record<'notice' | 'press' | 'recruit', { label: string; icon: React.ReactNode; color: string }> = {
-  notice: { label: '공지사항', icon: <Megaphone size={12} />, color: 'bg-[#ef4444]/10 text-[#dc2626]' },
-  press: { label: '언론자료', icon: <FileText size={12} />, color: 'bg-[#3071a5]/10 text-[#3071a5]' },
-  recruit: { label: '기타', icon: <Briefcase size={12} />, color: 'bg-[#eab308]/10 text-[#ca8a04]' },
+const categoryLabels: Record<'notice' | 'press' | 'recruit', { label: string; color: string }> = {
+  notice: { label: '공지사항', color: 'bg-[#ef4444]/10 text-[#dc2626]' },
+  press: { label: '언론자료', color: 'bg-[#3071a5]/10 text-[#3071a5]' },
+  recruit: { label: '기타', color: 'bg-[#eab308]/10 text-[#ca8a04]' },
 };
 
 const categories = [
@@ -92,8 +92,7 @@ export default function PWANoticePreview({ notices }: PWANoticePreviewProps) {
                   {/* 내용 */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] rounded ${cat.color}`}>
-                        {cat.icon}
+                      <span className={`inline-flex items-center px-1.5 py-0.5 text-[10px] rounded ${cat.color}`}>
                         {cat.label}
                       </span>
                       {notice.is_pinned && <Pin size={12} className="text-[#f59e0b]" />}

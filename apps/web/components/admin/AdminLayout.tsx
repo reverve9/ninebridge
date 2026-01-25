@@ -12,7 +12,7 @@ export default function AdminLayout({ children, preview, showPreview = true }: A
   return (
     <div className="min-h-screen bg-[#f5f5f5]">
       <div className="flex justify-center">
-        <div className="flex w-full max-w-[1200px]">
+        <div className="flex w-full max-w-[1280px]">
           
           {/* 좌측 PWA 미리보기 */}
           {showPreview && (
@@ -33,7 +33,7 @@ export default function AdminLayout({ children, preview, showPreview = true }: A
           )}
           
           {/* 우측 어드민 콘텐츠 */}
-          <div className={`flex-1 min-h-screen ${showPreview ? '' : 'max-w-[1200px] mx-auto'}`}>
+          <div className={`flex-1 min-h-screen ${showPreview ? '' : 'max-w-[1280px] mx-auto'}`}>
             {children}
           </div>
           

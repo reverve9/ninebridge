@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Project } from '@/lib/types';
+import { Project, GalleryItem } from '@/lib/types';
 import { getPublishedProjects } from '@/lib/projects';
 
 interface ExtendedProjectProps {
@@ -27,6 +27,8 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
   const [loading, setLoading] = useState(true);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isYoutubePlaying, setIsYoutubePlaying] = useState(false);
+  const [currentGalleryIndex, setCurrentGalleryIndex] = useState(0);
+  const [isHoveringMain, setIsHoveringMain] = useState(false);
 
   useEffect(() => {
     loadProjects();
@@ -41,9 +43,16 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
     }
   }, [selectedProjectId, projects]);
 
-  // 프로젝트 변경 시 유튜브 재생 상태 초기화
+  // 프로젝트 변경 시 상태 초기화
   useEffect(() => {
     setIsYoutubePlaying(false);
+    // 대표 콘텐츠 찾기
+    if (selectedProject?.gallery) {
+      const mainIndex = selectedProject.gallery.findIndex(item => item.is_main);
+      setCurrentGalleryIndex(mainIndex >= 0 ? mainIndex : 0);
+    } else {
+      setCurrentGalleryIndex(0);
+    }
   }, [selectedProject]);
 
   const loadProjects = async () => {
@@ -55,6 +64,11 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
     } finally {
       setLoading(false);
     }
+  };
+
+  // 유튜브 ID 추출
+  const getYoutubeId = (url: string) => {
+    return url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?]+)/)?.[1];
   };
 
   // 대표 프로젝트
@@ -130,8 +144,9 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
 
   // 프로젝트 선택 시 상세 표시
   if (selectedProject) {
-    // 유튜브 ID 추출
-    const youtubeId = selectedProject.youtube_url?.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?]+)/)?.[1];
+    const gallery = selectedProject.gallery || [];
+    const currentItem = gallery[currentGalleryIndex];
+    const youtubeId = currentItem?.type === 'youtube' ? getYoutubeId(currentItem.url) : null;
 
     return (
       <div className="space-y-6">
@@ -145,7 +160,7 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
-          <h2 className="text-[21px] font-bold text-[#1f2937] flex-1 truncate" style={{ fontFamily: 'S-CoreDream', fontWeight: 900, letterSpacing: '-0.03em' }}>{selectedProject.title}</h2>
+          <h2 className="text-[21px] text-[#1f2937] flex-1 truncate" style={{ fontFamily: 'S-CoreDream', fontWeight: 900, letterSpacing: '-0.03em' }}>{selectedProject.title}</h2>
           <div className="flex gap-2 flex-shrink-0">
             {selectedProject.categories.map((cat) => {
               const color = categoryColors[cat] ?? categoryColors.etc;
@@ -159,56 +174,110 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
         </div>
 
         {/* 메인 비주얼 (16:9) */}
-        {youtubeId ? (
-          <div className="w-full aspect-video rounded-[12px] overflow-hidden relative">
-            {isYoutubePlaying ? (
-              <>
-                <iframe
-                  src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0`}
-                  title={selectedProject.title}
-                  className="w-full h-full"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-                <button
-                  onClick={() => setIsYoutubePlaying(false)}
-                  className="absolute top-4 right-4 w-10 h-10 bg-black/30 backdrop-blur-sm text-white rounded-full flex items-center justify-center hover:bg-black/50 transition-all hover:scale-105"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </>
-            ) : (
-              <div 
-                className="relative w-full h-full cursor-pointer group"
-                onClick={() => setIsYoutubePlaying(true)}
-              >
-                <img
-                  src={`https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`}
-                  alt={selectedProject.title}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`;
-                  }}
-                />
-                {/* 재생 버튼 오버레이 */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-16 h-16 bg-black/30 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-black/50 transition-all hover:scale-105">
-                    <svg className="w-13 h-13 text-white ml-0.3" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M8 5v14l11-7z"/>
+        {gallery.length > 0 ? (
+          <div 
+            className="w-full aspect-video rounded-[12px] overflow-hidden relative"
+            onMouseEnter={() => setIsHoveringMain(true)}
+            onMouseLeave={() => setIsHoveringMain(false)}
+          >
+            {/* 현재 콘텐츠 */}
+            {currentItem?.type === 'youtube' && youtubeId ? (
+              isYoutubePlaying ? (
+                <>
+                  <iframe
+                    src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0`}
+                    title={currentItem.title || selectedProject.title}
+                    className="w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                  <button
+                    onClick={() => setIsYoutubePlaying(false)}
+                    className="absolute top-4 right-4 w-10 h-10 bg-black/30 backdrop-blur-sm text-white rounded-full flex items-center justify-center hover:bg-black/50 transition-all hover:scale-105"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                     </svg>
+                  </button>
+                </>
+              ) : (
+                <div 
+                  className="relative w-full h-full cursor-pointer group"
+                  onClick={() => setIsYoutubePlaying(true)}
+                >
+                  <img
+                    src={`https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`}
+                    alt={currentItem.title || selectedProject.title}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`;
+                    }}
+                  />
+                  {/* 재생 버튼 오버레이 */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-16 h-16 bg-black/30 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-black/50 transition-all hover:scale-105">
+                      <svg className="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z"/>
+                      </svg>
+                    </div>
                   </div>
+                </div>
+              )
+            ) : currentItem?.type === 'image' ? (
+              <img
+                src={currentItem.url}
+                alt={currentItem.title || selectedProject.title}
+                className="w-full h-full object-cover"
+              />
+            ) : selectedProject.thumbnail ? (
+              <img
+                src={selectedProject.thumbnail}
+                alt={selectedProject.title}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full bg-[#f3f4f6] flex items-center justify-center text-[#9ca3af]">
+                이미지 없음
+              </div>
+            )}
+
+            {/* 호버 시 갤러리 썸네일 (하단) */}
+            {gallery.length > 1 && isHoveringMain && !isYoutubePlaying && (
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4 pt-8">
+                <div className="flex gap-2 justify-center">
+                  {gallery.map((item, index) => {
+                    const thumbYoutubeId = item.type === 'youtube' ? getYoutubeId(item.url) : null;
+                    return (
+                      <button
+                        key={index}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setCurrentGalleryIndex(index);
+                          setIsYoutubePlaying(false);
+                        }}
+                        className={`w-[80px] h-[45px] rounded overflow-hidden border-2 transition-all
+                          ${currentGalleryIndex === index ? 'border-white scale-105' : 'border-transparent opacity-70 hover:opacity-100'}`}
+                      >
+                        {item.type === 'youtube' && thumbYoutubeId ? (
+                          <img 
+                            src={`https://img.youtube.com/vi/${thumbYoutubeId}/mqdefault.jpg`}
+                            alt={item.title || '영상'}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <img 
+                            src={item.url}
+                            alt={item.title || '이미지'}
+                            className="w-full h-full object-cover"
+                          />
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             )}
           </div>
-        ) : selectedProject.main_visual ? (
-          <img
-            src={selectedProject.main_visual}
-            alt={selectedProject.title}
-            className="w-full aspect-video object-cover rounded-[12px]"
-          />
         ) : selectedProject.thumbnail ? (
           <img
             src={selectedProject.thumbnail}
@@ -217,8 +286,10 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
           />
         ) : null}
 
-        {/* 텍스트 영역 - 연한 그레이 박스 */}
+        {/* 프로젝트 인포메이션 박스 */}
         <div className="bg-[#f5f5f5] p-6">
+          <h3 className="text-[14px] font-semibold text-[#6b7280] uppercase tracking-wide mb-4">Project Information</h3>
+          
           {/* 2열 그리드: Client, Date */}
           <div className="grid grid-cols-2 gap-6 mb-6">
             <div>
@@ -256,70 +327,28 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
             </div>
           )}
         </div>
-
-        {/* 갤러리 */}
-        {selectedProject.images && selectedProject.images.length > 0 && (
-          <div>
-            <h3 className="text-[16px] font-semibold text-[#1f2937] mb-3">Gallery</h3>
-            <div className="grid grid-cols-4 gap-3">
-              {selectedProject.images.map((img, idx) => (
-                <img
-                  key={idx}
-                  src={img}
-                  alt={`갤러리 ${idx + 1}`}
-                  className="w-full h-[100px] object-cover rounded-[8px] cursor-pointer hover:opacity-80 transition-opacity"
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* 링크 */}
-        {selectedProject.link && (
-          <a
-            href={selectedProject.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block px-6 py-3 bg-[#3071a5] text-white text-[14px] font-medium rounded-[8px] hover:bg-[#265d8a] transition-colors"
-          >
-            바로가기 →
-          </a>
-        )}
       </div>
     );
   }
 
-  // 기본: 상단 여백(텍스트 영역) + 대표 프로젝트 + 연도별 그리드
+  // 목록 표시
   return (
-    <div>
-      {projects.length === 0 ? (
-        <div className="flex items-center justify-center min-h-[200px] text-[#9ca3af] text-[14px]">
-          등록된 프로젝트가 없습니다
-        </div>
-      ) : (
-        <div className="space-y-8">
-          {/* 상단 텍스트 영역 (나중에 사용) */}
-          <div className="h-[60px]">
-            {/* 추후 텍스트 박스 */}
-          </div>
-
-          {/* 대표 프로젝트 */}
-          {featuredProjects.length > 0 && (
-            <div>
-              <h3 className="text-[16px] font-semibold text-[#1f2937] mb-2">Featured</h3>
-              <ThumbnailGrid items={featuredProjects} />
-            </div>
-          )}
-
-          {/* 연도별 리스트 */}
-          {sortedYears.map((year) => (
-            <div key={year}>
-              <h3 className="text-[18px] font-bold text-[#1f2937] mb-2">{year}</h3>
-              <ThumbnailGrid items={projectsByYear[year] || []} />
-            </div>
-          ))}
+    <div className="space-y-8 pt-[60px]">
+      {/* Featured 섹션 */}
+      {featuredProjects.length > 0 && (
+        <div>
+          <h3 className="text-[18px] font-bold text-[#1f2937] mb-2">Featured</h3>
+          <ThumbnailGrid items={featuredProjects} />
         </div>
       )}
+
+      {/* 연도별 리스트 */}
+      {sortedYears.map((year) => (
+        <div key={year}>
+          <h3 className="text-[18px] font-bold text-[#1f2937] mb-2">{year}</h3>
+          <ThumbnailGrid items={projectsByYear[year] || []} />
+        </div>
+      ))}
     </div>
   );
 }

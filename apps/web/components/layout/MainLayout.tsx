@@ -22,8 +22,8 @@ export default function MainLayout({ pwaContent, extendedContent, activeMenu = '
       {/* 데스크탑: PWA + 확장 콘텐츠 (768px~) */}
       
       <div className="flex justify-center h-screen">
-        {/* 전체 컨테이너 - 최대 1200px */}
-        <div className="flex w-full max-w-[1200px]">
+        {/* 전체 컨테이너 - 최대 1280px */}
+        <div className="flex w-full max-w-[1280px]">
           
           {/* 좌측 PWA 영역 - 항상 430px, 독립 스크롤 */}
           <div id="pwa-wrapper" className="w-full max-w-[430px] h-screen mx-auto md:mx-0 md:flex-shrink-0 overflow-y-auto">

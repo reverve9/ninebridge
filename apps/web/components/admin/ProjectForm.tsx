@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Project, ProjectInsert, GalleryItem } from '@/lib/types';
 import { createProject, updateProject, uploadImage } from '@/lib/projects';
-import { ArrowLeft, Upload, X, Plus, Star, Play, Image } from 'lucide-react';
+import { ArrowLeft, Upload, X, Plus, Star, Play, Image, Monitor, Smartphone } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import PWAPreview from '@/components/admin/PWAPreview';
 
@@ -45,7 +45,7 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
 
   // 갤러리 아이템 추가 모달
   const [showGalleryModal, setShowGalleryModal] = useState(false);
-  const [galleryItemType, setGalleryItemType] = useState<'youtube' | 'image'>('youtube');
+  const [galleryItemType, setGalleryItemType] = useState<'hor' | 'ver' | 'img'>('hor');
   const [galleryItemUrl, setGalleryItemUrl] = useState('');
   const [galleryItemTitle, setGalleryItemTitle] = useState('');
   const [galleryItemDesc, setGalleryItemDesc] = useState('');
@@ -128,7 +128,7 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
       url: galleryItemUrl,
       title: galleryItemTitle,
       desc: galleryItemDesc,
-      is_main: form.gallery.length === 0, // 첫 번째 아이템은 자동으로 대표
+      is_main: form.gallery.length === 0,
     };
 
     setForm(prev => ({ ...prev, gallery: [...prev.gallery, newItem] }));
@@ -136,6 +136,7 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
     setGalleryItemUrl('');
     setGalleryItemTitle('');
     setGalleryItemDesc('');
+    setGalleryItemType('hor');
   };
 
   // 갤러리 이미지 직접 업로드
@@ -146,7 +147,7 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
     try {
       const url = await uploadImage(file, 'gallery');
       const newItem: GalleryItem = {
-        type: 'image',
+        type: 'img',
         url: url,
         title: '',
         desc: '',
@@ -163,7 +164,6 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
   const handleRemoveGalleryItem = (index: number) => {
     setForm(prev => {
       const newGallery = prev.gallery.filter((_, i) => i !== index);
-      // 삭제된 게 대표였으면 첫 번째를 대표로
       if (prev.gallery[index]?.is_main && newGallery.length > 0 && newGallery[0]) {
         newGallery[0] = { ...newGallery[0], is_main: true };
       }
@@ -229,6 +229,15 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
     } finally {
       setLoading(false);
     }
+  };
+
+  // 타입별 아이콘과 라벨
+  const typeInfo: Record<string, { icon: React.ReactNode; label: string; color: string }> = {
+    hor: { icon: <Monitor size={14} />, label: '가로영상', color: 'text-blue-500' },
+    ver: { icon: <Smartphone size={14} />, label: '세로영상', color: 'text-purple-500' },
+    img: { icon: <Image size={14} />, label: '이미지', color: 'text-green-500' },
+    youtube: { icon: <Monitor size={14} />, label: '영상', color: 'text-blue-500' },
+    image: { icon: <Image size={14} />, label: '이미지', color: 'text-green-500' },
   };
 
   return (
@@ -436,7 +445,7 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
                 <div key={index} className={`flex items-center gap-3 p-3 border rounded-[8px] ${item.is_main ? 'border-[#3071a5] bg-[#3071a5]/5' : 'border-[#e5e7eb]'}`}>
                   {/* 썸네일 */}
                   <div className="w-[80px] h-[45px] bg-[#f3f4f6] rounded overflow-hidden flex-shrink-0">
-                    {item.type === 'youtube' ? (
+                    {(item.type === 'hor' || item.type === 'ver') ? (
                       <img 
                         src={`https://img.youtube.com/vi/${getYoutubeId(item.url)}/mqdefault.jpg`}
                         alt={item.title}
@@ -450,8 +459,9 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
                   {/* 정보 */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      {item.type === 'youtube' ? <Play size={14} className="text-red-500" /> : <Image size={14} className="text-[#3071a5]" />}
-                      <span className="text-[14px] font-medium text-[#1f2937] truncate">{item.title || (item.type === 'youtube' ? '유튜브 영상' : '이미지')}</span>
+                      <span className={typeInfo[item.type]?.color || 'text-gray-500'}>{typeInfo[item.type]?.icon}</span>
+                      <span className="text-[11px] text-[#9ca3af]">{typeInfo[item.type]?.label || item.type}</span>
+                      <span className="text-[14px] font-medium text-[#1f2937] truncate">{item.title || '제목 없음'}</span>
                       {item.is_main && <Star size={14} className="text-[#f59e0b] fill-[#f59e0b]" />}
                     </div>
                     {item.desc && <p className="text-[12px] text-[#9ca3af] truncate">{item.desc}</p>}
@@ -485,15 +495,23 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
             <div className="flex gap-2">
               <button
                 type="button"
-                onClick={() => { setGalleryItemType('youtube'); setShowGalleryModal(true); }}
-                className="flex items-center gap-2 px-4 py-2 border border-[#e5e7eb] rounded-[8px] text-[14px] text-[#6b7280] hover:border-[#3071a5] hover:text-[#3071a5] transition-colors"
+                onClick={() => { setGalleryItemType('hor'); setShowGalleryModal(true); }}
+                className="flex items-center gap-2 px-4 py-2 border border-[#e5e7eb] rounded-[8px] text-[14px] text-[#6b7280] hover:border-blue-500 hover:text-blue-500 transition-colors"
               >
-                <Play size={16} />
-                유튜브 추가
+                <Monitor size={16} />
+                가로영상
               </button>
-              <label className="flex items-center gap-2 px-4 py-2 border border-[#e5e7eb] rounded-[8px] text-[14px] text-[#6b7280] hover:border-[#3071a5] hover:text-[#3071a5] transition-colors cursor-pointer">
+              <button
+                type="button"
+                onClick={() => { setGalleryItemType('ver'); setShowGalleryModal(true); }}
+                className="flex items-center gap-2 px-4 py-2 border border-[#e5e7eb] rounded-[8px] text-[14px] text-[#6b7280] hover:border-purple-500 hover:text-purple-500 transition-colors"
+              >
+                <Smartphone size={16} />
+                세로영상
+              </button>
+              <label className="flex items-center gap-2 px-4 py-2 border border-[#e5e7eb] rounded-[8px] text-[14px] text-[#6b7280] hover:border-green-500 hover:text-green-500 transition-colors cursor-pointer">
                 <Image size={16} />
-                이미지 추가
+                이미지
                 <input type="file" accept="image/*" onChange={handleGalleryImageUpload} className="hidden" />
               </label>
             </div>
@@ -563,19 +581,17 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-[12px] p-6 w-[400px]">
             <h3 className="text-[16px] font-semibold text-[#1f2937] mb-4">
-              {galleryItemType === 'youtube' ? '유튜브 영상 추가' : '이미지 추가'}
+              {galleryItemType === 'hor' ? '가로 영상 추가' : galleryItemType === 'ver' ? '세로 영상 추가' : '이미지 추가'}
             </h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-[14px] text-[#374151] mb-1">
-                  {galleryItemType === 'youtube' ? '유튜브 URL' : '이미지 URL'}
-                </label>
+                <label className="block text-[14px] text-[#374151] mb-1">유튜브 URL</label>
                 <input
                   type="text"
                   value={galleryItemUrl}
                   onChange={(e) => setGalleryItemUrl(e.target.value)}
                   className="w-full px-4 py-3 border border-[#e5e7eb] rounded-[8px] text-[14px] focus:outline-none focus:border-[#3071a5]"
-                  placeholder={galleryItemType === 'youtube' ? 'https://www.youtube.com/watch?v=...' : 'https://...'}
+                  placeholder="https://www.youtube.com/watch?v=..."
                 />
               </div>
               <div>
@@ -585,7 +601,7 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
                   value={galleryItemTitle}
                   onChange={(e) => setGalleryItemTitle(e.target.value)}
                   className="w-full px-4 py-3 border border-[#e5e7eb] rounded-[8px] text-[14px] focus:outline-none focus:border-[#3071a5]"
-                  placeholder="영상/이미지 제목"
+                  placeholder="영상 제목"
                 />
               </div>
               <div>
@@ -599,7 +615,7 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
                 />
               </div>
               {/* 유튜브 미리보기 */}
-              {galleryItemType === 'youtube' && galleryItemUrl && getYoutubeId(galleryItemUrl) && (
+              {galleryItemUrl && getYoutubeId(galleryItemUrl) && (
                 <div className="w-full aspect-video bg-[#f3f4f6] rounded-[8px] overflow-hidden">
                   <img 
                     src={`https://img.youtube.com/vi/${getYoutubeId(galleryItemUrl)}/maxresdefault.jpg`}

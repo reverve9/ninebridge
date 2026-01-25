@@ -30,11 +30,16 @@ export default function PWAPreview({ projects, selectedProject, onSelectProject 
   const [activeCategory, setActiveCategory] = useState('all');
   const [showModal, setShowModal] = useState(false);
 
-  const publishedProjects = projects.filter(p => p.is_published);
+  // 미리보기 모드: projects가 1개이고 id가 'preview'면 필터링 없이 바로 표시
+  const isPreviewMode = projects.length === 1 && projects[0]?.id === 'preview';
+  
+  const displayProjects = isPreviewMode 
+    ? projects 
+    : projects.filter(p => p.is_published);
   
   const filteredProjects = activeCategory === 'all'
-    ? publishedProjects
-    : publishedProjects.filter(p => p.categories.includes(activeCategory));
+    ? displayProjects
+    : displayProjects.filter(p => p.categories.includes(activeCategory));
 
   const handleProjectClick = (project: Project) => {
     onSelectProject(project);
@@ -197,10 +202,10 @@ export default function PWAPreview({ projects, selectedProject, onSelectProject 
                 {selectedProject.gallery && selectedProject.gallery.length > 0 && (
                   <div className="grid grid-cols-2 gap-2 mt-4">
                     {selectedProject.gallery.map((item, idx) => {
-                      const youtubeId = item.type === 'youtube' ? getYoutubeId(item.url) : null;
+                      const youtubeId = (item.type === 'hor' || item.type === 'ver') ? getYoutubeId(item.url) : null;
                       return (
                         <div key={idx} className="relative">
-                          {item.type === 'youtube' && youtubeId ? (
+                          {youtubeId ? (
                             <img 
                               src={`https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`}
                               alt={item.title || `갤러리 ${idx + 1}`} 

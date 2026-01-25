@@ -60,29 +60,39 @@ export default function AdminProjectsPage() {
 
   const handleMoveUp = async (index: number) => {
     if (index === 0) return;
-    const current = projects[index];
-    const target = projects[index - 1];
-    if (!current || !target) return;
+    const newProjects = [...projects];
+    [newProjects[index - 1], newProjects[index]] = [newProjects[index], newProjects[index - 1]];
     
+    // 즉시 UI 업데이트
+    setProjects(newProjects);
+    
+    // DB 업데이트 - 모든 프로젝트에 새 order 값 부여
     try {
-      await swapProjectOrder(current.id, current.order, target.id, target.order);
-      await loadProjects();
+      for (let i = 0; i < newProjects.length; i++) {
+        await supabase.from('projects').update({ order: i }).eq('id', newProjects[i].id);
+      }
     } catch (error) {
       console.error('순서 변경 실패:', error);
+      loadProjects(); // 실패 시 원복
     }
   };
 
   const handleMoveDown = async (index: number) => {
     if (index === projects.length - 1) return;
-    const current = projects[index];
-    const target = projects[index + 1];
-    if (!current || !target) return;
+    const newProjects = [...projects];
+    [newProjects[index], newProjects[index + 1]] = [newProjects[index + 1], newProjects[index]];
     
+    // 즉시 UI 업데이트
+    setProjects(newProjects);
+    
+    // DB 업데이트 - 모든 프로젝트에 새 order 값 부여
     try {
-      await swapProjectOrder(current.id, current.order, target.id, target.order);
-      await loadProjects();
+      for (let i = 0; i < newProjects.length; i++) {
+        await supabase.from('projects').update({ order: i }).eq('id', newProjects[i].id);
+      }
     } catch (error) {
       console.error('순서 변경 실패:', error);
+      loadProjects(); // 실패 시 원복
     }
   };
 

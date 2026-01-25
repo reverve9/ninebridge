@@ -1,5 +1,5 @@
 export interface GalleryItem {
-  type: 'youtube' | 'image';
+  type: 'hor' | 'ver' | 'img';
   url: string;
   title: string;
   desc: string;

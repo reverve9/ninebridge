@@ -45,6 +45,7 @@ export default function NoticeForm({ notice, isEdit = false }: NoticeFormProps) 
     link: form.link,
     is_published: true,
     is_pinned: form.is_pinned,
+    view_count: notice?.view_count || 0,
     order: form.order,
     created_at: notice?.created_at || new Date().toISOString(),
     updated_at: new Date().toISOString(),

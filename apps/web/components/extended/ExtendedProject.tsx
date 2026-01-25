@@ -290,42 +290,48 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
         <div className="bg-[#f5f5f5] p-6">
           <h3 className="text-[14px] font-semibold text-[#6b7280] uppercase tracking-wide mb-4">Project Information</h3>
           
-          {/* 2열 그리드: Client, Date */}
-          <div className="grid grid-cols-2 gap-6 mb-6">
-            <div>
-              <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-1">Client</p>
-              <p className="text-[15px] text-[#1f2937]">{selectedProject.client || '-'}</p>
+          {/* 2열 구조 */}
+          <div className="flex gap-6">
+            {/* 좌측: Client, Date, Details */}
+            <div className="flex-1 space-y-4">
+              <div>
+                <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-1">Client</p>
+                <p className="text-[15px] text-[#1f2937]">{selectedProject.client || '-'}</p>
+              </div>
+              <div>
+                <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-1">Date</p>
+                <p className="text-[15px] text-[#1f2937]">
+                  {selectedProject.date_start 
+                    ? `${selectedProject.date_start}${selectedProject.date_end ? ` - ${selectedProject.date_end}` : ''}`
+                    : '-'
+                  }
+                </p>
+              </div>
+              {selectedProject.details && (
+                <div>
+                  <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-1">Details</p>
+                  <p className="text-[15px] text-[#374151] leading-relaxed whitespace-pre-wrap">
+                    {selectedProject.details}
+                  </p>
+                </div>
+              )}
             </div>
-            <div>
-              <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-1">Date</p>
-              <p className="text-[15px] text-[#1f2937]">
-                {selectedProject.date_start 
-                  ? `${selectedProject.date_start}${selectedProject.date_end ? ` - ${selectedProject.date_end}` : ''}`
-                  : '-'
-                }
-              </p>
+
+            {/* 구분선 */}
+            <div className="w-px bg-[#e5e7eb]"></div>
+
+            {/* 우측: Description */}
+            <div className="flex-1">
+              {selectedProject.content && (
+                <div>
+                  <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-1">Description</p>
+                  <p className="text-[15px] text-[#374151] leading-relaxed whitespace-pre-wrap">
+                    {selectedProject.content}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
-
-          {/* Description */}
-          {selectedProject.content && (
-            <div className="mb-6">
-              <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-1">Description</p>
-              <p className="text-[15px] text-[#374151] leading-relaxed whitespace-pre-wrap">
-                {selectedProject.content}
-              </p>
-            </div>
-          )}
-
-          {/* Details */}
-          {selectedProject.details && (
-            <div>
-              <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-1">Details</p>
-              <p className="text-[15px] text-[#374151] leading-relaxed whitespace-pre-wrap">
-                {selectedProject.details}
-              </p>
-            </div>
-          )}
         </div>
       </div>
     );

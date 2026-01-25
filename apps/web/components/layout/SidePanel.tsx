@@ -38,7 +38,7 @@ export default function SidePanel({ activeSection = 'home' }: SidePanelProps) {
     },
   };
 
-  const currentInfo = sectionInfo[activeSection] || sectionInfo.home;
+  const currentInfo = sectionInfo[activeSection] || sectionInfo['home']!;
 
   return (
     <div className="flex flex-col h-full gap-8">

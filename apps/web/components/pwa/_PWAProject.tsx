@@ -143,7 +143,7 @@ export default function PWAProject({ onProjectSelect }: PWAProjectProps) {
                 ${project.has_detail ? 'cursor-pointer hover:border-[#3071a5]' : 'cursor-default'}`}
             >
               {/* 썸네일 영역 */}
-              <div className="w-[130px] h-[130px] flex items-center justify-center flex-shrink-0 self-center">
+              <div className="w-[120px] h-[120px] flex items-center justify-center flex-shrink-0">
                 {project.thumbnail ? (
                   <img src={project.thumbnail} alt={project.title} className="w-[100px] h-[100px] object-cover rounded-[0px]" />
                 ) : (

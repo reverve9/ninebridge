@@ -50,7 +50,8 @@ export default function HomePage() {
   return (
     <MainLayout 
       pwaContent={pwaContent} 
-      extendedContent={extendedContent} 
+      extendedContent={extendedContent}
+      activeMenu={activeMenu}
     />
   );
 }

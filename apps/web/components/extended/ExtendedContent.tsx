@@ -7,6 +7,7 @@ import ExtendedEvent from './ExtendedEvent';
 import ExtendedMarketing from './ExtendedMarketing';
 import ExtendedMedia from './ExtendedMedia';
 import ExtendedContact from './ExtendedContact';
+import ExtendedProject from './ExtendedProject';
 import Maintenance from '@/components/common/Maintenance';
 
 interface ExtendedContentProps {
@@ -22,15 +23,7 @@ export default function ExtendedContent({ activeMenu, selectedProject }: Extende
       case 'service':
         return <Maintenance size="large" />;
       case 'project':
-        // 프로젝트 선택 시 상세 표시, 없으면 안내
-        if (selectedProject) {
-          return <div>프로젝트 상세: {selectedProject}</div>;
-        }
-        return (
-          <div className="flex items-center justify-center min-h-[400px] text-[#9ca3af] text-[14px]">
-            좌측에서 프로젝트를 선택해주세요
-          </div>
-        );
+        return <ExtendedProject selectedProjectId={selectedProject} />;
       case 'contact':
         return <Maintenance size="large" />;
       case 'development':

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import PageTitle from '@/components/common/PageTitle';
 import { Notice } from '@/lib/types';
 import { getPublishedNotices, incrementViewCount } from '@/lib/notices';
@@ -34,6 +34,7 @@ export default function PWANotice({ onSelectNotice, selectedNoticeId }: PWANotic
   const [displayCount, setDisplayCount] = useState(ITEMS_PER_PAGE);
   const [loadingMore, setLoadingMore] = useState(false);
   const [isMobile, setIsMobile] = useState(true);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     loadNotices();
@@ -76,27 +77,28 @@ export default function PWANotice({ onSelectNotice, selectedNoticeId }: PWANotic
   const displayedNotices = sortedNotices.slice(0, displayCount);
   const hasMore = displayCount < sortedNotices.length;
 
-  // 무한 스크롤
-  const handleScroll = useCallback(() => {
-    if (loadingMore || !hasMore) return;
-    
-    const scrollTop = window.scrollY || document.documentElement.scrollTop;
-    const scrollHeight = document.documentElement.scrollHeight;
-    const clientHeight = document.documentElement.clientHeight;
-    
-    if (scrollTop + clientHeight >= scrollHeight - 100) {
-      setLoadingMore(true);
-      setTimeout(() => {
-        setDisplayCount(prev => prev + ITEMS_PER_PAGE);
-        setLoadingMore(false);
-      }, 300);
-    }
-  }, [loadingMore, hasMore]);
-
+  // PWA wrapper 스크롤 감지
   useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [handleScroll]);
+    const pwaWrapper = document.getElementById('pwa-wrapper');
+    if (!pwaWrapper) return;
+
+    const handleScroll = () => {
+      if (loadingMore || !hasMore) return;
+      
+      const { scrollTop, scrollHeight, clientHeight } = pwaWrapper;
+      
+      if (scrollTop + clientHeight >= scrollHeight - 100) {
+        setLoadingMore(true);
+        setTimeout(() => {
+          setDisplayCount(prev => prev + ITEMS_PER_PAGE);
+          setLoadingMore(false);
+        }, 300);
+      }
+    };
+
+    pwaWrapper.addEventListener('scroll', handleScroll);
+    return () => pwaWrapper.removeEventListener('scroll', handleScroll);
+  }, [loadingMore, hasMore]);
 
   const getCategoryCount = (catId: string) => {
     if (catId === 'all') return notices.length;
@@ -147,7 +149,7 @@ export default function PWANotice({ onSelectNotice, selectedNoticeId }: PWANotic
   };
 
   return (
-    <div className="relative min-h-full">
+    <div ref={containerRef} className="relative min-h-full">
       <PageTitle title="NOTICE" subtitle="공지사항" />
 
       {/* 카테고리 탭 */}
@@ -173,7 +175,7 @@ export default function PWANotice({ onSelectNotice, selectedNoticeId }: PWANotic
       </div>
 
       {/* 게시글 목록 - 카드형 */}
-      <div className="px-4 py-2 space-y-3">
+      <div className="px-4 py-2 space-y-3 pb-20">
         {loading ? (
           <p className="text-[14px] text-[#9ca3af] py-8 text-center">로딩 중...</p>
         ) : sortedNotices.length === 0 ? (

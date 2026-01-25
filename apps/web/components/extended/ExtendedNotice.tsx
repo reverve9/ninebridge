@@ -33,7 +33,7 @@ export default function ExtendedNotice({ selectedNoticeId }: ExtendedNoticeProps
 
   // selectedNoticeId 변경시 해당 게시글 열기
   useEffect(() => {
-    if (selectedNoticeId) {
+    if (selectedNoticeId && notices.length > 0) {
       setExpandedId(selectedNoticeId);
       
       // 해당 게시글이 있는 페이지로 이동
@@ -46,7 +46,7 @@ export default function ExtendedNotice({ selectedNoticeId }: ExtendedNoticeProps
         setCurrentPage(prev => ({ ...prev, [category]: page }));
       }
     }
-  }, [selectedNoticeId, notices]);
+  }, [selectedNoticeId]);
 
   const loadNotices = async () => {
     try {
@@ -179,9 +179,9 @@ export default function ExtendedNotice({ selectedNoticeId }: ExtendedNoticeProps
                   return (
                     <div key={notice.id} className={!isLast ? 'border-b border-[#e5e7eb]' : ''}>
                       {/* 게시글 헤더 (클릭 영역) */}
-                      <button
+                      <div
                         onClick={() => handleToggle(notice)}
-                        className="w-full px-5 py-4 flex items-center gap-3 hover:bg-[#f9fafb] transition-colors text-left"
+                        className="w-full px-5 py-4 flex items-center gap-3 hover:bg-[#f9fafb] transition-colors text-left cursor-pointer"
                       >
                         {/* 펼침 아이콘 */}
                         <ChevronDown 
@@ -218,7 +218,7 @@ export default function ExtendedNotice({ selectedNoticeId }: ExtendedNoticeProps
                           <Eye size={14} />
                           <span className="text-[12px]">{notice.view_count || 0}</span>
                         </span>
-                      </button>
+                      </div>
 
                       {/* 펼침 내용 */}
                       {isExpanded && (

@@ -18,9 +18,9 @@ export default function ExtendedContent({ activeMenu, selectedProject }: Extende
   const renderContent = () => {
     switch (activeMenu) {
       case 'home':
-        return <Maintenance title="HOME 상세" message="메인 페이지를 준비하고 있습니다." />;
+        return <Maintenance size="large" />;
       case 'service':
-        return <Maintenance title="WORX 상세" message="사업분야 상세 페이지를 준비하고 있습니다." />;
+        return <Maintenance size="large" />;
       case 'project':
         // 프로젝트 선택 시 상세 표시, 없으면 안내
         if (selectedProject) {
@@ -32,7 +32,7 @@ export default function ExtendedContent({ activeMenu, selectedProject }: Extende
           </div>
         );
       case 'contact':
-        return <Maintenance title="CONTACT 상세" message="문의 페이지를 준비하고 있습니다." />;
+        return <Maintenance size="large" />;
       case 'development':
         return <ExtendedDevelopment />;
       case 'event':

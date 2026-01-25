@@ -1,32 +1,40 @@
 'use client';
 
 import React from 'react';
-import { Construction } from 'lucide-react';
+import { Loader } from 'lucide-react';
 
 interface MaintenanceProps {
-  title?: string;
-  message?: string;
+  size?: 'small' | 'large';
 }
 
-export default function Maintenance({ 
-  title = '페이지 준비 중',
-  message = '더 나은 서비스를 위해 준비 중입니다.\n빠른 시일 내에 찾아뵙겠습니다.'
-}: MaintenanceProps) {
+export default function Maintenance({ size = 'small' }: MaintenanceProps) {
+  const isLarge = size === 'large';
+  
   return (
-    <div className="flex flex-col items-center justify-center min-h-[400px] px-6 py-12 text-center">
-      <div className="w-[80px] h-[80px] bg-[#3071a5]/10 rounded-full flex items-center justify-center mb-6">
-        <Construction className="w-[40px] h-[40px] text-[#3071a5]" />
+    <>
+      <style jsx>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        @keyframes fade {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.4; }
+        }
+      `}</style>
+      <div className="flex flex-col items-center justify-center h-full min-h-[calc(100vh-200px)]">
+        <div className={`${isLarge ? 'w-[160px] h-[160px]' : 'w-[120px] h-[120px]'} rounded-full bg-[#9ca3af]/20 flex items-center justify-center`}>
+          <Loader 
+            className={`${isLarge ? 'w-[70px] h-[70px]' : 'w-[50px] h-[50px]'} text-[#9ca3af]`}
+            style={{
+              animation: 'spin 3s linear infinite, fade 2s ease-in-out infinite'
+            }}
+          />
+        </div>
+        <p className={`${isLarge ? 'text-[20px]' : 'text-[16px]'} text-[#9ca3af] mt-8`}>
+          Coming soon...
+        </p>
       </div>
-      <h2 className="text-[20px] font-bold text-[#1f2937] mb-3">
-        {title}
-      </h2>
-      <p className="text-[14px] text-[#6b7280] leading-relaxed whitespace-pre-line">
-        {message}
-      </p>
-      <div className="mt-8 flex items-center gap-2 text-[12px] text-[#9ca3af]">
-        <span className="w-[6px] h-[6px] bg-[#3071a5] rounded-full animate-pulse" />
-        <span>Coming Soon</span>
-      </div>
-    </div>
+    </>
   );
 }

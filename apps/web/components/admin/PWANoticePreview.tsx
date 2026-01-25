@@ -10,16 +10,16 @@ interface PWANoticePreviewProps {
 }
 
 const categoryLabels: Record<'notice' | 'press' | 'recruit', { label: string; icon: React.ReactNode; color: string }> = {
-  notice: { label: '공지사항', icon: <Megaphone size={12} />, color: 'bg-[#3071a5]/10 text-[#3071a5]' },
-  press: { label: '보도자료', icon: <FileText size={12} />, color: 'bg-[#ef4444]/10 text-[#dc2626]' },
-  recruit: { label: '채용공고', icon: <Briefcase size={12} />, color: 'bg-[#eab308]/10 text-[#ca8a04]' },
+  notice: { label: '공지사항', icon: <Megaphone size={12} />, color: 'bg-[#ef4444]/10 text-[#dc2626]' },
+  press: { label: '언론자료', icon: <FileText size={12} />, color: 'bg-[#3071a5]/10 text-[#3071a5]' },
+  recruit: { label: '기타', icon: <Briefcase size={12} />, color: 'bg-[#eab308]/10 text-[#ca8a04]' },
 };
 
 const categories = [
   { id: 'all', label: '전체' },
   { id: 'notice', label: '공지사항' },
-  { id: 'press', label: '보도자료' },
-  { id: 'recruit', label: '채용공고' },
+  { id: 'press', label: '언론자료' },
+  { id: 'recruit', label: '기타' },
 ];
 
 export default function PWANoticePreview({ notices }: PWANoticePreviewProps) {

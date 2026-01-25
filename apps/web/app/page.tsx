@@ -12,14 +12,20 @@ import ExtendedContent from '@/components/extended/ExtendedContent';
 export default function HomePage() {
   const [activeMenu, setActiveMenu] = useState('home');
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
+  const [selectedNotice, setSelectedNotice] = useState<string | null>(null);
 
   const handleMenuSelect = (menu: string) => {
     setActiveMenu(menu);
     setSelectedProject(null);
+    setSelectedNotice(null);
   };
 
   const handleProjectSelect = (projectId: string) => {
     setSelectedProject(projectId);
+  };
+
+  const handleNoticeSelect = (noticeId: string | null) => {
+    setSelectedNotice(noticeId);
   };
 
   const renderPWAContent = () => {
@@ -29,7 +35,7 @@ export default function HomePage() {
       case 'works':
         return <PWAProject onProjectSelect={handleProjectSelect} />;
       case 'notice':
-        return <PWANotice />;
+        return <PWANotice onSelectNotice={handleNoticeSelect} selectedNoticeId={selectedNotice} />;
       case 'contact':
         return <PWAContact />;
       default:
@@ -44,7 +50,11 @@ export default function HomePage() {
   );
 
   const extendedContent = (
-    <ExtendedContent activeMenu={activeMenu} selectedProject={selectedProject} />
+    <ExtendedContent 
+      activeMenu={activeMenu} 
+      selectedProject={selectedProject}
+      selectedNotice={selectedNotice}
+    />
   );
 
   return (

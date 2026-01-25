@@ -14,9 +14,10 @@ import Maintenance from '@/components/common/Maintenance';
 interface ExtendedContentProps {
   activeMenu: string;
   selectedProject?: string | null;
+  selectedNotice?: string | null;
 }
 
-export default function ExtendedContent({ activeMenu, selectedProject }: ExtendedContentProps) {
+export default function ExtendedContent({ activeMenu, selectedProject, selectedNotice }: ExtendedContentProps) {
   const renderContent = () => {
     switch (activeMenu) {
       case 'home':
@@ -24,7 +25,7 @@ export default function ExtendedContent({ activeMenu, selectedProject }: Extende
       case 'works':
         return <ExtendedProject selectedProjectId={selectedProject} />;
       case 'notice':
-        return <ExtendedNotice />;
+        return <ExtendedNotice selectedNoticeId={selectedNotice} />;
       case 'contact':
         return <Maintenance size="large" />;
       case 'development':

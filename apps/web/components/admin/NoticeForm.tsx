@@ -13,10 +13,10 @@ interface NoticeFormProps {
   isEdit?: boolean;
 }
 
-const categoryOptions: { id: 'notice' | 'press' | 'recruit'; label: string; icon: React.ReactNode }[] = [
-  { id: 'notice', label: '공지사항', icon: <Megaphone size={16} /> },
-  { id: 'press', label: '보도자료', icon: <FileText size={16} /> },
-  { id: 'recruit', label: '채용공고', icon: <Briefcase size={16} /> },
+const categoryOptions: { id: 'notice' | 'press' | 'recruit'; label: string }[] = [
+  { id: 'notice', label: '공지사항' },
+  { id: 'press', label: '언론자료' },
+  { id: 'recruit', label: '기타' },
 ];
 
 export default function NoticeForm({ notice, isEdit = false }: NoticeFormProps) {
@@ -179,7 +179,6 @@ export default function NoticeForm({ notice, isEdit = false }: NoticeFormProps) 
                       : 'border-[#e5e7eb] text-[#6b7280] hover:border-[#3071a5]'
                     }`}
                 >
-                  {cat.icon}
                   {cat.label}
                 </button>
               ))}

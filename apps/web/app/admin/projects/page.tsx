@@ -62,6 +62,7 @@ export default function AdminProjectsPage() {
     if (index === 0) return;
     const current = projects[index];
     const target = projects[index - 1];
+    if (!current || !target) return;
     
     try {
       await swapProjectOrder(current.id, current.order, target.id, target.order);
@@ -75,6 +76,7 @@ export default function AdminProjectsPage() {
     if (index === projects.length - 1) return;
     const current = projects[index];
     const target = projects[index + 1];
+    if (!current || !target) return;
     
     try {
       await swapProjectOrder(current.id, current.order, target.id, target.order);

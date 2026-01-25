@@ -7,7 +7,7 @@ import { Project } from '@/lib/types';
 import { getAllProjects, deleteProject, swapProjectOrder } from '@/lib/projects';
 import { Plus, Edit, Trash2, LogOut, Eye, EyeOff, ChevronUp, ChevronDown } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
-import PWAPreview from '@/components/admin/PWAPreview';
+import PWAProject from '@/components/pwa/PWAProject';
 
 export default function AdminProjectsPage() {
   const router = useRouter();
@@ -130,7 +130,7 @@ export default function AdminProjectsPage() {
 
   return (
     <AdminLayout 
-      preview={<PWAPreview projects={projects} selectedProject={selectedProject} onSelectProject={setSelectedProject} />}
+      preview={<PWAProject isPreview={true} externalProjects={projects.filter(p => p.is_published)} />}
     >
       {/* 헤더 */}
       <header className="bg-white border-b border-[#e5e7eb] px-6 py-4">

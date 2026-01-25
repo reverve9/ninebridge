@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/admin/AdminLayout';
-import PWANoticePreview from '@/components/admin/PWANoticePreview';
+import PWANotice from '@/components/pwa/PWANotice';
 import { Notice } from '@/lib/types';
 import { getAllNotices, deleteNotice, swapNoticeOrder } from '@/lib/notices';
 import { Plus, Edit, Trash2, ChevronUp, ChevronDown, Pin, ExternalLink } from 'lucide-react';
@@ -78,7 +78,7 @@ export default function AdminNoticesPage() {
     ? notices 
     : notices.filter(n => n.category === activeCategory);
 
-  const preview = <PWANoticePreview notices={notices.filter(n => n.is_published)} />;
+  const preview = <PWANotice isPreview={true} externalNotices={notices.filter(n => n.is_published)} />;
 
   return (
     <AdminLayout preview={preview} activeTab="notice">
@@ -107,7 +107,7 @@ export default function AdminNoticesPage() {
           >
             전체 ({notices.length})
           </button>
-          {Object.entries(categoryLabels).map(([key, { label, icon }]) => {
+          {Object.entries(categoryLabels).map(([key, { label }]) => {
             const count = notices.filter(n => n.category === key).length;
             return (
               <button
@@ -116,7 +116,6 @@ export default function AdminNoticesPage() {
                 className={`flex items-center gap-2 px-4 py-2 text-[14px] rounded-[8px] transition-colors
                   ${activeCategory === key ? 'bg-[#1f2937] text-white' : 'bg-white text-[#6b7280] border border-[#e5e7eb]'}`}
               >
-                {icon}
                 {label} ({count})
               </button>
             );

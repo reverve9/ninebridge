@@ -8,6 +8,8 @@ import { X } from 'lucide-react';
 
 interface PWAProjectProps {
   onProjectSelect?: (projectId: string) => void;
+  isPreview?: boolean;
+  externalProjects?: Project[];
 }
 
 const categories = [
@@ -25,7 +27,7 @@ const categoryBadgeMap: Record<string, { label: string; bg: string; text: string
   etc: { label: '기타', bg: 'bg-[#6b7280]/10', text: 'text-[#4b5563]' },
 };
 
-export default function PWAProject({ onProjectSelect }: PWAProjectProps) {
+export default function PWAProject({ onProjectSelect, isPreview = false, externalProjects }: PWAProjectProps) {
   const [activeCategory, setActiveCategory] = useState('all');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
@@ -34,8 +36,13 @@ export default function PWAProject({ onProjectSelect }: PWAProjectProps) {
   const [isYoutubePlaying, setIsYoutubePlaying] = useState(false);
 
   useEffect(() => {
-    loadProjects();
-  }, []);
+    if (isPreview && externalProjects) {
+      setProjects(externalProjects);
+      setLoading(false);
+    } else {
+      loadProjects();
+    }
+  }, [isPreview, externalProjects]);
 
   const loadProjects = async () => {
     try {

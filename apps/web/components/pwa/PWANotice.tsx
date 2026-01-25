@@ -24,9 +24,11 @@ const ITEMS_PER_PAGE = 5;
 interface PWANoticeProps {
   onSelectNotice?: (noticeId: string | null) => void;
   selectedNoticeId?: string | null;
+  isPreview?: boolean;
+  externalNotices?: Notice[];
 }
 
-export default function PWANotice({ onSelectNotice, selectedNoticeId }: PWANoticeProps) {
+export default function PWANotice({ onSelectNotice, selectedNoticeId, isPreview = false, externalNotices }: PWANoticeProps) {
   const [notices, setNotices] = useState<Notice[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState('all');
@@ -37,11 +39,16 @@ export default function PWANotice({ onSelectNotice, selectedNoticeId }: PWANotic
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    loadNotices();
+    if (isPreview && externalNotices) {
+      setNotices(externalNotices);
+      setLoading(false);
+    } else {
+      loadNotices();
+    }
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  }, [isPreview, externalNotices]);
 
   const checkMobile = () => {
     setIsMobile(window.innerWidth < 768);

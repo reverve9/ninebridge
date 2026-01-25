@@ -5,7 +5,7 @@ import { Notice } from '@/lib/types';
 import { getPublishedNotices, incrementViewCount } from '@/lib/notices';
 import { Pin, FileText, Briefcase, Megaphone, Paperclip, ExternalLink, ChevronDown, Eye } from 'lucide-react';
 
-const categoryConfig: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
+const categoryConfig: Record<'notice' | 'press' | 'recruit', { label: string; icon: React.ReactNode; color: string }> = {
   notice: { label: '공지사항', icon: <Megaphone size={18} />, color: 'text-blue-600' },
   press: { label: '보도자료', icon: <FileText size={18} />, color: 'text-green-600' },
   recruit: { label: '채용공고', icon: <Briefcase size={18} />, color: 'text-purple-600' },

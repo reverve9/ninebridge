@@ -183,11 +183,11 @@ export default function PWAProject({ onProjectSelect, isPreview = false, externa
                 ${project.has_detail ? 'cursor-pointer hover:bg-[#f0f0f0]' : 'cursor-default'}`}
             >
               {/* 썸네일 영역 */}
-              <div className="w-[130px] h-[130px] flex items-center justify-center flex-shrink-0 self-center">
+              <div className="w-[110px] h-[110px] flex items-center justify-center flex-shrink-0 self-center">
                 {project.thumbnail ? (
-                  <img src={project.thumbnail} alt={project.title} className="w-[100px] h-[100px] object-cover rounded-[0px]" />
+                  <img src={project.thumbnail} alt={project.title} className="w-[90px] h-[90px] object-cover rounded-[0px]" />
                 ) : (
-                  <div className="w-[100px] h-[100px] bg-[#f3f4f6] rounded-[0px] flex items-center justify-center">
+                  <div className="w-[90px] h-[90px] bg-[#f3f4f6] rounded-[0px] flex items-center justify-center">
                     <span className="text-[#9ca3af] text-[12px]">이미지</span>
                   </div>
                 )}

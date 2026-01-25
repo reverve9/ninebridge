@@ -200,7 +200,7 @@ export default function PWANotice({ onSelectNotice, selectedNoticeId, isPreview 
                     ${isSelected ? 'border-[#3071a5] shadow-sm' : 'border-[#e5e7eb]'}`}
                 >
                   {/* 고정 + 배지 + 제목 (한 줄) */}
-                  <div className="flex items-center gap-2 mb-2">
+                  <div className="flex items-center gap-2 mb-1">
                     {notice.is_pinned && <Pin size={14} className="text-[#f59e0b] flex-shrink-0" />}
                     <span className={`inline-flex items-center px-2 py-0.5 text-[11px] font-medium rounded flex-shrink-0 ${cat.color}`}>
                       {cat.label}
@@ -212,7 +212,7 @@ export default function PWANotice({ onSelectNotice, selectedNoticeId, isPreview 
                   </div>
 
                   {/* 작성일시 · 첨부 | 조회수 (우측정렬) */}
-                  <div className="flex items-center justify-between text-[12px] text-[#9ca3af] mb-2">
+                  <div className="flex items-center justify-between text-[12px] text-[#9ca3af] mb-1">
                     <div className="flex items-center gap-3">
                       <span>{formatDateTime(notice.created_at)}</span>
                       {notice.attachments && notice.attachments.length > 0 && (

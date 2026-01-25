@@ -504,10 +504,19 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
     );
   }
 
-  // 목록 표시 - Notice 스타일 (카테고리별 박스 + 그리드)
+  // 목록 표시
+  // Featured가 아닌 프로젝트들 (최신순)
+  const nonFeaturedProjects = projects
+    .filter(p => !p.is_featured)
+    .sort((a, b) => {
+      const dateA = a.date_start || '0000';
+      const dateB = b.date_start || '0000';
+      return dateB.localeCompare(dateA);
+    });
+
   return (
     <div className="space-y-6">
-      {/* Featured */}
+      {/* Featured - 2열 카드 */}
       {featuredProjects.length > 0 && (
         <div className="bg-white rounded-[12px] border border-[#e5e7eb] overflow-hidden">
           <div className="flex items-center justify-between px-5 py-4 border-b border-[#e5e7eb] bg-[#f9fafb]">
@@ -516,26 +525,110 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
               <span className="text-[13px] text-[#9ca3af] ml-1">({featuredProjects.length})</span>
             </div>
           </div>
-          <div className="p-5">
-            <ThumbnailGrid items={featuredProjects} />
+          <div className="p-5 space-y-4">
+            {featuredProjects.slice(0, 3).map((project) => (
+              <div
+                key={project.id}
+                onClick={() => project.has_detail && setSelectedProject(project)}
+                className={`flex gap-5 p-4 rounded-[8px] border border-[#e5e7eb] transition-all
+                  ${project.has_detail ? 'cursor-pointer hover:bg-[#f9fafb] hover:border-[#3071a5]' : 'cursor-default'}`}
+              >
+                {/* 좌측: 썸네일 16:9 */}
+                <div className="w-[280px] flex-shrink-0">
+                  <div className="aspect-video rounded-[6px] overflow-hidden bg-[#f3f4f6]">
+                    {project.thumbnail ? (
+                      <img
+                        src={project.thumbnail}
+                        alt={project.title}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-[#9ca3af] text-[12px]">
+                        이미지
+                      </div>
+                    )}
+                  </div>
+                </div>
+                {/* 우측: 상세정보 */}
+                <div className="flex-1 min-w-0 flex flex-col justify-center">
+                  {/* 카테고리 배지 */}
+                  <div className="flex gap-1 mb-2">
+                    {project.categories.map((cat) => {
+                      const color = categoryColors[cat] ?? categoryColors.etc;
+                      return (
+                        <span key={cat} className={`px-2 py-0.5 text-[11px] font-medium rounded ${color?.bg || 'bg-[#6b7280]'} ${color?.text || 'text-white'}`}>
+                          {categoryLabels[cat] || cat}
+                        </span>
+                      );
+                    })}
+                  </div>
+                  {/* 제목 */}
+                  <h3 className="text-[18px] font-bold text-[#1f2937] mb-1 truncate">{project.title}</h3>
+                  {/* 클라이언트 | 날짜 */}
+                  <p className="text-[13px] text-[#9ca3af] mb-2">
+                    {project.client && <span>{project.client}</span>}
+                    {project.client && project.date_start && <span> | </span>}
+                    {project.date_start && (
+                      <span>{project.date_start}{project.date_end && ` - ${project.date_end}`}</span>
+                    )}
+                  </p>
+                  {/* 설명 */}
+                  {project.description && (
+                    <p className="text-[14px] text-[#6b7280] line-clamp-2">{project.description}</p>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}
 
-      {/* 년도별 */}
-      {sortedYears.map((year) => (
-        <div key={year} className="bg-white rounded-[12px] border border-[#e5e7eb] overflow-hidden">
+      {/* All Projects - 4열 그리드 */}
+      {nonFeaturedProjects.length > 0 && (
+        <div className="bg-white rounded-[12px] border border-[#e5e7eb] overflow-hidden">
           <div className="flex items-center justify-between px-5 py-4 border-b border-[#e5e7eb] bg-[#f9fafb]">
             <div className="flex items-center gap-2 text-[#1f2937]">
-              <h2 className="text-[16px] font-semibold">{year}</h2>
-              <span className="text-[13px] text-[#9ca3af] ml-1">({(projectsByYear[year] || []).length})</span>
+              <h2 className="text-[16px] font-semibold">All Projects</h2>
+              <span className="text-[13px] text-[#9ca3af] ml-1">({nonFeaturedProjects.length})</span>
             </div>
           </div>
           <div className="p-5">
-            <ThumbnailGrid items={projectsByYear[year] || []} />
+            <div className="grid grid-cols-4 gap-3">
+              {nonFeaturedProjects.map((project) => (
+                <div
+                  key={project.id}
+                  onClick={() => project.has_detail && setSelectedProject(project)}
+                  className={`group rounded-[6px] overflow-hidden border border-[#e5e7eb] transition-all
+                    ${project.has_detail ? 'cursor-pointer hover:border-[#3071a5] hover:shadow-sm' : 'cursor-default'}`}
+                >
+                  {/* 썸네일 16:9 */}
+                  <div className="aspect-video bg-[#f3f4f6] overflow-hidden">
+                    {project.thumbnail ? (
+                      <img
+                        src={project.thumbnail}
+                        alt={project.title}
+                        className={`w-full h-full object-cover transition-transform
+                          ${project.has_detail ? 'group-hover:scale-105' : ''}`}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-[#9ca3af] text-[11px]">
+                        이미지
+                      </div>
+                    )}
+                  </div>
+                  {/* 정보 */}
+                  <div className="p-2">
+                    <h4 className="text-[13px] font-medium text-[#1f2937] truncate">{project.title}</h4>
+                    <p className="text-[11px] text-[#9ca3af] truncate">
+                      {project.client || project.date_start || ''}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      ))}
+      )}
     </div>
   );
 }

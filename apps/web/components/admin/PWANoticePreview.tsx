@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Notice } from '@/lib/types';
 import PageTitle from '@/components/common/PageTitle';
-import { Pin, Paperclip } from 'lucide-react';
+import { Pin, Paperclip, ExternalLink, Eye } from 'lucide-react';
 
 interface PWANoticePreviewProps {
   notices: Notice[];
@@ -36,6 +36,23 @@ export default function PWANoticePreview({ notices }: PWANoticePreviewProps) {
     return a.order - b.order;
   });
 
+  const getCategoryCount = (catId: string) => {
+    if (catId === 'all') return notices.length;
+    return notices.filter(n => n.category === catId).length;
+  };
+
+  const formatDateTime = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('ko-KR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }) + ' ' + date.toLocaleTimeString('ko-KR', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
+
   return (
     <div className="min-h-full bg-white">
       {/* 헤더 */}
@@ -49,9 +66,7 @@ export default function PWANoticePreview({ notices }: PWANoticePreviewProps) {
       <div className="px-4 pb-3">
         <div className="flex gap-1 flex-wrap">
           {categories.map((cat) => {
-            const count = cat.id === 'all' 
-              ? notices.length 
-              : notices.filter(n => n.category === cat.id).length;
+            const count = getCategoryCount(cat.id);
             return (
               <button
                 key={cat.id}
@@ -69,8 +84,8 @@ export default function PWANoticePreview({ notices }: PWANoticePreviewProps) {
         </div>
       </div>
 
-      {/* 게시글 목록 */}
-      <div className="px-4 py-2 space-y-2">
+      {/* 게시글 목록 - 메인 앱과 동일한 카드형 */}
+      <div className="px-4 py-2 space-y-3">
         {sortedNotices.length === 0 ? (
           <p className="text-[14px] text-[#9ca3af] py-8 text-center">등록된 게시글이 없습니다.</p>
         ) : (
@@ -79,38 +94,43 @@ export default function PWANoticePreview({ notices }: PWANoticePreviewProps) {
             return (
               <div
                 key={notice.id}
-                className="bg-white rounded-[8px] border border-[#e5e7eb] p-3 hover:bg-[#f9fafb] transition-colors"
+                className="bg-white rounded-[12px] border border-[#e5e7eb] p-4 hover:bg-[#f0f0f0] transition-all cursor-pointer"
               >
-                <div className="flex items-start gap-3">
-                  {/* 썸네일 */}
-                  {notice.thumbnail && (
-                    <div className="w-[60px] h-[60px] rounded-[4px] overflow-hidden flex-shrink-0">
-                      <img src={notice.thumbnail} alt="" className="w-full h-full object-cover" />
-                    </div>
-                  )}
-                  
-                  {/* 내용 */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className={`inline-flex items-center px-1.5 py-0.5 text-[10px] rounded ${cat.color}`}>
-                        {cat.label}
-                      </span>
-                      {notice.is_pinned && <Pin size={12} className="text-[#f59e0b]" />}
-                    </div>
-                    <h3 className="text-[14px] font-medium text-[#1f2937] truncate">{notice.title}</h3>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-[11px] text-[#9ca3af]">
-                        {new Date(notice.created_at).toLocaleDateString('ko-KR')}
-                      </span>
-                      {notice.attachments && notice.attachments.length > 0 && (
-                        <span className="flex items-center gap-0.5 text-[11px] text-[#9ca3af]">
-                          <Paperclip size={10} />
-                          {notice.attachments.length}
-                        </span>
-                      )}
-                    </div>
-                  </div>
+                {/* 고정 + 배지 + 제목 (한 줄) */}
+                <div className="flex items-center gap-2 mb-2">
+                  {notice.is_pinned && <Pin size={14} className="text-[#f59e0b] flex-shrink-0" />}
+                  <span className={`inline-flex items-center px-2 py-0.5 text-[11px] font-medium rounded flex-shrink-0 ${cat.color}`}>
+                    {cat.label}
+                  </span>
+                  <h3 className="flex-1 text-[15px] font-medium text-[#1f2937] truncate min-w-0">
+                    {notice.title}
+                  </h3>
+                  {notice.link && <ExternalLink size={14} className="text-[#9ca3af] flex-shrink-0" />}
                 </div>
+
+                {/* 작성일시 · 첨부 | 조회수 (우측정렬) */}
+                <div className="flex items-center justify-between text-[12px] text-[#9ca3af] mb-2">
+                  <div className="flex items-center gap-3">
+                    <span>{formatDateTime(notice.created_at)}</span>
+                    {notice.attachments && notice.attachments.length > 0 && (
+                      <span className="flex items-center gap-1">
+                        <Paperclip size={12} />
+                        {notice.attachments.length}
+                      </span>
+                    )}
+                  </div>
+                  <span className="flex items-center gap-1">
+                    <Eye size={12} />
+                    {notice.view_count || 0}
+                  </span>
+                </div>
+
+                {/* 한줄 내용 */}
+                {notice.content && (
+                  <p className="text-[13px] text-[#6b7280] line-clamp-1">
+                    {notice.content}
+                  </p>
+                )}
               </div>
             );
           })

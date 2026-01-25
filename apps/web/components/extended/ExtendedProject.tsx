@@ -265,7 +265,22 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
 
             {/* 우측: 정보 */}
             <div className="flex-1 bg-[#f5f5f5] rounded-[12px] p-6">
-              <h3 className="text-[14px] font-semibold text-[#6b7280] uppercase tracking-wide mb-4">Project Information</h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-[14px] font-semibold text-[#6b7280] uppercase tracking-wide">Project Information</h3>
+                {selectedProject.link && (
+                  <a 
+                    href={selectedProject.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 text-[13px] text-[#3071a5] hover:text-[#265d8a] transition-colors"
+                  >
+                    바로가기
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  </a>
+                )}
+              </div>
               
               <div className="space-y-4">
                 <div>
@@ -435,7 +450,22 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
 
         {/* 프로젝트 인포메이션 박스 */}
         <div className="bg-[#f5f5f5] p-6">
-          <h3 className="text-[14px] font-semibold text-[#6b7280] uppercase tracking-wide mb-4">Project Information</h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-[14px] font-semibold text-[#6b7280] uppercase tracking-wide">Project Information</h3>
+            {selectedProject.link && (
+              <a 
+                href={selectedProject.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 text-[13px] text-[#3071a5] hover:text-[#265d8a] transition-colors"
+              >
+                바로가기
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+            )}
+          </div>
           
           {/* 1열 구조 */}
           <div className="space-y-4">

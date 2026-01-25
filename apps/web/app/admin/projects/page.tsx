@@ -61,7 +61,12 @@ export default function AdminProjectsPage() {
   const handleMoveUp = async (index: number) => {
     if (index === 0) return;
     const newProjects = [...projects];
-    [newProjects[index - 1], newProjects[index]] = [newProjects[index], newProjects[index - 1]];
+    const current = newProjects[index];
+    const target = newProjects[index - 1];
+    if (!current || !target) return;
+    
+    newProjects[index - 1] = current;
+    newProjects[index] = target;
     
     // 즉시 UI 업데이트
     setProjects(newProjects);
@@ -69,7 +74,10 @@ export default function AdminProjectsPage() {
     // DB 업데이트 - 모든 프로젝트에 새 order 값 부여
     try {
       for (let i = 0; i < newProjects.length; i++) {
-        await supabase.from('projects').update({ order: i }).eq('id', newProjects[i].id);
+        const p = newProjects[i];
+        if (p) {
+          await supabase.from('projects').update({ order: i }).eq('id', p.id);
+        }
       }
     } catch (error) {
       console.error('순서 변경 실패:', error);
@@ -80,7 +88,12 @@ export default function AdminProjectsPage() {
   const handleMoveDown = async (index: number) => {
     if (index === projects.length - 1) return;
     const newProjects = [...projects];
-    [newProjects[index], newProjects[index + 1]] = [newProjects[index + 1], newProjects[index]];
+    const current = newProjects[index];
+    const target = newProjects[index + 1];
+    if (!current || !target) return;
+    
+    newProjects[index] = target;
+    newProjects[index + 1] = current;
     
     // 즉시 UI 업데이트
     setProjects(newProjects);
@@ -88,7 +101,10 @@ export default function AdminProjectsPage() {
     // DB 업데이트 - 모든 프로젝트에 새 order 값 부여
     try {
       for (let i = 0; i < newProjects.length; i++) {
-        await supabase.from('projects').update({ order: i }).eq('id', newProjects[i].id);
+        const p = newProjects[i];
+        if (p) {
+          await supabase.from('projects').update({ order: i }).eq('id', p.id);
+        }
       }
     } catch (error) {
       console.error('순서 변경 실패:', error);

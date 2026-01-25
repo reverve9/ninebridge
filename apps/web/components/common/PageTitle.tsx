@@ -11,10 +11,10 @@ export default function PageTitle({ title, subtitle }: PageTitleProps) {
   return (
     <div className="px-4 py-5">
       <div className="flex items-baseline gap-2">
-        <h1 className="font-score text-[20px] tracking-[0.8px] font-[800] text-[#1f2937]">
+        <h1 className="font-raleway text-[28px] tracking-[1.5px] font-[100] text-[#000000]">
           {title}
         </h1>
-        <span className="text-[16px] text-[#3071a5]">
+        <span className="text-[16px] font-[300] text-[#333333]">
           {subtitle}
         </span>
       </div>

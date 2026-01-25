@@ -8,6 +8,7 @@ import ExtendedMarketing from './ExtendedMarketing';
 import ExtendedMedia from './ExtendedMedia';
 import ExtendedContact from './ExtendedContact';
 import ExtendedProject from './ExtendedProject';
+import ExtendedNotice from './ExtendedNotice';
 import Maintenance from '@/components/common/Maintenance';
 
 interface ExtendedContentProps {
@@ -20,10 +21,10 @@ export default function ExtendedContent({ activeMenu, selectedProject }: Extende
     switch (activeMenu) {
       case 'home':
         return <Maintenance size="large" />;
-      case 'service':
-        return <Maintenance size="large" />;
-      case 'project':
+      case 'works':
         return <ExtendedProject selectedProjectId={selectedProject} />;
+      case 'notice':
+        return <ExtendedNotice />;
       case 'contact':
         return <Maintenance size="large" />;
       case 'development':

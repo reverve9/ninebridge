@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import PWAContainer from '@/components/layout/PWAContainer';
 import PWAHomeMaintenance from '@/components/pwa/PWAHomeMaintenance';
-import PWAService from '@/components/pwa/PWAService';
 import PWAProject from '@/components/pwa/PWAProject';
+import PWANotice from '@/components/pwa/PWANotice';
 import PWAContact from '@/components/pwa/PWAContact';
 import ExtendedContent from '@/components/extended/ExtendedContent';
 
@@ -26,10 +26,10 @@ export default function HomePage() {
     switch (activeMenu) {
       case 'home':
         return <PWAHomeMaintenance />;
-      case 'service':
-        return <PWAService />;
-      case 'project':
+      case 'works':
         return <PWAProject onProjectSelect={handleProjectSelect} />;
+      case 'notice':
+        return <PWANotice />;
       case 'contact':
         return <PWAContact />;
       default:

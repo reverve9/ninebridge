@@ -30,3 +30,29 @@ export interface Project {
 
 export type ProjectInsert = Omit<Project, 'id' | 'created_at' | 'updated_at'>;
 export type ProjectUpdate = Partial<ProjectInsert>;
+
+// Notice (게시판)
+export interface Attachment {
+  name: string;
+  url: string;
+  size: number;
+}
+
+export interface Notice {
+  id: string;
+  category: 'notice' | 'press' | 'recruit';
+  title: string;
+  content: string | null;
+  thumbnail: string | null;
+  attachments: Attachment[];
+  link: string | null;
+  is_published: boolean;
+  is_pinned: boolean;
+  view_count: number;
+  order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export type NoticeInsert = Omit<Notice, 'id' | 'created_at' | 'updated_at' | 'view_count'>;
+export type NoticeUpdate = Partial<NoticeInsert>;

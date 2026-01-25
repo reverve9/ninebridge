@@ -116,7 +116,7 @@ export default function PWAProject({ onProjectSelect }: PWAProjectProps) {
 
   return (
     <div className="relative h-full">
-      <PageTitle title="PROJECT" subtitle="포트폴리오" />
+      <PageTitle title="WORKS" subtitle="포트폴리오" />
       
       {/* 카테고리 탭 */}
       <div className="px-4 py-3">

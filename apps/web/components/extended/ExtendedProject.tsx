@@ -505,17 +505,15 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
   }
 
   // 목록 표시
-  // Featured가 아닌 프로젝트들 (최신순)
-  const nonFeaturedProjects = projects
-    .filter(p => !p.is_featured)
-    .sort((a, b) => {
-      const dateA = a.date_start || '0000';
-      const dateB = b.date_start || '0000';
-      return dateB.localeCompare(dateA);
-    });
+  // 전체 프로젝트 (최신순) - 대표 프로젝트도 포함
+  const allProjects = [...projects].sort((a, b) => {
+    const dateA = a.date_start || '0000';
+    const dateB = b.date_start || '0000';
+    return dateB.localeCompare(dateA);
+  });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-[30px]">
       {/* Featured - 카드만 (헤더 박스 없음) */}
       {featuredProjects.length > 0 && (
         <div className="space-y-4">
@@ -538,7 +536,7 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
               >
                 {/* 좌측: 썸네일 16:9 + 배지 오버레이 */}
                 <div className="w-[280px] flex-shrink-0 relative">
-                  <div className="aspect-video rounded-[6px] overflow-hidden bg-[#f3f4f6]">
+                  <div className="aspect-video overflow-hidden bg-[#f3f4f6]">
                     {thumbnailUrl ? (
                       <img
                         src={thumbnailUrl}
@@ -618,53 +616,55 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
         </div>
       )}
 
-      {/* All Projects - 썸네일만 4열 그리드 (헤더 박스 없음) */}
-      {nonFeaturedProjects.length > 0 && (
-        <div className="grid grid-cols-4 gap-3">
-          {nonFeaturedProjects.map((project) => {
-            const mainGalleryItem = project.gallery?.find(item => item.is_main) || project.gallery?.[0];
-            const youtubeId = mainGalleryItem && (mainGalleryItem.type === 'hor' || mainGalleryItem.type === 'ver') 
-              ? getYoutubeId(mainGalleryItem.url) 
-              : null;
-            const thumbnailUrl = youtubeId 
-              ? `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`
-              : project.thumbnail;
+      {/* All Projects - 박스 안 그리드 (타이틀 없음, 대표도 포함) */}
+      {allProjects.length > 0 && (
+        <div className="bg-white rounded-[12px] border border-[#e5e7eb] overflow-hidden p-4">
+          <div className="grid grid-cols-4 gap-[2px]">
+            {allProjects.map((project) => {
+              const mainGalleryItem = project.gallery?.find(item => item.is_main) || project.gallery?.[0];
+              const youtubeId = mainGalleryItem && (mainGalleryItem.type === 'hor' || mainGalleryItem.type === 'ver') 
+                ? getYoutubeId(mainGalleryItem.url) 
+                : null;
+              const thumbnailUrl = youtubeId 
+                ? `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`
+                : project.thumbnail;
 
-            return (
-              <div
-                key={project.id}
-                onClick={() => project.has_detail && setSelectedProject(project)}
-                className={`group aspect-video rounded-[6px] overflow-hidden bg-[#f3f4f6] relative
-                  ${project.has_detail ? 'cursor-pointer' : 'cursor-default'}`}
-              >
-                {thumbnailUrl ? (
-                  <img
-                    src={thumbnailUrl}
-                    alt={project.title}
-                    className={`w-full h-full object-cover transition-transform
-                      ${project.has_detail ? 'group-hover:scale-105' : ''}`}
-                    onError={(e) => {
-                      if (youtubeId) {
-                        (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`;
-                      }
-                    }}
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-[#9ca3af] text-[11px]">
-                    이미지
-                  </div>
-                )}
-                {/* 호버시 제목 오버레이 */}
-                {project.has_detail && (
-                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-2">
-                    <p className="text-white text-[12px] font-medium text-center line-clamp-2">
-                      {project.title}
-                    </p>
-                  </div>
-                )}
-              </div>
-            );
-          })}
+              return (
+                <div
+                  key={project.id}
+                  onClick={() => project.has_detail && setSelectedProject(project)}
+                  className={`group aspect-video overflow-hidden bg-[#f3f4f6] relative
+                    ${project.has_detail ? 'cursor-pointer' : 'cursor-default'}`}
+                >
+                  {thumbnailUrl ? (
+                    <img
+                      src={thumbnailUrl}
+                      alt={project.title}
+                      className={`w-full h-full object-cover transition-transform
+                        ${project.has_detail ? 'group-hover:scale-105' : ''}`}
+                      onError={(e) => {
+                        if (youtubeId) {
+                          (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`;
+                        }
+                      }}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-[#9ca3af] text-[11px]">
+                      이미지
+                    </div>
+                  )}
+                  {/* 호버시 제목 오버레이 */}
+                  {project.has_detail && (
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-2">
+                      <p className="text-white text-[12px] font-medium text-center line-clamp-2">
+                        {project.title}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
     </div>

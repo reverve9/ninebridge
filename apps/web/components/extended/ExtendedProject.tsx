@@ -576,6 +576,8 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
                     })}
                   </div>
                 </div>
+                {/* 구분선 */}
+                <div className="w-px bg-[#e5e7eb] self-stretch" />
                 {/* 우측: 상세정보 */}
                 <div className="flex-1 min-w-0 flex flex-col justify-center">
                   {/* 제목 */}

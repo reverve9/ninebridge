@@ -79,7 +79,7 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
     <div className="grid grid-cols-6 gap-2">
       {items.map((project) => {
         const mainCategory = project.categories[0] || 'etc';
-        const color = categoryColors[mainCategory] || categoryColors.etc;
+        const color = categoryColors[mainCategory] ?? categoryColors.etc;
         return (
           <div
             key={project.id}
@@ -102,8 +102,9 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
             )}
             
             {/* 우상단 배지 */}
-            <span className={`absolute top-2 right-2 px-2 py-0.5 text-[10px] font-medium rounded ${color.bg} ${color.text}`}>
-              {categoryLabels[mainCategory]}
+            <span className={`absolute top-2 right-2 px-2 py-0.5 text-[10px] font-medium rounded ${color?.bg || 'bg-[#6b7280]'} ${color?.text || 'text-white'}`}>
+              {categoryLabels[mainCategory] || mainCategory}
+            </span>
             </span>
 
             {/* 호버 시 제목 표시 (상세 있는 경우만) */}

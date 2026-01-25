@@ -436,7 +436,7 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
 
           {/* 갤러리 */}
           <div className="bg-white rounded-[12px] p-6">
-            <h2 className="text-[16px] font-semibold text-[#1f2937] mb-4">갤러리 (상세페이지용)</h2>
+            <h2 className="text-[16px] font-semibold text-[#1f2937] mb-4">프로젝트 갤러리</h2>
             <p className="text-[13px] text-[#9ca3af] mb-4">★ 표시된 항목이 대표 콘텐츠로 메인에 표시됩니다.</p>
             
             {/* 갤러리 아이템 목록 */}

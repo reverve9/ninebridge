@@ -34,8 +34,9 @@ export default function PWAHeader({ onMenuClick }: PWAHeaderProps) {
   const [floatingStyle, setFloatingStyle] = useState({ right: '15px' });
 
   useEffect(() => {
+    const pwaWrapper = document.getElementById('pwa-wrapper');
+    
     const updatePosition = () => {
-      const pwaWrapper = document.getElementById('pwa-wrapper');
       if (pwaWrapper) {
         const rect = pwaWrapper.getBoundingClientRect();
         setFloatingStyle({
@@ -45,17 +46,19 @@ export default function PWAHeader({ onMenuClick }: PWAHeaderProps) {
     };
 
     const handleScroll = () => {
-      setShowFloating(window.scrollY > 100);
+      if (pwaWrapper) {
+        setShowFloating(pwaWrapper.scrollTop > 100);
+      }
     };
 
     updatePosition();
     handleScroll();
     window.addEventListener('resize', updatePosition);
-    window.addEventListener('scroll', handleScroll);
+    pwaWrapper?.addEventListener('scroll', handleScroll);
     
     return () => {
       window.removeEventListener('resize', updatePosition);
-      window.removeEventListener('scroll', handleScroll);
+      pwaWrapper?.removeEventListener('scroll', handleScroll);
     };
   }, []);
 

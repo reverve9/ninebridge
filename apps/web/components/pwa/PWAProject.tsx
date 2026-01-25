@@ -173,7 +173,7 @@ export default function PWAProject({ onProjectSelect }: PWAProjectProps) {
               key={project.id}
               onClick={() => handleProjectClick(project)}
               className={`w-full bg-white rounded-[8px] border border-[#e5e7eb] overflow-hidden text-left transition-all flex
-                ${project.has_detail ? 'cursor-pointer hover:bg-[#f9fafb]' : 'cursor-default'}`}
+                ${project.has_detail ? 'cursor-pointer hover:bg-[#f0f0f0]' : 'cursor-default'}`}
             >
               {/* 썸네일 영역 */}
               <div className="w-[130px] h-[130px] flex items-center justify-center flex-shrink-0 self-center">

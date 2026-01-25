@@ -233,8 +233,8 @@ export default function PWAProject({ onProjectSelect }: PWAProjectProps) {
 
       {/* 모바일 상세 모달 */}
       {modalProject && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center">
-          <div className="bg-white w-full max-w-[430px] max-h-[85vh] rounded-t-[20px] overflow-hidden flex flex-col">
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-5">
+          <div className="bg-white w-full max-h-[80vh] rounded-[16px] overflow-hidden flex flex-col shadow-xl">
             {/* 모달 헤더 */}
             <div className="sticky top-0 bg-white px-4 py-3 border-b border-[#e5e7eb] flex items-center justify-between z-10">
               <h2 className="text-[16px] font-bold text-[#1f2937] truncate flex-1">{modalProject.title}</h2>

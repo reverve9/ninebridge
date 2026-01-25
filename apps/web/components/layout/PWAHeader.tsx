@@ -66,14 +66,8 @@ export default function PWAHeader({ onMenuClick }: PWAHeaderProps) {
     <>
       <header className="bg-[#3071a5] text-white px-4 h-[100px] pt-[20px] flex flex-col justify-center sticky top-0 z-50">
         <div className="flex items-center justify-between">
-          {/* 로고 - 추후 이미지로 교체 */}
-          <div className="flex flex-col gap-1">
-            <span className="text-xl font-bold tracking-tight">NINE BRIDGE</span>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-light tracking-wide opacity-70">나인브릿지는 모두의 내일을 연결합니다</span>
-              <span className="text-[11px] font-semibold tracking-wider">Link the Next</span>
-            </div>
-          </div>
+          {/* 로고 */}
+          <img src="/logo_head.png" alt="NINE BRIDGE" className="h-[40px]" />
           
           {/* 우측 메뉴 버튼 */}
           <GridMenuButton onClick={onMenuClick} />

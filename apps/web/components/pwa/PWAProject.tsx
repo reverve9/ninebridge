@@ -172,8 +172,8 @@ export default function PWAProject({ onProjectSelect }: PWAProjectProps) {
             <div
               key={project.id}
               onClick={() => handleProjectClick(project)}
-              className={`w-full bg-white rounded-[8px] border border-[#e5e7eb] overflow-hidden text-left transition-colors flex
-                ${project.has_detail ? 'cursor-pointer hover:border-[#3071a5]' : 'cursor-default'}`}
+              className={`w-full bg-white rounded-[8px] border border-[#e5e7eb] overflow-hidden text-left transition-all flex
+                ${project.has_detail ? 'cursor-pointer hover:bg-[#f9fafb]' : 'cursor-default'}`}
             >
               {/* 썸네일 영역 */}
               <div className="w-[130px] h-[130px] flex items-center justify-center flex-shrink-0 self-center">
@@ -233,8 +233,14 @@ export default function PWAProject({ onProjectSelect }: PWAProjectProps) {
 
       {/* 모바일 상세 모달 */}
       {modalProject && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-5">
-          <div className="bg-white w-full max-h-[80vh] rounded-[16px] overflow-hidden flex flex-col shadow-xl">
+        <div 
+          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-5"
+          onClick={closeModal}
+        >
+          <div 
+            className="bg-white w-full max-h-[80vh] rounded-[16px] overflow-hidden flex flex-col shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
             {/* 모달 헤더 */}
             <div className="sticky top-0 bg-white px-4 py-3 border-b border-[#e5e7eb] flex items-center justify-between z-10">
               <h2 className="text-[16px] font-bold text-[#1f2937] truncate flex-1">{modalProject.title}</h2>
@@ -312,41 +318,15 @@ export default function PWAProject({ onProjectSelect }: PWAProjectProps) {
 
               {/* 정보 */}
               <div className="p-4 space-y-3">
-                {/* 카테고리 배지 */}
-                <div className="flex gap-2 flex-wrap">
-                  {modalProject.categories.map((cat) => {
-                    const badge = categoryBadgeMap[cat] || { label: cat, bg: 'bg-[#6b7280]/10', text: 'text-[#4b5563]' };
-                    return (
-                      <span key={cat} className={`text-[12px] font-medium px-3 py-1 rounded-full ${badge.bg} ${badge.text}`}>
-                        {badge.label}
-                      </span>
-                    );
-                  })}
-                </div>
-
-                {/* Client & Date */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-[11px] text-[#9ca3af] uppercase">Client</p>
-                    <p className="text-[14px] text-[#1f2937]">{modalProject.client || '-'}</p>
-                  </div>
-                  <div>
-                    <p className="text-[11px] text-[#9ca3af] uppercase">Date</p>
-                    <p className="text-[14px] text-[#1f2937]">
-                      {modalProject.date_start || '-'}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Description (간단히) */}
+                {/* Description */}
                 {modalProject.description && (
-                  <p className="text-[14px] text-[#374151] line-clamp-3">
+                  <p className="text-[14px] text-[#374151]">
                     {modalProject.description}
                   </p>
                 )}
 
                 {/* PC에서 확인 안내 */}
-                <div className="bg-[#f5f5f5] rounded-[8px] p-4 text-center">
+                <div className="bg-[#f5f5f5] rounded-[8px] p-3 text-center">
                   <p className="text-[13px] text-[#6b7280]">
                     더 자세한 내용은 PC에서 확인하세요
                   </p>

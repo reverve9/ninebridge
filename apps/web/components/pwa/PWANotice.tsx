@@ -189,7 +189,7 @@ export default function PWANotice({ onSelectNotice, selectedNoticeId }: PWANotic
                 <div
                   key={notice.id}
                   onClick={() => handleNoticeClick(notice)}
-                  className={`bg-white rounded-[12px] border p-4 hover:border-[#3071a5] hover:shadow-sm transition-all cursor-pointer
+                  className={`bg-white rounded-[12px] border p-4 transition-all cursor-pointer hover:bg-[#f0f0f0]
                     ${isSelected ? 'border-[#3071a5] shadow-sm' : 'border-[#e5e7eb]'}`}
                 >
                   {/* 고정 + 배지 + 제목 (한 줄) */}

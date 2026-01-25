@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import PageTitle from '@/components/common/PageTitle';
 import { Project } from '@/lib/types';
 import { getPublishedProjects } from '@/lib/projects';
+import { X } from 'lucide-react';
 
 interface PWAProjectProps {
   onProjectSelect?: (projectId: string) => void;
@@ -29,6 +30,8 @@ export default function PWAProject({ onProjectSelect }: PWAProjectProps) {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [modalProject, setModalProject] = useState<Project | null>(null);
+  const [isYoutubePlaying, setIsYoutubePlaying] = useState(false);
 
   useEffect(() => {
     loadProjects();
@@ -43,6 +46,11 @@ export default function PWAProject({ onProjectSelect }: PWAProjectProps) {
     } finally {
       setLoading(false);
     }
+  };
+
+  // 유튜브 ID 추출
+  const getYoutubeId = (url: string) => {
+    return url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?]+)/)?.[1];
   };
 
   // 카테고리별 개수
@@ -79,6 +87,31 @@ export default function PWAProject({ onProjectSelect }: PWAProjectProps) {
     setSelectedTags(prev => 
       prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
     );
+  };
+
+  // 프로젝트 클릭 핸들러
+  const handleProjectClick = (project: Project) => {
+    if (!project.has_detail) return;
+    
+    // 모바일 (768px 미만)에서는 모달, 웹에서는 우측 확장
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      setModalProject(project);
+      setIsYoutubePlaying(false);
+    } else {
+      onProjectSelect?.(project.id);
+    }
+  };
+
+  // 모달 닫기
+  const closeModal = () => {
+    setModalProject(null);
+    setIsYoutubePlaying(false);
+  };
+
+  // 대표 갤러리 아이템 가져오기
+  const getMainGalleryItem = (project: Project) => {
+    if (!project.gallery || project.gallery.length === 0) return null;
+    return project.gallery.find(item => item.is_main) || project.gallery[0];
   };
 
   return (
@@ -138,7 +171,7 @@ export default function PWAProject({ onProjectSelect }: PWAProjectProps) {
           filteredProjects.map((project) => (
             <div
               key={project.id}
-              onClick={() => project.has_detail && onProjectSelect?.(project.id)}
+              onClick={() => handleProjectClick(project)}
               className={`w-full bg-white rounded-[8px] border border-[#e5e7eb] overflow-hidden text-left transition-colors flex
                 ${project.has_detail ? 'cursor-pointer hover:border-[#3071a5]' : 'cursor-default'}`}
             >
@@ -197,6 +230,132 @@ export default function PWAProject({ onProjectSelect }: PWAProjectProps) {
           ))
         )}
       </div>
+
+      {/* 모바일 상세 모달 */}
+      {modalProject && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-end">
+          <div className="bg-white w-full max-h-[90vh] rounded-t-[20px] overflow-hidden flex flex-col">
+            {/* 모달 헤더 */}
+            <div className="sticky top-0 bg-white px-4 py-3 border-b border-[#e5e7eb] flex items-center justify-between z-10">
+              <h2 className="text-[16px] font-bold text-[#1f2937] truncate flex-1">{modalProject.title}</h2>
+              <button
+                onClick={closeModal}
+                className="p-1 hover:bg-[#f3f4f6] rounded-full ml-2"
+              >
+                <X size={22} className="text-[#6b7280]" />
+              </button>
+            </div>
+
+            {/* 모달 콘텐츠 */}
+            <div className="flex-1 overflow-y-auto">
+              {/* 메인 영상/이미지 */}
+              {(() => {
+                const mainItem = getMainGalleryItem(modalProject);
+                const youtubeId = mainItem && (mainItem.type === 'hor' || mainItem.type === 'ver') 
+                  ? getYoutubeId(mainItem.url) 
+                  : null;
+
+                if (mainItem) {
+                  return (
+                    <div className="w-full aspect-video bg-black relative">
+                      {youtubeId ? (
+                        isYoutubePlaying ? (
+                          <iframe
+                            src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0`}
+                            title={modalProject.title}
+                            className="w-full h-full"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                          />
+                        ) : (
+                          <div 
+                            className="relative w-full h-full cursor-pointer"
+                            onClick={() => setIsYoutubePlaying(true)}
+                          >
+                            <img
+                              src={`https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`}
+                              alt={modalProject.title}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`;
+                              }}
+                            />
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <div className="w-14 h-14 bg-black/40 backdrop-blur-sm rounded-full flex items-center justify-center">
+                                <svg className="w-7 h-7 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M8 5v14l11-7z"/>
+                                </svg>
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      ) : mainItem.type === 'img' ? (
+                        <img
+                          src={mainItem.url}
+                          alt={modalProject.title}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : null}
+                    </div>
+                  );
+                } else if (modalProject.thumbnail) {
+                  return (
+                    <img
+                      src={modalProject.thumbnail}
+                      alt={modalProject.title}
+                      className="w-full aspect-video object-cover"
+                    />
+                  );
+                }
+                return null;
+              })()}
+
+              {/* 정보 */}
+              <div className="p-4 space-y-3">
+                {/* 카테고리 배지 */}
+                <div className="flex gap-2 flex-wrap">
+                  {modalProject.categories.map((cat) => {
+                    const badge = categoryBadgeMap[cat] || { label: cat, bg: 'bg-[#6b7280]/10', text: 'text-[#4b5563]' };
+                    return (
+                      <span key={cat} className={`text-[12px] font-medium px-3 py-1 rounded-full ${badge.bg} ${badge.text}`}>
+                        {badge.label}
+                      </span>
+                    );
+                  })}
+                </div>
+
+                {/* Client & Date */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-[11px] text-[#9ca3af] uppercase">Client</p>
+                    <p className="text-[14px] text-[#1f2937]">{modalProject.client || '-'}</p>
+                  </div>
+                  <div>
+                    <p className="text-[11px] text-[#9ca3af] uppercase">Date</p>
+                    <p className="text-[14px] text-[#1f2937]">
+                      {modalProject.date_start || '-'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Description (간단히) */}
+                {modalProject.description && (
+                  <p className="text-[14px] text-[#374151] line-clamp-3">
+                    {modalProject.description}
+                  </p>
+                )}
+
+                {/* PC에서 확인 안내 */}
+                <div className="bg-[#f5f5f5] rounded-[8px] p-4 text-center">
+                  <p className="text-[13px] text-[#6b7280]">
+                    더 자세한 내용은 PC에서 확인하세요
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

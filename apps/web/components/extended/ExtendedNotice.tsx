@@ -127,9 +127,8 @@ export default function ExtendedNotice({ selectedNoticeId }: ExtendedNoticeProps
   }
 
   return (
-    <div className="p-6 h-full overflow-y-auto">
-      <div className="max-w-[700px] mx-auto space-y-6">
-        {(['notice', 'press', 'recruit'] as const).map((category) => {
+    <div className="space-y-6">
+      {(['notice', 'press', 'recruit'] as const).map((category) => {
           const config = categoryConfig[category];
           const items = groupedNotices[category];
           const paginatedItems = getPaginatedItems(category);
@@ -262,12 +261,11 @@ export default function ExtendedNotice({ selectedNoticeId }: ExtendedNoticeProps
           );
         })}
 
-        {notices.length === 0 && (
-          <div className="text-center py-12 text-[#9ca3af]">
-            등록된 게시글이 없습니다.
-          </div>
-        )}
-      </div>
+      {notices.length === 0 && (
+        <div className="text-center py-12 text-[#9ca3af]">
+          등록된 게시글이 없습니다.
+        </div>
+      )}
     </div>
   );
 }

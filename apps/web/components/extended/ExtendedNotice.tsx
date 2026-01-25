@@ -33,20 +33,20 @@ export default function ExtendedNotice({ selectedNoticeId }: ExtendedNoticeProps
 
   // selectedNoticeId 변경시 해당 게시글 열기
   useEffect(() => {
-    if (selectedNoticeId && notices.length > 0) {
-      setExpandedId(selectedNoticeId);
-      
-      // 해당 게시글이 있는 페이지로 이동
-      const notice = notices.find(n => n.id === selectedNoticeId);
-      if (notice) {
-        const category = notice.category;
-        const categoryNotices = notices.filter(n => n.category === category);
-        const index = categoryNotices.findIndex(n => n.id === selectedNoticeId);
-        const page = Math.floor(index / ITEMS_PER_PAGE) + 1;
-        setCurrentPage(prev => ({ ...prev, [category]: page }));
-      }
+    if (!selectedNoticeId || notices.length === 0) return;
+    
+    setExpandedId(selectedNoticeId);
+    
+    // 해당 게시글이 있는 페이지로 이동
+    const notice = notices.find(n => n.id === selectedNoticeId);
+    if (notice) {
+      const category = notice.category;
+      const categoryNotices = notices.filter(n => n.category === category);
+      const index = categoryNotices.findIndex(n => n.id === selectedNoticeId);
+      const page = Math.floor(index / ITEMS_PER_PAGE) + 1;
+      setCurrentPage(prev => ({ ...prev, [category]: page }));
     }
-  }, [selectedNoticeId]);
+  }, [selectedNoticeId, notices.length]);
 
   const loadNotices = async () => {
     try {

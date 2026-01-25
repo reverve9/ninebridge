@@ -130,6 +130,7 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
       const urls: string[] = [];
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
+        if (!file) continue;
         const path = `gallery/${Date.now()}_${file.name}`;
         const url = await uploadImage(file, path);
         urls.push(url);

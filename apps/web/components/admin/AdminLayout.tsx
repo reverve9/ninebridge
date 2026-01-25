@@ -12,7 +12,7 @@ interface AdminLayoutProps {
 
 const adminTabs = [
   { id: 'home', label: 'HOME', path: '/admin/home' },
-  { id: 'works', label: 'WORKS', path: '/admin/projects' },
+  { id: 'works', label: 'WORX', path: '/admin/projects' },
   { id: 'notice', label: 'NOTICE', path: '/admin/notices' },
   { id: 'contact', label: 'CONTACT', path: '/admin/contact' },
 ];

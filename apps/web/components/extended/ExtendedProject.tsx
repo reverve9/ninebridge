@@ -504,20 +504,36 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
     );
   }
 
-  // 목록 표시
+  // 목록 표시 - Notice 스타일 (카테고리별 박스 + 그리드)
   return (
-    <div className="space-y-6 pt-[60px]">
+    <div className="space-y-6">
+      {/* Featured */}
       {featuredProjects.length > 0 && (
-        <div className="bg-white rounded-[12px] p-6 shadow-sm">
-          <h3 className="text-[18px] font-bold text-[#1f2937] mb-4">Featured</h3>
-          <ThumbnailGrid items={featuredProjects} />
+        <div className="bg-white rounded-[12px] border border-[#e5e7eb] overflow-hidden">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-[#e5e7eb] bg-[#f9fafb]">
+            <div className="flex items-center gap-2 text-[#1f2937]">
+              <h2 className="text-[16px] font-semibold">Featured</h2>
+              <span className="text-[13px] text-[#9ca3af] ml-1">({featuredProjects.length})</span>
+            </div>
+          </div>
+          <div className="p-5">
+            <ThumbnailGrid items={featuredProjects} />
+          </div>
         </div>
       )}
 
+      {/* 년도별 */}
       {sortedYears.map((year) => (
-        <div key={year} className="bg-white rounded-[12px] p-6 shadow-sm">
-          <h3 className="text-[18px] font-bold text-[#1f2937] mb-4">{year}</h3>
-          <ThumbnailGrid items={projectsByYear[year] || []} />
+        <div key={year} className="bg-white rounded-[12px] border border-[#e5e7eb] overflow-hidden">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-[#e5e7eb] bg-[#f9fafb]">
+            <div className="flex items-center gap-2 text-[#1f2937]">
+              <h2 className="text-[16px] font-semibold">{year}</h2>
+              <span className="text-[13px] text-[#9ca3af] ml-1">({(projectsByYear[year] || []).length})</span>
+            </div>
+          </div>
+          <div className="p-5">
+            <ThumbnailGrid items={projectsByYear[year] || []} />
+          </div>
         </div>
       ))}
     </div>

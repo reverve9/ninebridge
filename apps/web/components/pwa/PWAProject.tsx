@@ -123,7 +123,7 @@ export default function PWAProject({ onProjectSelect, isPreview = false, externa
 
   return (
     <div className="relative h-full">
-      <PageTitle title="WORKS" subtitle="포트폴리오" />
+      <PageTitle title="WORX" subtitle="포트폴리오" />
       
       {/* 카테고리 탭 */}
       <div className="px-4 py-3">

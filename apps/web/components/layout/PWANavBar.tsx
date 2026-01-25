@@ -61,7 +61,7 @@ export default function PWANavBar({ onMenuSelect, activeMenu = 'home' }: PWANavB
   // └───┴───┘
   const navItems = [
     { id: 'home', label: 'HOME', boxIndex: 0 },
-    { id: 'works', label: 'WORKS', boxIndex: 1 },
+    { id: 'works', label: 'WORX', boxIndex: 1 },
     { id: 'notice', label: 'NOTICE', boxIndex: 2 },
     { id: 'contact', label: 'CONTACT', boxIndex: 3 },
   ];

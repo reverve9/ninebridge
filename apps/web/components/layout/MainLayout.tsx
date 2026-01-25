@@ -21,7 +21,7 @@ export default function MainLayout({ pwaContent, extendedContent, activeMenu = '
       {/* 모바일: PWA만 보임 (~767px) */}
       {/* 데스크탑: PWA + 확장 콘텐츠 (768px~) */}
       
-      <div className="flex justify-center md:justify-start h-screen">
+      <div className="flex justify-center md:justify-start xl:justify-center h-screen">
         {/* 전체 컨테이너 - 데스크탑 1280px 고정, 모바일은 화면 너비 */}
         <div className="flex w-full md:w-[1280px]">
           

@@ -31,11 +31,19 @@ export default function ExtendedNotice({ selectedNoticeId }: ExtendedNoticeProps
     loadNotices();
   }, []);
 
-  // selectedNoticeId 변경시 해당 게시글 열기
+  // selectedNoticeId 변경시 해당 게시글 열기 + 스크롤
   useEffect(() => {
     if (!selectedNoticeId) return;
     
     setExpandedId(selectedNoticeId);
+    
+    // 약간의 딜레이 후 스크롤 (DOM 업데이트 대기)
+    setTimeout(() => {
+      const element = document.getElementById(`notice-${selectedNoticeId}`);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 100);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedNoticeId]);
 
@@ -168,7 +176,11 @@ export default function ExtendedNotice({ selectedNoticeId }: ExtendedNoticeProps
                   const isLast = index === paginatedItems.length - 1;
 
                   return (
-                    <div key={notice.id} className={!isLast ? 'border-b border-[#e5e7eb]' : ''}>
+                    <div 
+                      key={notice.id} 
+                      id={`notice-${notice.id}`}
+                      className={!isLast ? 'border-b border-[#e5e7eb]' : ''}
+                    >
                       {/* 게시글 헤더 (클릭 영역) */}
                       <div
                         onClick={() => handleToggle(notice)}

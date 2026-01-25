@@ -516,160 +516,155 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
 
   return (
     <div className="space-y-6">
-      {/* Featured - 2열 카드 */}
+      {/* Featured - 카드만 (헤더 박스 없음) */}
       {featuredProjects.length > 0 && (
-        <div className="bg-white rounded-[12px] border border-[#e5e7eb] overflow-hidden">
-          <div className="flex items-center justify-between px-5 py-4 border-b border-[#e5e7eb] bg-[#f9fafb]">
-            <div className="flex items-center gap-2 text-[#1f2937]">
-              <h2 className="text-[16px] font-semibold">Featured</h2>
-              <span className="text-[13px] text-[#9ca3af] ml-1">({featuredProjects.length})</span>
-            </div>
-          </div>
-          <div className="p-5 space-y-4">
-            {featuredProjects.slice(0, 3).map((project) => {
-              // 갤러리에서 메인 영상/이미지 찾기
-              const mainGalleryItem = project.gallery?.find(item => item.is_main) || project.gallery?.[0];
-              const youtubeId = mainGalleryItem && (mainGalleryItem.type === 'hor' || mainGalleryItem.type === 'ver') 
-                ? getYoutubeId(mainGalleryItem.url) 
-                : null;
-              const thumbnailUrl = youtubeId 
-                ? `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`
-                : project.thumbnail;
+        <div className="space-y-4">
+          {featuredProjects.slice(0, 3).map((project) => {
+            // 갤러리에서 메인 영상/이미지 찾기
+            const mainGalleryItem = project.gallery?.find(item => item.is_main) || project.gallery?.[0];
+            const youtubeId = mainGalleryItem && (mainGalleryItem.type === 'hor' || mainGalleryItem.type === 'ver') 
+              ? getYoutubeId(mainGalleryItem.url) 
+              : null;
+            const thumbnailUrl = youtubeId 
+              ? `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`
+              : project.thumbnail;
 
-              return (
-                <div
-                  key={project.id}
-                  onClick={() => project.has_detail && setSelectedProject(project)}
-                  className={`flex gap-5 p-4 rounded-[8px] border border-[#e5e7eb] transition-all
-                    ${project.has_detail ? 'cursor-pointer hover:bg-[#f9fafb] hover:border-[#3071a5]' : 'cursor-default'}`}
-                >
-                  {/* 좌측: 썸네일 16:9 + 배지 오버레이 */}
-                  <div className="w-[280px] flex-shrink-0 relative">
-                    <div className="aspect-video rounded-[6px] overflow-hidden bg-[#f3f4f6]">
-                      {thumbnailUrl ? (
-                        <img
-                          src={thumbnailUrl}
-                          alt={project.title}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            if (youtubeId) {
-                              (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`;
-                            }
-                          }}
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-[#9ca3af] text-[12px]">
-                          이미지
-                        </div>
-                      )}
-                      {/* 유튜브 재생 아이콘 */}
-                      {youtubeId && (
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="w-10 h-10 bg-black/40 rounded-full flex items-center justify-center">
-                            <svg className="w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M8 5v14l11-7z"/>
-                            </svg>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                    {/* 카테고리 배지 - 썸네일 우측 상단 */}
-                    <div className="absolute top-2 right-2 flex gap-1">
-                      {project.categories.map((cat) => {
-                        const color = categoryColors[cat] ?? categoryColors.etc;
-                        return (
-                          <span key={cat} className={`px-2 py-0.5 text-[10px] font-medium rounded ${color?.bg || 'bg-[#6b7280]'} ${color?.text || 'text-white'}`}>
-                            {categoryLabels[cat] || cat}
-                          </span>
-                        );
-                      })}
-                    </div>
-                  </div>
-                  {/* 우측: 상세정보 */}
-                  <div className="flex-1 min-w-0 flex flex-col justify-center">
-                    {/* 제목 */}
-                    <h3 className="text-[18px] font-bold text-[#1f2937] mb-1 truncate">{project.title}</h3>
-                    {/* 클라이언트 | 날짜 */}
-                    <p className="text-[13px] text-[#9ca3af] mb-2">
-                      {project.client && <span>{project.client}</span>}
-                      {project.client && project.date_start && <span> | </span>}
-                      {project.date_start && (
-                        <span>{project.date_start}{project.date_end && ` - ${project.date_end}`}</span>
-                      )}
-                    </p>
-                    {/* 설명 */}
-                    {project.description && (
-                      <p className="text-[14px] text-[#6b7280] line-clamp-2 mb-2">{project.description}</p>
-                    )}
-                    {/* 디테일 */}
-                    {project.details && (
-                      <p className="text-[13px] text-[#9ca3af] line-clamp-1 mb-2">{project.details}</p>
-                    )}
-                    {/* 태그 */}
-                    {project.tags && project.tags.length > 0 && (
-                      <div className="flex gap-1.5 flex-wrap">
-                        {project.tags.slice(0, 5).map((tag) => (
-                          <span key={tag} className="text-[12px] text-[#6b7280] bg-[#f3f4f6] px-2 py-0.5 rounded">
-                            #{tag}
-                          </span>
-                        ))}
-                        {project.tags.length > 5 && (
-                          <span className="text-[12px] text-[#9ca3af]">+{project.tags.length - 5}</span>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* All Projects - 4열 그리드 */}
-      {nonFeaturedProjects.length > 0 && (
-        <div className="bg-white rounded-[12px] border border-[#e5e7eb] overflow-hidden">
-          <div className="flex items-center justify-between px-5 py-4 border-b border-[#e5e7eb] bg-[#f9fafb]">
-            <div className="flex items-center gap-2 text-[#1f2937]">
-              <h2 className="text-[16px] font-semibold">All Projects</h2>
-              <span className="text-[13px] text-[#9ca3af] ml-1">({nonFeaturedProjects.length})</span>
-            </div>
-          </div>
-          <div className="p-5">
-            <div className="grid grid-cols-4 gap-3">
-              {nonFeaturedProjects.map((project) => (
-                <div
-                  key={project.id}
-                  onClick={() => project.has_detail && setSelectedProject(project)}
-                  className={`group rounded-[6px] overflow-hidden border border-[#e5e7eb] transition-all
-                    ${project.has_detail ? 'cursor-pointer hover:border-[#3071a5] hover:shadow-sm' : 'cursor-default'}`}
-                >
-                  {/* 썸네일 16:9 */}
-                  <div className="aspect-video bg-[#f3f4f6] overflow-hidden">
-                    {project.thumbnail ? (
+            return (
+              <div
+                key={project.id}
+                onClick={() => project.has_detail && setSelectedProject(project)}
+                className={`flex gap-5 p-4 bg-white rounded-[12px] border border-[#e5e7eb] transition-all
+                  ${project.has_detail ? 'cursor-pointer hover:bg-[#f9fafb] hover:border-[#3071a5]' : 'cursor-default'}`}
+              >
+                {/* 좌측: 썸네일 16:9 + 배지 오버레이 */}
+                <div className="w-[280px] flex-shrink-0 relative">
+                  <div className="aspect-video rounded-[6px] overflow-hidden bg-[#f3f4f6]">
+                    {thumbnailUrl ? (
                       <img
-                        src={project.thumbnail}
+                        src={thumbnailUrl}
                         alt={project.title}
-                        className={`w-full h-full object-cover transition-transform
-                          ${project.has_detail ? 'group-hover:scale-105' : ''}`}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          if (youtubeId) {
+                            (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`;
+                          }
+                        }}
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-[#9ca3af] text-[11px]">
+                      <div className="w-full h-full flex items-center justify-center text-[#9ca3af] text-[12px]">
                         이미지
                       </div>
                     )}
+                    {/* 유튜브 재생 아이콘 */}
+                    {youtubeId && (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-10 h-10 bg-black/40 rounded-full flex items-center justify-center">
+                          <svg className="w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                          </svg>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  {/* 정보 */}
-                  <div className="p-2">
-                    <h4 className="text-[13px] font-medium text-[#1f2937] truncate">{project.title}</h4>
-                    <p className="text-[11px] text-[#9ca3af] truncate">
-                      {project.client || project.date_start || ''}
-                    </p>
+                  {/* 카테고리 배지 - 썸네일 우측 상단 */}
+                  <div className="absolute top-2 right-2 flex gap-1">
+                    {project.categories.map((cat) => {
+                      const color = categoryColors[cat] ?? categoryColors.etc;
+                      return (
+                        <span key={cat} className={`px-2 py-0.5 text-[10px] font-medium rounded ${color?.bg || 'bg-[#6b7280]'} ${color?.text || 'text-white'}`}>
+                          {categoryLabels[cat] || cat}
+                        </span>
+                      );
+                    })}
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
+                {/* 우측: 상세정보 */}
+                <div className="flex-1 min-w-0 flex flex-col justify-center">
+                  {/* 제목 */}
+                  <h3 className="text-[18px] font-bold text-[#1f2937] mb-1 truncate">{project.title}</h3>
+                  {/* 클라이언트 | 날짜 */}
+                  <p className="text-[13px] text-[#9ca3af] mb-2">
+                    {project.client && <span>{project.client}</span>}
+                    {project.client && project.date_start && <span> | </span>}
+                    {project.date_start && (
+                      <span>{project.date_start}{project.date_end && ` - ${project.date_end}`}</span>
+                    )}
+                  </p>
+                  {/* 설명 */}
+                  {project.description && (
+                    <p className="text-[14px] text-[#6b7280] line-clamp-2 mb-2">{project.description}</p>
+                  )}
+                  {/* 디테일 */}
+                  {project.details && (
+                    <p className="text-[13px] text-[#9ca3af] line-clamp-1 mb-2">{project.details}</p>
+                  )}
+                  {/* 태그 */}
+                  {project.tags && project.tags.length > 0 && (
+                    <div className="flex gap-1.5 flex-wrap">
+                      {project.tags.slice(0, 5).map((tag) => (
+                        <span key={tag} className="text-[12px] text-[#6b7280] bg-[#f3f4f6] px-2 py-0.5 rounded">
+                          #{tag}
+                        </span>
+                      ))}
+                      {project.tags.length > 5 && (
+                        <span className="text-[12px] text-[#9ca3af]">+{project.tags.length - 5}</span>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* All Projects - 썸네일만 4열 그리드 (헤더 박스 없음) */}
+      {nonFeaturedProjects.length > 0 && (
+        <div className="grid grid-cols-4 gap-3">
+          {nonFeaturedProjects.map((project) => {
+            const mainGalleryItem = project.gallery?.find(item => item.is_main) || project.gallery?.[0];
+            const youtubeId = mainGalleryItem && (mainGalleryItem.type === 'hor' || mainGalleryItem.type === 'ver') 
+              ? getYoutubeId(mainGalleryItem.url) 
+              : null;
+            const thumbnailUrl = youtubeId 
+              ? `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`
+              : project.thumbnail;
+
+            return (
+              <div
+                key={project.id}
+                onClick={() => project.has_detail && setSelectedProject(project)}
+                className={`group aspect-video rounded-[6px] overflow-hidden bg-[#f3f4f6] relative
+                  ${project.has_detail ? 'cursor-pointer' : 'cursor-default'}`}
+              >
+                {thumbnailUrl ? (
+                  <img
+                    src={thumbnailUrl}
+                    alt={project.title}
+                    className={`w-full h-full object-cover transition-transform
+                      ${project.has_detail ? 'group-hover:scale-105' : ''}`}
+                    onError={(e) => {
+                      if (youtubeId) {
+                        (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`;
+                      }
+                    }}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-[#9ca3af] text-[11px]">
+                    이미지
+                  </div>
+                )}
+                {/* 호버시 제목 오버레이 */}
+                {project.has_detail && (
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-2">
+                    <p className="text-white text-[12px] font-medium text-center line-clamp-2">
+                      {project.title}
+                    </p>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

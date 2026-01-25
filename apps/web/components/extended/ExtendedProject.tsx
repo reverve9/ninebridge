@@ -148,9 +148,9 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
           <h2 className="text-[21px] font-bold text-[#1f2937] flex-1 truncate" style={{ fontFamily: 'S-CoreDream', fontWeight: 900, letterSpacing: '-0.03em' }}>{selectedProject.title}</h2>
           <div className="flex gap-2 flex-shrink-0">
             {selectedProject.categories.map((cat) => {
-              const color = categoryColors[cat] || categoryColors.etc;
+              const color = categoryColors[cat] ?? categoryColors.etc;
               return (
-                <span key={cat} className={`px-3 py-1 text-[12px] font-medium rounded-full ${color.bg} ${color.text}`}>
+                <span key={cat} className={`px-3 py-1 text-[12px] font-medium rounded-full ${color?.bg || 'bg-[#6b7280]'} ${color?.text || 'text-white'}`}>
                   {categoryLabels[cat] || cat}
                 </span>
               );

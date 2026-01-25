@@ -67,11 +67,9 @@ export default function PWAHeader({ onMenuClick }: PWAHeaderProps) {
       <header className="bg-[#3071a5] text-white px-4 h-[100px] pt-[20px] flex flex-col justify-center sticky top-0 z-50">
         <div className="flex items-center justify-between">
           {/* 로고 */}
-          <div className="flex flex-col gap-0">
+          <div>
             <img src="/logo_head.png" alt="NINE BRIDGE" className="h-[18px]" />
-            <div className="flex items-center gap-0">
-              <span className="text-[13px] font-light tracking-wide opacity-70">나인브릿지는 모두의 내일을 연결합니다</span>
-            </div>
+            <p className="text-[13px] font-light tracking-wide opacity-70 mt-1">나인브릿지는 모두의 내일을 연결합니다</p>
           </div>
           
           {/* 우측 메뉴 버튼 */}

@@ -8,7 +8,7 @@ import { Notice } from '@/lib/types';
 import { getAllNotices, deleteNotice, swapNoticeOrder } from '@/lib/notices';
 import { Plus, Edit, Trash2, ChevronUp, ChevronDown, Pin, ExternalLink, FileText, Briefcase, Megaphone } from 'lucide-react';
 
-const categoryLabels: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
+const categoryLabels: Record<'notice' | 'press' | 'recruit', { label: string; icon: React.ReactNode; color: string }> = {
   notice: { label: '공지사항', icon: <Megaphone size={14} />, color: 'bg-blue-100 text-blue-700' },
   press: { label: '보도자료', icon: <FileText size={14} />, color: 'bg-green-100 text-green-700' },
   recruit: { label: '채용공고', icon: <Briefcase size={14} />, color: 'bg-purple-100 text-purple-700' },
@@ -143,7 +143,7 @@ export default function AdminNoticesPage() {
               </thead>
               <tbody>
                 {filteredNotices.map((notice, index) => {
-                  const cat = categoryLabels[notice.category] || categoryLabels.notice;
+                  const cat = categoryLabels[notice.category];
                   return (
                     <tr key={notice.id} className="border-b border-[#e5e7eb] hover:bg-[#f9fafb]">
                       <td className="px-4 py-3">

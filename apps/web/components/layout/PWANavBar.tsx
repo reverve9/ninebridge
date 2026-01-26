@@ -74,10 +74,10 @@ export default function PWANavBar({ onMenuSelect, activeMenu = 'home' }: PWANavB
 
   return (
     <nav 
-      className="fixed bottom-[40px] z-50"
+      className="fixed bottom-0 z-50 pb-[env(safe-area-inset-bottom,15px)]"
       style={navStyle}
     >
-      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-100">
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-100 mb-[15px]">
         <div className="flex items-center justify-around py-2.5 px-2">
           {navItems.map((item) => {
             const isActive = activeMenu === item.id;
@@ -107,8 +107,6 @@ export default function PWANavBar({ onMenuSelect, activeMenu = 'home' }: PWANavB
           })}
         </div>
       </div>
-      {/* Safe area for iOS */}
-      <div className="pb-[env(safe-area-inset-bottom)]" />
     </nav>
   );
 }

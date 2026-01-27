@@ -688,7 +688,7 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
           
           {/* 2열 그리드 */}
           <div className="grid grid-cols-2 gap-3">
-            {projectsByYear[year].map((project) => (
+            {(projectsByYear[year] || []).map((project) => (
               <div
                 key={project.id}
                 onClick={() => project.has_detail && setSelectedProject(project)}

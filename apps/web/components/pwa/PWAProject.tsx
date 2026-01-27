@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import PageTitle from '@/components/common/PageTitle';
+import { TabButton, TagButton } from '@/components/common/Button';
 import { Project } from '@/lib/types';
 import { getPublishedProjects } from '@/lib/projects';
 import { X } from 'lucide-react';
@@ -20,13 +21,6 @@ const categories = [
   { id: 'etc', label: '기타' },
 ];
 
-const categoryBadgeMap: Record<string, { label: string; bg: string; text: string }> = {
-  platform: { label: '플랫폼', bg: 'bg-[#3071a5]/10', text: 'text-[#3071a5]' },
-  marketing: { label: '마케팅', bg: 'bg-[#ef4444]/10', text: 'text-[#dc2626]' },
-  contents: { label: '콘텐츠', bg: 'bg-[#eab308]/10', text: 'text-[#ca8a04]' },
-  etc: { label: '기타', bg: 'bg-[#6b7280]/10', text: 'text-[#4b5563]' },
-};
-
 export default function PWAProject({ onProjectSelect, isPreview = false, externalProjects }: PWAProjectProps) {
   const [activeCategory, setActiveCategory] = useState('all');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -34,6 +28,8 @@ export default function PWAProject({ onProjectSelect, isPreview = false, externa
   const [loading, setLoading] = useState(true);
   const [modalProject, setModalProject] = useState<Project | null>(null);
   const [isYoutubePlaying, setIsYoutubePlaying] = useState(false);
+  const [isMobile, setIsMobile] = useState(true);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   useEffect(() => {
     if (isPreview && externalProjects) {
@@ -42,7 +38,14 @@ export default function PWAProject({ onProjectSelect, isPreview = false, externa
     } else {
       loadProjects();
     }
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, [isPreview, externalProjects]);
+
+  const checkMobile = () => {
+    setIsMobile(window.innerWidth < 768);
+  };
 
   const loadProjects = async () => {
     try {
@@ -100,8 +103,7 @@ export default function PWAProject({ onProjectSelect, isPreview = false, externa
   const handleProjectClick = (project: Project) => {
     if (!project.has_detail) return;
     
-    // 모바일 (768px 미만)에서는 모달, 웹에서는 우측 확장
-    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+    if (isMobile) {
       setModalProject(project);
       setIsYoutubePlaying(false);
     } else {
@@ -131,17 +133,13 @@ export default function PWAProject({ onProjectSelect, isPreview = false, externa
           {categories.map((cat) => {
             const count = getCategoryCount(cat.id);
             return (
-              <button
+              <TabButton
                 key={cat.id}
+                active={activeCategory === cat.id}
                 onClick={() => handleCategoryChange(cat.id)}
-                className={`px-3 py-1.5 text-[14px] rounded-[4px] transition-colors border
-                  ${activeCategory === cat.id
-                    ? 'bg-[#3071a5] text-white border-[#3071a5]'
-                    : 'bg-white text-[#6b7280] border-[#e5e7eb] hover:border-[#3071a5]'
-                  }`}
               >
                 {cat.label} <span className="opacity-70">{count}</span>
-              </button>
+              </TabButton>
             );
           })}
         </div>
@@ -152,78 +150,77 @@ export default function PWAProject({ onProjectSelect, isPreview = false, externa
         <div className="px-4 pb-2">
           <div className="flex gap-1.5 flex-wrap">
             {availableTags.map((tag) => (
-              <button
+              <TagButton
                 key={tag}
+                active={selectedTags.includes(tag)}
                 onClick={() => handleTagToggle(tag)}
-                className={`px-2.5 py-1 text-[12px] rounded-full transition-colors
-                  ${selectedTags.includes(tag)
-                    ? 'bg-[#1f2937] text-white'
-                    : 'bg-[#f3f4f6] text-[#6b7280] hover:bg-[#e5e7eb]'
-                  }`}
               >
                 #{tag}
-              </button>
+              </TagButton>
             ))}
           </div>
         </div>
       )}
       
-      {/* 프로젝트 리스트 */}
-      <div className="px-4 py-2 space-y-3">
+      {/* 프로젝트 그리드 - 3열 */}
+      <div className="px-3 py-2 pb-28">
         {loading ? (
           <p className="text-[14px] text-[#9ca3af] py-8 text-center">로딩 중...</p>
         ) : filteredProjects.length === 0 ? (
           <p className="text-[14px] text-[#9ca3af] py-8 text-center">등록된 프로젝트가 없습니다.</p>
         ) : (
-          filteredProjects.map((project) => (
-            <div
-              key={project.id}
-              onClick={() => handleProjectClick(project)}
-              className={`w-full bg-white rounded-[8px] border border-[#e5e7eb] overflow-hidden text-left transition-all flex
-                ${project.has_detail ? 'cursor-pointer hover:bg-[#f0f0f0]' : 'cursor-default'}`}
-            >
-              {/* 썸네일 영역 */}
-              <div className="w-[110px] h-[110px] flex items-center justify-center flex-shrink-0 self-center">
-                {project.thumbnail ? (
-                  <img src={project.thumbnail} alt={project.title} className="w-[90px] h-[90px] object-cover rounded-[0px]" />
-                ) : (
-                  <div className="w-[90px] h-[90px] bg-[#f3f4f6] rounded-[0px] flex items-center justify-center">
-                    <span className="text-[#9ca3af] text-[12px]">이미지</span>
-                  </div>
-                )}
-              </div>
-              {/* 내용 */}
-              <div className="py-3 pr-3 flex-1 min-w-0 flex flex-col justify-center">
-                {/* 제목 */}
-                <h3 className="text-[16px] font-bold text-[#1f2937] truncate">{project.title}</h3>
-                {/* 클라이언트 | 날짜 */}
-                <p className="text-[12px] text-[#9ca3af] mt-0">
-                  {project.client && <span>{project.client}</span>}
-                  {project.client && project.date_start && <span> | </span>}
-                  {project.date_start && (
-                    <span>{project.date_start}{project.date_end && ` - ${project.date_end}`}</span>
+          <div className="grid grid-cols-3 gap-1">
+            {filteredProjects.map((project) => {
+              const isHovered = hoveredId === project.id;
+              
+              return (
+                <div
+                  key={project.id}
+                  onClick={() => handleProjectClick(project)}
+                  onMouseEnter={() => setHoveredId(project.id)}
+                  onMouseLeave={() => setHoveredId(null)}
+                  className={`relative aspect-square overflow-hidden
+                    ${project.has_detail ? 'cursor-pointer' : 'cursor-default'}`}
+                >
+                  {/* 썸네일 이미지 */}
+                  {project.thumbnail ? (
+                    <img 
+                      src={project.thumbnail} 
+                      alt={project.title} 
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-[#f3f4f6] flex items-center justify-center">
+                      <span className="text-[#9ca3af] text-[11px]">이미지</span>
+                    </div>
                   )}
-                </p>
-                {/* 설명 */}
-                {project.description && (
-                  <p className="text-[15px] text-[#6b7280] mt-1 line-clamp-1">{project.description}</p>
-                )}
-                {/* 태그 */}
-                {project.tags && project.tags.length > 0 && (
-                  <div className="flex gap-1.5 mt-0 flex-wrap">
-                    {project.tags.slice(0, 4).map((tag) => (
-                      <span key={tag} className="text-[13px] text-[#6b7280]">
-                        #{tag}
-                      </span>
-                    ))}
-                    {project.tags.length > 4 && (
-                      <span className="text-[11px] text-[#9ca3af]">+{project.tags.length - 4}</span>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-          ))
+                  
+                  {/* 오버레이 - 데스크탑 호버시만 */}
+                  {!isMobile && (
+                    <div 
+                      className={`absolute inset-0 flex flex-col justify-end transition-opacity duration-300
+                        ${isHovered ? 'opacity-100' : 'opacity-0'}`}
+                    >
+                      {/* 하단 그라데이션 */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                      
+                      {/* 텍스트 */}
+                      <div className="relative p-3">
+                        <h3 className="text-[14px] font-bold text-white leading-tight truncate">
+                          {project.title}
+                        </h3>
+                        {project.client && (
+                          <p className="text-[12px] text-white/70 mt-0.5 truncate">
+                            {project.client}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         )}
       </div>
 
@@ -314,6 +311,17 @@ export default function PWAProject({ onProjectSelect, isPreview = false, externa
 
               {/* 정보 */}
               <div className="p-4 space-y-3">
+                {/* 클라이언트 | 날짜 */}
+                {(modalProject.client || modalProject.date_start) && (
+                  <p className="text-[13px] text-[#6b7280]">
+                    {modalProject.client && <span>{modalProject.client}</span>}
+                    {modalProject.client && modalProject.date_start && <span> · </span>}
+                    {modalProject.date_start && (
+                      <span>{modalProject.date_start}{modalProject.date_end && ` - ${modalProject.date_end}`}</span>
+                    )}
+                  </p>
+                )}
+
                 {/* Description */}
                 {modalProject.description && (
                   <p className="text-[14px] text-[#374151]">
@@ -321,10 +329,21 @@ export default function PWAProject({ onProjectSelect, isPreview = false, externa
                   </p>
                 )}
 
+                {/* 태그 */}
+                {modalProject.tags && modalProject.tags.length > 0 && (
+                  <div className="flex gap-1.5 flex-wrap">
+                    {modalProject.tags.map((tag) => (
+                      <span key={tag} className="text-[13px] text-[#6b7280]">
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
                 {/* PC에서 확인 안내 */}
                 <div className="bg-[#f5f5f5] rounded-[8px] p-3 text-center">
                   <p className="text-[13px] text-[#6b7280]">
-                    더 자세한 내용은 데스크탑 (width 1280px 이상)에서 확인하실 수 있습니다
+                    더 자세한 내용은 데스크탑에서 확인하실 수 있습니다
                   </p>
                 </div>
               </div>

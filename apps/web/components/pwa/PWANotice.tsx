@@ -2,16 +2,13 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import PageTitle from '@/components/common/PageTitle';
+import { TabButton } from '@/components/common/Button';
+import { NoticeBadge } from '@/components/common/Badge';
 import { Notice } from '@/lib/types';
 import { getPublishedNotices, incrementViewCount } from '@/lib/notices';
 import { Pin, Paperclip, ExternalLink, X, Eye } from 'lucide-react';
 import MarkdownRenderer from '@/components/common/MarkdownRenderer';
-
-const categoryLabels: Record<'notice' | 'press' | 'recruit', { label: string; color: string }> = {
-  notice: { label: '공지사항', color: 'bg-[#ef4444]/10 text-[#dc2626]' },
-  press: { label: '언론자료', color: 'bg-[#3071a5]/10 text-[#3071a5]' },
-  recruit: { label: '기타', color: 'bg-[#eab308]/10 text-[#ca8a04]' },
-};
+import PWAFooter from '@/components/pwa/PWAFooter';
 
 const categories = [
   { id: 'all', label: '전체' },
@@ -160,30 +157,26 @@ export default function PWANotice({ onSelectNotice, selectedNoticeId, isPreview 
     <div ref={containerRef} className="relative min-h-full">
       <PageTitle title="NOTICE" subtitle="공지사항" />
 
-      {/* 카테고리 탭 */}
-      <div className="px-4 pb-3">
+      {/* 카테고리 탭 - WORX 스타일과 통일 (px-4 py-3, text-[14px]) */}
+      <div className="px-4 py-3">
         <div className="flex gap-1 flex-wrap">
           {categories.map((cat) => {
             const count = getCategoryCount(cat.id);
             return (
-              <button
+              <TabButton
                 key={cat.id}
+                active={activeCategory === cat.id}
                 onClick={() => setActiveCategory(cat.id)}
-                className={`px-3 py-1.5 text-[13px] rounded-[4px] transition-colors border
-                  ${activeCategory === cat.id
-                    ? 'bg-[#3071a5] text-white border-[#3071a5]'
-                    : 'bg-white text-[#6b7280] border-[#e5e7eb] hover:border-[#3071a5]'
-                  }`}
               >
                 {cat.label} <span className="opacity-70">{count}</span>
-              </button>
+              </TabButton>
             );
           })}
         </div>
       </div>
 
       {/* 게시글 목록 - 카드형 */}
-      <div className="px-4 py-2 space-y-3 pb-20">
+      <div className="px-4 py-2 space-y-3 pb-4">
         {loading ? (
           <p className="text-[14px] text-[#9ca3af] py-8 text-center">로딩 중...</p>
         ) : sortedNotices.length === 0 ? (
@@ -191,21 +184,18 @@ export default function PWANotice({ onSelectNotice, selectedNoticeId, isPreview 
         ) : (
           <>
             {displayedNotices.map((notice) => {
-              const cat = categoryLabels[notice.category];
               const isSelected = selectedNoticeId === notice.id;
               return (
                 <div
                   key={notice.id}
                   onClick={() => handleNoticeClick(notice)}
                   className={`bg-white rounded-[12px] border p-4 transition-all cursor-pointer hover:bg-[#f0f0f0]
-                    ${isSelected ? 'border-[#3071a5] shadow-sm' : 'border-[#e5e7eb]'}`}
+                    ${isSelected ? 'border-[#384155] shadow-sm' : 'border-[#e5e7eb]'}`}
                 >
                   {/* 고정 + 배지 + 제목 (한 줄) */}
                   <div className="flex items-center gap-2 mb-1">
                     {notice.is_pinned && <Pin size={14} className="text-[#f59e0b] flex-shrink-0" />}
-                    <span className={`inline-flex items-center px-2 py-0.5 text-[11px] font-medium rounded flex-shrink-0 ${cat.color}`}>
-                      {cat.label}
-                    </span>
+                    <NoticeBadge category={notice.category} size="sm" className="flex-shrink-0" />
                     <h3 className="flex-1 text-[15px] font-medium text-[#1f2937] truncate min-w-0">
                       {notice.title}
                     </h3>
@@ -264,14 +254,7 @@ export default function PWANotice({ onSelectNotice, selectedNoticeId, isPreview 
             <div className="sticky top-0 bg-white px-4 py-3 border-b border-[#e5e7eb] flex items-center justify-between z-10">
               <div className="flex items-center gap-2">
                 {selectedNotice.is_pinned && <Pin size={12} className="text-[#f59e0b]" />}
-                {(() => {
-                  const cat = categoryLabels[selectedNotice.category];
-                  return (
-                    <span className={`inline-flex items-center px-2 py-0.5 text-[11px] font-medium rounded ${cat.color}`}>
-                      {cat.label}
-                    </span>
-                  );
-                })()}
+                <NoticeBadge category={selectedNotice.category} size="sm" />
               </div>
               <button
                 onClick={() => setSelectedNotice(null)}
@@ -327,6 +310,9 @@ export default function PWANotice({ onSelectNotice, selectedNoticeId, isPreview 
           </div>
         </div>
       )}
+
+      {/* 푸터 */}
+      <PWAFooter />
     </div>
   );
 }

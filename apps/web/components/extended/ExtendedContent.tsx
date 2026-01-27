@@ -21,7 +21,7 @@ export default function ExtendedContent({ activeMenu, selectedProject, selectedN
   const renderContent = () => {
     switch (activeMenu) {
       case 'home':
-        return <Maintenance size="large" />;
+        return <ExtendedHome />;
       case 'works':
         return <ExtendedProject selectedProjectId={selectedProject} />;
       case 'notice':

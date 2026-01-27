@@ -1,12 +1,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Search } from 'lucide-react';
 
 interface PWATopNavProps {
   onMenuSelect?: (menu: string) => void;
   activeMenu?: string;
-  onSearchClick?: () => void;
 }
 
 // 메뉴 아이템
@@ -17,7 +15,7 @@ const navItems = [
   { id: 'contact', label: 'CONTACT', labelKo: '문의하기' },
 ];
 
-export default function PWATopNav({ onMenuSelect, activeMenu = 'home', onSearchClick }: PWATopNavProps) {
+export default function PWATopNav({ onMenuSelect, activeMenu = 'home' }: PWATopNavProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [navStyle, setNavStyle] = useState({ left: '0px', width: '100%' });
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
@@ -85,23 +83,23 @@ export default function PWATopNav({ onMenuSelect, activeMenu = 'home', onSearchC
                     ${showEffect ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}`}
                   style={{
                     background: `radial-gradient(circle, 
-                      rgba(48,113,165,0.6) 0%, 
-                      rgba(48,113,165,0.55) 5%, 
-                      rgba(48,113,165,0.5) 10%, 
-                      rgba(48,113,165,0.45) 15%, 
-                      rgba(48,113,165,0.4) 20%, 
-                      rgba(48,113,165,0.35) 25%, 
-                      rgba(48,113,165,0.3) 30%, 
-                      rgba(48,113,165,0.25) 35%, 
-                      rgba(48,113,165,0.2) 40%, 
-                      rgba(48,113,165,0.15) 45%, 
-                      rgba(48,113,165,0.12) 50%, 
-                      rgba(48,113,165,0.09) 55%, 
-                      rgba(48,113,165,0.06) 60%, 
-                      rgba(48,113,165,0.04) 65%, 
-                      rgba(48,113,165,0.02) 70%, 
-                      rgba(48,113,165,0.01) 75%, 
-                      rgba(48,113,165,0) 80%
+                      rgba(184,122,90,0.85) 0%, 
+rgba(184,122,90,0.75) 5%, 
+rgba(184,122,90,0.65) 10%, 
+rgba(184,122,90,0.55) 15%, 
+rgba(184,122,90,0.48) 20%, 
+rgba(184,122,90,0.42) 25%, 
+rgba(184,122,90,0.36) 30%, 
+rgba(184,122,90,0.30) 35%, 
+rgba(184,122,90,0.24) 40%, 
+rgba(184,122,90,0.18) 45%, 
+rgba(184,122,90,0.14) 50%, 
+rgba(184,122,90,0.10) 55%, 
+rgba(184,122,90,0.07) 60%, 
+rgba(184,122,90,0.04) 65%, 
+rgba(184,122,90,0.02) 70%, 
+rgba(184,122,90,0.01) 75%, 
+rgba(184,122,90,0) 80%
                     )`,
                   }}
                 />
@@ -118,14 +116,6 @@ export default function PWATopNav({ onMenuSelect, activeMenu = 'home', onSearchC
               </button>
             );
           })}
-          
-          {/* 검색 버튼 */}
-          <button 
-            onClick={onSearchClick}
-            className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-[#3071a5] transition-colors"
-          >
-            <Search size={17} strokeWidth={1.5} />
-          </button>
         </div>
       </div>
     </nav>

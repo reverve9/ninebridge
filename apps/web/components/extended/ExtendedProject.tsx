@@ -63,7 +63,9 @@ function FeaturedSlider({ projects, onProjectClick, getYoutubeId }: FeaturedSlid
   };
 
   // 무한루프를 위해 첫번째 슬라이드를 끝에 복제
-  const slidesWithClone = [...projects, projects[0]];
+  const slidesWithClone = projects.length > 0 ? [...projects, projects[0]] : [];
+
+  if (projects.length === 0) return null;
 
   return (
     <div className="bg-white rounded-[12px] border border-[#e5e7eb] p-4">
@@ -78,6 +80,7 @@ function FeaturedSlider({ projects, onProjectClick, getYoutubeId }: FeaturedSlid
           onTransitionEnd={handleTransitionEnd}
         >
           {slidesWithClone.map((project, idx) => {
+            if (!project) return null;
             // 메인 썸네일 가져오기
             const mainItem = project.gallery?.find(item => item.is_main) || project.gallery?.[0];
             const mainThumbnail = mainItem 

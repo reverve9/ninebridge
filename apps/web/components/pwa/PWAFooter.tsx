@@ -24,18 +24,30 @@ export default function PWAFooter({ onCertClick }: PWAFooterProps) {
   const hasSns = settings.sns_kakao || settings.sns_instagram || settings.sns_youtube || settings.sns_facebook;
 
   return (
-    <footer className="bg-white mt-2 px-4 pb-4">
+    <footer className="bg-white mt-[60px] px-4 pb-4">
       {/* 회색 박스 */}
       <div className="bg-[#f5f5f5]">
         {/* 메인 영역 */}
         <div className="flex gap-3 px-4 py-4">
           {/* 좌측: 스퀘어 로고 (20%) */}
           <div className="w-[20%] flex-shrink-0 flex items-center justify-center">
-            <div className="w-[90px] h-[90px] bg-[#eaeaea] rounded-full flex items-center justify-center">
+            <div className="w-[90px] h-[90px] relative flex items-center justify-center">
+              {/* 블루 블러 원형 배경 - 넓게 퍼짐 */}
+              <div 
+                className="absolute rounded-full"
+                style={{
+                  width: '140px',
+                  height: '140px',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  background: 'radial-gradient(circle, rgba(91,124,174,0.3) 0%, rgba(91,124,174,0.15) 40%, rgba(91,124,174,0.05) 60%, rgba(91,124,174,0) 80%)'
+                }}
+              />
               <img 
                 src="/logo_s250.png" 
                 alt="Nine Bridge" 
-                className="w-[60px] h-[60px] object-contain"
+                className="w-[60px] h-[60px] object-contain relative z-10"
                 onError={(e) => {
                   (e.target as HTMLImageElement).style.display = 'none';
                 }}

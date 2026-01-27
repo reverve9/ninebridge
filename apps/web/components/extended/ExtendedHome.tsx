@@ -40,7 +40,7 @@ export default function ExtendedHome() {
           단순한 노출이 아닌, 진심을 전합니다.<br />
           브랜드의 가치를 콘텐츠에 담아, 마케팅으로 마음을 움직입니다.<br />
           플랫폼 위에서 당신이 빛나는 순간.<br />
-          나인브릿지가 함께합니다.
+          <span className="text-[20px] font-semibold">나인브릿지가 함께합니다.</span>
         </p>
       </div>
 

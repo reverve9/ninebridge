@@ -75,7 +75,7 @@ export default function AdminLayout({ children, preview, showPreview = true, act
           
           {/* 좌측 PWA 미리보기 */}
           {showPreview && (
-            <div className="w-[430px] flex-shrink-0 h-full overflow-hidden">
+            <div className="w-[500px] flex-shrink-0 h-full overflow-hidden">
               <div className="h-full bg-[#e5e7eb] p-4">
                 <p className="text-[12px] text-[#6b7280] mb-2 text-center">미리보기</p>
                 <div className="bg-white h-[calc(100%-24px)] rounded-[12px] shadow-lg overflow-hidden">

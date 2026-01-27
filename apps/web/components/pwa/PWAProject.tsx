@@ -6,6 +6,7 @@ import { TabButton, TagButton } from '@/components/common/Button';
 import { Project } from '@/lib/types';
 import { getPublishedProjects } from '@/lib/projects';
 import { X } from 'lucide-react';
+import PWAFooter from '@/components/pwa/PWAFooter';
 
 interface PWAProjectProps {
   onProjectSelect?: (projectId: string) => void;
@@ -162,14 +163,14 @@ export default function PWAProject({ onProjectSelect, isPreview = false, externa
         </div>
       )}
       
-      {/* 프로젝트 그리드 - 3열 */}
+      {/* 프로젝트 그리드 - 500px 미만 3열, 이상 4열 */}
       <div className="px-3 py-2 pb-28">
         {loading ? (
           <p className="text-[14px] text-[#9ca3af] py-8 text-center">로딩 중...</p>
         ) : filteredProjects.length === 0 ? (
           <p className="text-[14px] text-[#9ca3af] py-8 text-center">등록된 프로젝트가 없습니다.</p>
         ) : (
-          <div className="grid grid-cols-3 gap-1">
+          <div className="grid grid-cols-3 min-[500px]:grid-cols-4 gap-0">
             {filteredProjects.map((project) => {
               const isHovered = hoveredId === project.id;
               
@@ -351,6 +352,9 @@ export default function PWAProject({ onProjectSelect, isPreview = false, externa
           </div>
         </div>
       )}
+
+      {/* 푸터 */}
+      <PWAFooter />
     </div>
   );
 }

@@ -24,9 +24,9 @@ const BADGE_COLORS = {
 
 // 프로젝트 카테고리 → 배지 컬러 매핑
 export const PROJECT_CATEGORY_MAP: Record<string, { label: string; color: keyof typeof BADGE_COLORS }> = {
-  platform: { label: '플랫폼', color: 'orange' },
+  platform: { label: '플랫폼', color: 'blue' },
   marketing: { label: '마케팅', color: 'green' },
-  contents: { label: '콘텐츠', color: 'blue' },
+  contents: { label: '콘텐츠', color: 'orange' },
   etc: { label: '기타', color: 'gray' },
 };
 

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { SiteSettings, getSiteSettings, updateSiteSettings } from '@/lib/siteSettings';
 import { Save } from 'lucide-react';
+import PWAHome from '@/components/pwa/PWAHome';
 
 export default function AdminHomePage() {
   const [settings, setSettings] = useState<SiteSettings | null>(null);
@@ -53,6 +54,10 @@ export default function AdminHomePage() {
         sns_instagram: settings.sns_instagram,
         sns_youtube: settings.sns_youtube,
         sns_facebook: settings.sns_facebook,
+        header_tagline: settings.header_tagline,
+        hero_title: settings.hero_title,
+        hero_subtitle: settings.hero_subtitle,
+        hero_description: settings.hero_description,
       });
       setMessage({ type: 'success', text: '저장되었습니다.' });
     } catch (error) {
@@ -63,9 +68,22 @@ export default function AdminHomePage() {
     }
   };
 
+  // 미리보기용 컴포넌트
+  const PreviewComponent = settings ? (
+    <PWAHome 
+      isPreview={true}
+      settings={{
+        header_tagline: settings.header_tagline || undefined,
+        hero_title: settings.hero_title || undefined,
+        hero_subtitle: settings.hero_subtitle || undefined,
+        hero_description: settings.hero_description || undefined,
+      }}
+    />
+  ) : null;
+
   if (loading) {
     return (
-      <AdminLayout activeTab="home" showPreview={false}>
+      <AdminLayout activeTab="home" showPreview={true} preview={null}>
         <main className="p-6">
           <div className="text-center text-[#9ca3af] py-8">로딩 중...</div>
         </main>
@@ -75,7 +93,7 @@ export default function AdminHomePage() {
 
   if (!settings) {
     return (
-      <AdminLayout activeTab="home" showPreview={false}>
+      <AdminLayout activeTab="home" showPreview={true} preview={null}>
         <main className="p-6">
           <div className="text-center text-[#9ca3af] py-8">설정을 불러올 수 없습니다.</div>
         </main>
@@ -84,13 +102,13 @@ export default function AdminHomePage() {
   }
 
   return (
-    <AdminLayout activeTab="home" showPreview={false}>
+    <AdminLayout activeTab="home" showPreview={true} preview={PreviewComponent}>
       <main className="p-6">
         {/* 헤더 */}
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-[24px] font-bold text-[#1f2937]">홈 설정</h1>
-            <p className="text-[14px] text-[#6b7280] mt-1">사이트 기본 정보 및 푸터 설정을 관리합니다.</p>
+            <p className="text-[14px] text-[#6b7280] mt-1">홈 화면 및 사이트 기본 정보를 관리합니다.</p>
           </div>
           <button
             onClick={handleSave}
@@ -112,9 +130,63 @@ export default function AdminHomePage() {
         )}
 
         <div className="space-y-6">
+          {/* 헤더 설정 */}
+          <div className="bg-white rounded-[12px] p-6 shadow-sm">
+            <h2 className="text-[18px] font-bold text-[#1f2937] mb-4">헤더 설정</h2>
+            <div>
+              <label className="block text-[13px] font-medium text-[#374151] mb-1">태그라인</label>
+              <input
+                type="text"
+                value={settings.header_tagline || ''}
+                onChange={(e) => handleChange('header_tagline', e.target.value)}
+                placeholder="나인브릿지는 모두의 내일을 연결합니다"
+                className="w-full px-3 py-2 border border-[#e5e7eb] rounded-[6px] text-[14px] focus:outline-none focus:border-[#5b7cae]"
+              />
+              <p className="text-[12px] text-[#9ca3af] mt-1">상단 헤더 로고 옆에 표시됩니다.</p>
+            </div>
+          </div>
+
+          {/* 히어로 영역 설정 */}
+          <div className="bg-white rounded-[12px] p-6 shadow-sm">
+            <h2 className="text-[18px] font-bold text-[#1f2937] mb-4">히어로 영역</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-[13px] font-medium text-[#374151] mb-1">메인 타이틀</label>
+                <textarea
+                  value={settings.hero_title || ''}
+                  onChange={(e) => handleChange('hero_title', e.target.value)}
+                  placeholder="Connect platform&#10;Create experience"
+                  rows={2}
+                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-[6px] text-[14px] focus:outline-none focus:border-[#5b7cae] resize-none"
+                />
+                <p className="text-[12px] text-[#9ca3af] mt-1">줄바꿈으로 두 줄 입력 가능합니다. 영문 C는 자동으로 강조됩니다.</p>
+              </div>
+              <div>
+                <label className="block text-[13px] font-medium text-[#374151] mb-1">서브 타이틀</label>
+                <textarea
+                  value={settings.hero_subtitle || ''}
+                  onChange={(e) => handleChange('hero_subtitle', e.target.value)}
+                  placeholder="콘텐츠, 마케팅, 플랫폼을 연결하는&#10;디지털 마케팅 전문 기업"
+                  rows={2}
+                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-[6px] text-[14px] focus:outline-none focus:border-[#5b7cae] resize-none"
+                />
+              </div>
+              <div>
+                <label className="block text-[13px] font-medium text-[#374151] mb-1">설명</label>
+                <textarea
+                  value={settings.hero_description || ''}
+                  onChange={(e) => handleChange('hero_description', e.target.value)}
+                  placeholder="(주)나인브릿지는 플랫폼 기획 및 개발..."
+                  rows={3}
+                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-[6px] text-[14px] focus:outline-none focus:border-[#5b7cae] resize-none"
+                />
+              </div>
+            </div>
+          </div>
+
           {/* 기본 정보 */}
           <div className="bg-white rounded-[12px] p-6 shadow-sm">
-            <h2 className="text-[18px] font-bold text-[#1f2937] mb-4">기본 정보</h2>
+            <h2 className="text-[18px] font-bold text-[#1f2937] mb-4">기본 정보 (푸터)</h2>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-[13px] font-medium text-[#374151] mb-1">회사명</label>

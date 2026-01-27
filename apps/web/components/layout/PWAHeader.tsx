@@ -50,7 +50,7 @@ export default function PWAHeader({ variant = 'mobile' }: PWAHeaderProps) {
         }}
       >
         <div className="flex items-baseline gap-3">
-          <img src="/logo_120.png" alt="NINE BRIDGE" className="h-[24px]" />
+          <img src="/logo_120.png" alt="NINE BRIDGE" className="h-[22px]" />
           <p className="text-[14px] font-light tracking-wide opacity-70">나인브릿지는 모두의 내일을 연결합니다</p>
         </div>
       </header>
@@ -69,7 +69,7 @@ export default function PWAHeader({ variant = 'mobile' }: PWAHeaderProps) {
         <div className="flex items-center">
           {/* 로고 */}
           <div className="flex items-baseline gap-3">
-  <img src="/logo_120.png" alt="NINE BRIDGE" className="h-[22px]" />
+  <img src="/logo_120.png" alt="NINE BRIDGE" className="h-[20px]" />
   <p className="text-[12.5px] font-light tracking-wide opacity-70">나인브릿지는 모두의 내일을 연결합니다</p>
 </div>
         </div>

@@ -16,6 +16,11 @@ export interface SiteSettings {
   sns_instagram: string | null;
   sns_youtube: string | null;
   sns_facebook: string | null;
+  // 홈 설정 필드
+  header_tagline: string | null;
+  hero_title: string | null;
+  hero_subtitle: string | null;
+  hero_description: string | null;
   created_at: string;
   updated_at: string;
 }

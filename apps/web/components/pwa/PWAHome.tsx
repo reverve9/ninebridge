@@ -193,15 +193,15 @@ export default function PWAHome({ onMenuSelect, onBusinessAreaSelect }: PWAHomeP
           
           {/* 태그 */}
           <p className="text-[11px] text-[#999] mb-2">
-            {mainServices[0].tags.join(' / ')}
+            {mainServices[0]?.tags?.join(' / ')}
           </p>
           
           <h3 className="text-[20px] font-bold text-[#333] mb-3">
-            {mainServices[0].subtitle}
+            {mainServices[0]?.subtitle}
           </h3>
           
           <p className="text-[13px] text-[#666] leading-relaxed">
-            {mainServices[0].description}
+            {mainServices[0]?.description}
           </p>
         </div>
         
@@ -228,7 +228,7 @@ export default function PWAHome({ onMenuSelect, onBusinessAreaSelect }: PWAHomeP
           </p>
           
           <h3 className="text-[24px] font-bold mb-2">
-            {mainServices[1].title}
+            {mainServices[1]?.title}
           </h3>
           
           <p className="text-[13px] text-white/70 leading-relaxed mb-6">
@@ -238,7 +238,7 @@ export default function PWAHome({ onMenuSelect, onBusinessAreaSelect }: PWAHomeP
           
           {/* 피처 리스트 */}
           <div className="space-y-4">
-            {mainServices[1].features.map((feature, idx) => (
+            {mainServices[1]?.features?.map((feature, idx) => (
               <div key={idx}>
                 <h4 className="text-[13px] font-bold text-white mb-0.5">
                   {feature.title}

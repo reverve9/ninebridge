@@ -46,7 +46,7 @@ interface BadgeProps {
 
 export function Badge({ 
   children, 
-  color = 'navy',
+  color = 'blue',
   size = 'md',
   className = ''
 }: BadgeProps) {

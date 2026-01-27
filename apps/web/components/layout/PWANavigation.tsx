@@ -9,14 +9,12 @@ interface PWANavigationProps {
   children: React.ReactNode;
   onMenuSelect?: (menu: string) => void;
   activeMenu?: string;
-  onSearchClick?: () => void;
 }
 
 export default function PWANavigation({ 
   children, 
   onMenuSelect, 
-  activeMenu = 'home',
-  onSearchClick 
+  activeMenu = 'home'
 }: PWANavigationProps) {
   const [isMobile, setIsMobile] = useState(false);
 
@@ -35,7 +33,6 @@ export default function PWANavigation({
       <MobileNavigation 
         onMenuSelect={onMenuSelect} 
         activeMenu={activeMenu}
-        onSearchClick={onSearchClick}
       >
         {children}
       </MobileNavigation>
@@ -46,7 +43,6 @@ export default function PWANavigation({
     <DesktopNavigation 
       onMenuSelect={onMenuSelect} 
       activeMenu={activeMenu}
-      onSearchClick={onSearchClick}
     >
       {children}
     </DesktopNavigation>
@@ -59,13 +55,12 @@ export default function PWANavigation({
 function MobileNavigation({ 
   children, 
   onMenuSelect, 
-  activeMenu = 'home',
-  onSearchClick 
+  activeMenu = 'home'
 }: Omit<PWANavigationProps, 'children'> & { children: React.ReactNode }) {
   return (
     <div className="relative flex flex-col min-h-screen">
       {/* 상단 헤더 - PWAHeader 컴포넌트 */}
-      <PWAHeader variant="mobile" onSearchClick={onSearchClick} />
+      <PWAHeader variant="mobile" />
 
       {/* 메인 콘텐츠 */}
       <main className="flex-1 overflow-y-auto pb-28">
@@ -84,8 +79,7 @@ function MobileNavigation({
 function DesktopNavigation({ 
   children, 
   onMenuSelect, 
-  activeMenu = 'home',
-  onSearchClick 
+  activeMenu = 'home'
 }: Omit<PWANavigationProps, 'children'> & { children: React.ReactNode }) {
   return (
     <div className="relative flex flex-col min-h-screen">
@@ -96,7 +90,6 @@ function DesktopNavigation({
       <PWATopNav 
         onMenuSelect={onMenuSelect} 
         activeMenu={activeMenu} 
-        onSearchClick={onSearchClick} 
       />
 
       {/* 메인 콘텐츠 */}

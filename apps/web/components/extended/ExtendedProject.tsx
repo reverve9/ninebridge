@@ -4,6 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { Project, GalleryItem } from '@/lib/types';
 import { getPublishedProjects } from '@/lib/projects';
 import { ProjectBadge, PROJECT_CATEGORY_MAP } from '@/components/common/Badge';
+import ExtendedProjectDetail from './ExtendedProjectDetail';
+import ExtendedFooter from './ExtendedFooter';
+import ExtendedSNS from './ExtendedSNS';
 
 interface ExtendedProjectProps {
   selectedProjectId?: string | null;
@@ -209,9 +212,6 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [isYoutubePlaying, setIsYoutubePlaying] = useState(false);
-  const [currentGalleryIndex, setCurrentGalleryIndex] = useState(0);
-  const [isHoveringMain, setIsHoveringMain] = useState(false);
 
   useEffect(() => {
     loadProjects();
@@ -225,17 +225,6 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
       setSelectedProject(null);
     }
   }, [selectedProjectId, projects]);
-
-  // 프로젝트 변경 시 상태 초기화
-  useEffect(() => {
-    setIsYoutubePlaying(false);
-    if (selectedProject?.gallery) {
-      const mainIndex = selectedProject.gallery.findIndex(item => item.is_main);
-      setCurrentGalleryIndex(mainIndex >= 0 ? mainIndex : 0);
-    } else {
-      setCurrentGalleryIndex(0);
-    }
-  }, [selectedProject]);
 
   const loadProjects = async () => {
     try {
@@ -336,339 +325,20 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
 
   // 프로젝트 선택 시 상세 표시
   if (selectedProject) {
-    const gallery = selectedProject.gallery || [];
-    const currentItem = gallery[currentGalleryIndex];
-    const isVertical = currentItem?.type === 'ver';
-    const youtubeId = (currentItem?.type === 'hor' || currentItem?.type === 'ver') ? getYoutubeId(currentItem.url) : null;
-
-    // 세로영상 2열 레이아웃
-    if (isVertical) {
-      return (
-        <div className="space-y-6">
-          {/* 상단: 뒤로버튼 + 제목 + 카테고리 배지 */}
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => setSelectedProject(null)}
-              className="w-10 h-10 bg-black/30 backdrop-blur-sm text-white rounded-full flex items-center justify-center hover:bg-black/50 transition-all hover:scale-105 flex-shrink-0"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-            <h2 className="text-[21px] text-[#1f2937] flex-1 truncate" style={{ fontFamily: 'S-CoreDream', fontWeight: 900, letterSpacing: '-0.03em' }}>{selectedProject.title}</h2>
-            <div className="flex gap-2 flex-shrink-0">
-              {selectedProject.categories.map((cat) => {
-                const color = categoryColors[cat] ?? categoryColors.etc;
-                return (
-                  <span key={cat} className={`px-3 py-1 text-[12px] font-medium rounded-full ${color?.bg || 'bg-[#7c8a96]'} ${color?.text || 'text-white'}`}>
-                    {categoryLabels[cat] || cat}
-                  </span>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* 2열 레이아웃: 세로영상 + 정보 */}
-          <div className="flex gap-6">
-            {/* 좌측: 세로영상 */}
-            <div 
-              className="w-[380px] flex-shrink-0"
-              onMouseEnter={() => setIsHoveringMain(true)}
-              onMouseLeave={() => setIsHoveringMain(false)}
-            >
-              <div className="aspect-[9/16] rounded-[12px] overflow-hidden relative bg-black">
-                {youtubeId ? (
-                  isYoutubePlaying ? (
-                    <>
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <iframe
-                          src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0`}
-                          title={currentItem?.title || selectedProject.title}
-                          className="w-[320%] h-full"
-                          style={{ marginLeft: '0' }}
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                        />
-                      </div>
-                    </>
-                  ) : (
-                    <div 
-                      className="relative w-full h-full cursor-pointer group"
-                      onClick={() => setIsYoutubePlaying(true)}
-                    >
-                      <img
-                        src={`https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`}
-                        alt={currentItem?.title || selectedProject.title}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`;
-                        }}
-                      />
-                      <div className={`absolute inset-0 bg-black/30 flex items-center justify-center transition-opacity ${isHoveringMain ? 'opacity-100' : 'opacity-0'}`}>
-                        <div className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-lg">
-                          <svg className="w-7 h-7 text-[#1f2937] ml-1" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M8 5v14l11-7z"/>
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-                  )
-                ) : currentItem?.type === 'img' ? (
-                  <img
-                    src={currentItem.url}
-                    alt={currentItem.title || selectedProject.title}
-                    className="w-full h-full object-cover"
-                  />
-                ) : null}
-              </div>
-            </div>
-
-            {/* 우측: 정보 */}
-            <div className="flex-1 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-1">Client</p>
-                  <p className="text-[15px] text-[#1f2937]">{selectedProject.client || '-'}</p>
-                </div>
-                <div>
-                  <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-1">Date</p>
-                  <p className="text-[15px] text-[#1f2937]">
-                    {selectedProject.date_start 
-                      ? `${selectedProject.date_start}${selectedProject.date_end ? ` - ${selectedProject.date_end}` : ''}`
-                      : '-'
-                    }
-                  </p>
-                </div>
-              </div>
-              {selectedProject.content && (
-                <div>
-                  <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-1">Description</p>
-                  <p className="text-[15px] text-[#374151] leading-relaxed whitespace-pre-wrap">
-                    {selectedProject.content}
-                  </p>
-                </div>
-              )}
-              {selectedProject.details && (
-                <div>
-                  <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-1">Details</p>
-                  <p className="text-[15px] text-[#374151] leading-relaxed whitespace-pre-wrap">
-                    {selectedProject.details}
-                  </p>
-                </div>
-              )}
-              {selectedProject.tags && selectedProject.tags.length > 0 && (
-                <div>
-                  <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-2">Tags</p>
-                  <div className="flex gap-2 flex-wrap">
-                    {selectedProject.tags.map((tag) => (
-                      <span key={tag} className="text-[13px] text-[#6b7280] bg-[#f3f4f6] px-3 py-1 rounded-full">
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* 갤러리 썸네일 */}
-          {gallery.length > 1 && (
-            <div className="flex gap-2 overflow-x-auto pb-2">
-              {gallery.map((item, index) => {
-                const itemYoutubeId = (item.type === 'hor' || item.type === 'ver') ? getYoutubeId(item.url) : null;
-                const thumbUrl = itemYoutubeId 
-                  ? `https://img.youtube.com/vi/${itemYoutubeId}/mqdefault.jpg`
-                  : item.url;
-                
-                return (
-                  <button
-                    key={index}
-                    onClick={() => {
-                      setCurrentGalleryIndex(index);
-                      setIsYoutubePlaying(false);
-                    }}
-                    className={`w-20 h-20 flex-shrink-0 rounded-[8px] overflow-hidden border-2 transition-all
-                      ${currentGalleryIndex === index ? 'border-[#384155]' : 'border-transparent hover:border-[#5b7cae]'}`}
-                  >
-                    <img
-                      src={thumbUrl}
-                      alt={item.title || `Gallery ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                  </button>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      );
-    }
-
-    // 가로영상/이미지 기본 레이아웃
     return (
-      <div className="space-y-6">
-        {/* 상단: 뒤로버튼 + 제목 + 카테고리 배지 */}
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => setSelectedProject(null)}
-            className="w-10 h-10 bg-black/30 backdrop-blur-sm text-white rounded-full flex items-center justify-center hover:bg-black/50 transition-all hover:scale-105 flex-shrink-0"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          <h2 className="text-[21px] text-[#1f2937] flex-1 truncate" style={{ fontFamily: 'S-CoreDream', fontWeight: 900, letterSpacing: '-0.03em' }}>{selectedProject.title}</h2>
-          <div className="flex gap-2 flex-shrink-0">
-            {selectedProject.categories.map((cat) => {
-              const color = categoryColors[cat] ?? categoryColors.etc;
-              return (
-                <span key={cat} className={`px-3 py-1 text-[12px] font-medium rounded-full ${color?.bg || 'bg-[#7c8a96]'} ${color?.text || 'text-white'}`}>
-                  {categoryLabels[cat] || cat}
-                </span>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* 메인 영상/이미지 */}
-        <div 
-          className="aspect-video rounded-[12px] overflow-hidden relative bg-black"
-          onMouseEnter={() => setIsHoveringMain(true)}
-          onMouseLeave={() => setIsHoveringMain(false)}
-        >
-          {youtubeId ? (
-            isYoutubePlaying ? (
-              <iframe
-                src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0`}
-                title={currentItem?.title || selectedProject.title}
-                className="w-full h-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            ) : (
-              <div 
-                className="relative w-full h-full cursor-pointer group"
-                onClick={() => setIsYoutubePlaying(true)}
-              >
-                <img
-                  src={`https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`}
-                  alt={currentItem?.title || selectedProject.title}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`;
-                  }}
-                />
-                <div className={`absolute inset-0 bg-black/30 flex items-center justify-center transition-opacity ${isHoveringMain ? 'opacity-100' : 'opacity-0'}`}>
-                  <div className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-lg">
-                    <svg className="w-7 h-7 text-[#1f2937] ml-1" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M8 5v14l11-7z"/>
-                    </svg>
-                  </div>
-                </div>
-              </div>
-            )
-          ) : currentItem?.type === 'img' ? (
-            <img
-              src={currentItem.url}
-              alt={currentItem.title || selectedProject.title}
-              className="w-full h-full object-cover"
-            />
-          ) : selectedProject.thumbnail ? (
-            <img
-              src={selectedProject.thumbnail}
-              alt={selectedProject.title}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <div className="w-full h-full bg-[#f3f4f6] flex items-center justify-center text-[#9ca3af]">
-              이미지 없음
-            </div>
-          )}
-        </div>
-
-        {/* 갤러리 썸네일 */}
-        {gallery.length > 1 && (
-          <div className="flex gap-2 overflow-x-auto pb-2">
-            {gallery.map((item, index) => {
-              const itemYoutubeId = (item.type === 'hor' || item.type === 'ver') ? getYoutubeId(item.url) : null;
-              const thumbUrl = itemYoutubeId 
-                ? `https://img.youtube.com/vi/${itemYoutubeId}/mqdefault.jpg`
-                : item.url;
-              
-              return (
-                <button
-                  key={index}
-                  onClick={() => {
-                    setCurrentGalleryIndex(index);
-                    setIsYoutubePlaying(false);
-                  }}
-                  className={`w-20 h-20 flex-shrink-0 rounded-[8px] overflow-hidden border-2 transition-all
-                    ${currentGalleryIndex === index ? 'border-[#384155]' : 'border-transparent hover:border-[#5b7cae]'}`}
-                >
-                  <img
-                    src={thumbUrl}
-                    alt={item.title || `Gallery ${index + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                </button>
-              );
-            })}
-          </div>
-        )}
-
-        {/* 정보 영역 */}
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-1">Client</p>
-              <p className="text-[15px] text-[#1f2937]">{selectedProject.client || '-'}</p>
-            </div>
-            <div>
-              <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-1">Date</p>
-              <p className="text-[15px] text-[#1f2937]">
-                {selectedProject.date_start 
-                  ? `${selectedProject.date_start}${selectedProject.date_end ? ` - ${selectedProject.date_end}` : ''}`
-                  : '-'
-                }
-              </p>
-            </div>
-          </div>
-          {selectedProject.content && (
-            <div>
-              <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-1">Description</p>
-              <p className="text-[15px] text-[#374151] leading-relaxed whitespace-pre-wrap">
-                {selectedProject.content}
-              </p>
-            </div>
-          )}
-          {selectedProject.details && (
-            <div>
-              <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-1">Details</p>
-              <p className="text-[15px] text-[#374151] leading-relaxed whitespace-pre-wrap">
-                {selectedProject.details}
-              </p>
-            </div>
-          )}
-          {selectedProject.tags && selectedProject.tags.length > 0 && (
-            <div>
-              <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-2">Tags</p>
-              <div className="flex gap-2 flex-wrap">
-                {selectedProject.tags.map((tag) => (
-                  <span key={tag} className="text-[13px] text-[#6b7280] bg-[#f3f4f6] px-3 py-1 rounded-full">
-                    #{tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
+      <ExtendedProjectDetail 
+        project={selectedProject} 
+        onBack={() => setSelectedProject(null)} 
+      />
     );
   }
 
   // 목록 표시
   return (
     <div className="space-y-[30px]">
+      {/* SNS */}
+      <ExtendedSNS />
+
       {/* Featured - 슬라이드 카드 */}
       {featuredProjects.length > 0 && (
         <FeaturedSlider 
@@ -692,8 +362,8 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
               <div
                 key={project.id}
                 onClick={() => project.has_detail && setSelectedProject(project)}
-                className={`bg-white rounded-[12px] border border-[#e5e7eb] overflow-hidden transition-all
-                  ${project.has_detail ? 'cursor-pointer hover:border-[#384155] hover:shadow-sm' : 'cursor-default'}`}
+                className={`rounded-[12px] border border-[#e5e7eb] overflow-hidden transition-all
+                  ${project.has_detail ? 'cursor-pointer bg-white hover:bg-[#f0f0f0]' : 'cursor-default bg-white'}`}
               >
                 {/* 썸네일 + 정보 */}
                 <div className="flex gap-3 p-3">
@@ -772,6 +442,9 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
           </div>
         </div>
       ))}
+
+      {/* 푸터 */}
+      <ExtendedFooter />
     </div>
   );
 }

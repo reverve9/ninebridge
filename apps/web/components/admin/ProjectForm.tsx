@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Project, ProjectInsert, GalleryItem } from '@/lib/types';
 import { createProject, updateProject, uploadImage } from '@/lib/projects';
-import { ArrowLeft, Upload, X, Plus, Star, Play, Image, Monitor, Smartphone } from 'lucide-react';
+import { ArrowLeft, Upload, X, Plus, Star, Play, Image, Monitor, Smartphone, Pencil, HelpCircle } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import PWAPreview from '@/components/admin/PWAPreview';
 
@@ -24,6 +24,7 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [tagInput, setTagInput] = useState('');
+  const [showGuide, setShowGuide] = useState(false);
   const [form, setForm] = useState({
     title: project?.title || '',
     description: project?.description || '',
@@ -43,12 +44,13 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
     order: project?.order || 0,
   });
 
-  // 갤러리 아이템 추가 모달
+  // 갤러리 아이템 추가/수정 모달
   const [showGalleryModal, setShowGalleryModal] = useState(false);
   const [galleryItemType, setGalleryItemType] = useState<'hor' | 'ver' | 'img'>('hor');
   const [galleryItemUrl, setGalleryItemUrl] = useState('');
   const [galleryItemTitle, setGalleryItemTitle] = useState('');
   const [galleryItemDesc, setGalleryItemDesc] = useState('');
+  const [editingGalleryIndex, setEditingGalleryIndex] = useState<number | null>(null); // 수정 모드용
 
   // 미리보기용 프로젝트 객체
   const previewProject: Project = {
@@ -119,24 +121,51 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
     }
   };
 
-  // 갤러리 아이템 추가
+  // 갤러리 아이템 추가/수정
   const handleAddGalleryItem = async () => {
     if (!galleryItemUrl) return;
 
-    const newItem: GalleryItem = {
-      type: galleryItemType,
-      url: galleryItemUrl,
-      title: galleryItemTitle,
-      desc: galleryItemDesc,
-      is_main: form.gallery.length === 0,
-    };
+    if (editingGalleryIndex !== null) {
+      // 수정 모드
+      setForm(prev => ({
+        ...prev,
+        gallery: prev.gallery.map((item, i) => 
+          i === editingGalleryIndex 
+            ? { ...item, url: galleryItemUrl, title: galleryItemTitle, desc: galleryItemDesc }
+            : item
+        ),
+      }));
+    } else {
+      // 추가 모드
+      const newItem: GalleryItem = {
+        type: galleryItemType,
+        url: galleryItemUrl,
+        title: galleryItemTitle,
+        desc: galleryItemDesc,
+        is_main: form.gallery.length === 0,
+      };
+      setForm(prev => ({ ...prev, gallery: [...prev.gallery, newItem] }));
+    }
 
-    setForm(prev => ({ ...prev, gallery: [...prev.gallery, newItem] }));
     setShowGalleryModal(false);
     setGalleryItemUrl('');
     setGalleryItemTitle('');
     setGalleryItemDesc('');
     setGalleryItemType('hor');
+    setEditingGalleryIndex(null);
+  };
+
+  // 갤러리 아이템 수정 모달 열기
+  const handleEditGalleryItem = (index: number) => {
+    const item = form.gallery[index];
+    if (!item || item.type === 'img') return; // 이미지는 수정 불가
+    
+    setEditingGalleryIndex(index);
+    setGalleryItemType(item.type);
+    setGalleryItemUrl(item.url);
+    setGalleryItemTitle(item.title);
+    setGalleryItemDesc(item.desc);
+    setShowGalleryModal(true);
   };
 
   // 갤러리 이미지 직접 업로드
@@ -279,7 +308,7 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
               </div>
 
               <div>
-                <label className="block text-[14px] text-[#374151] mb-1">한 줄 설명</label>
+                <label className="block text-[14px] text-[#374151] mb-1">한 줄 설명 (PWA용)</label>
                 <input
                   type="text"
                   name="description"
@@ -291,26 +320,46 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
               </div>
 
               <div>
-                <label className="block text-[14px] text-[#374151] mb-1">상세 설명</label>
+                <div className="flex items-center gap-2 mb-1">
+                  <label className="text-[14px] text-[#374151]">Description (마크다운 지원)</label>
+                  <button
+                    type="button"
+                    onClick={() => setShowGuide(true)}
+                    title="마크다운 가이드"
+                    className="text-[#9ca3af] hover:text-[#3071a5]"
+                  >
+                    <HelpCircle size={16} />
+                  </button>
+                </div>
                 <textarea
                   name="content"
                   value={form.content}
                   onChange={handleChange}
                   rows={5}
                   className="w-full px-4 py-3 border border-[#e5e7eb] rounded-[8px] text-[14px] focus:outline-none focus:border-[#3071a5] resize-none"
-                  placeholder="프로젝트 상세 설명"
+                  placeholder="프로젝트 상세 설명 (마크다운 문법 사용 가능)"
                 />
               </div>
 
               <div>
-                <label className="block text-[14px] text-[#374151] mb-1">Details (제작 정보)</label>
+                <div className="flex items-center gap-2 mb-1">
+                  <label className="text-[14px] text-[#374151]">Details (마크다운 지원)</label>
+                  <button
+                    type="button"
+                    onClick={() => setShowGuide(true)}
+                    title="마크다운 가이드"
+                    className="text-[#9ca3af] hover:text-[#3071a5]"
+                  >
+                    <HelpCircle size={16} />
+                  </button>
+                </div>
                 <textarea
                   name="details"
                   value={form.details}
                   onChange={handleChange}
                   rows={4}
                   className="w-full px-4 py-3 border border-[#e5e7eb] rounded-[8px] text-[14px] focus:outline-none focus:border-[#3071a5] resize-none"
-                  placeholder="해상도: 1920x1080&#10;길이: 2분 30초&#10;비율: 16:9"
+                  placeholder="제작 정보 (마크다운 문법 사용 가능)"
                 />
               </div>
             </div>
@@ -481,6 +530,17 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
 
                   {/* 액션 버튼 */}
                   <div className="flex items-center gap-1">
+                    {/* 영상만 수정 가능 */}
+                    {(item.type === 'hor' || item.type === 'ver') && (
+                      <button
+                        type="button"
+                        onClick={() => handleEditGalleryItem(index)}
+                        className="p-1.5 text-[#9ca3af] hover:text-blue-500 hover:bg-blue-50 rounded transition-colors"
+                        title="수정"
+                      >
+                        <Pencil size={16} />
+                      </button>
+                    )}
                     {!item.is_main && (
                       <button
                         type="button"
@@ -495,6 +555,7 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
                       type="button"
                       onClick={() => handleRemoveGalleryItem(index)}
                       className="p-1.5 text-[#9ca3af] hover:text-red-500 hover:bg-red-50 rounded transition-colors"
+                      title="삭제"
                     >
                       <X size={16} />
                     </button>
@@ -588,12 +649,15 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
         </form>
       </main>
 
-      {/* 갤러리 아이템 추가 모달 */}
+      {/* 갤러리 아이템 추가/수정 모달 */}
       {showGalleryModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-[12px] p-6 w-[400px]">
             <h3 className="text-[16px] font-semibold text-[#1f2937] mb-4">
-              {galleryItemType === 'hor' ? '가로 영상 추가' : galleryItemType === 'ver' ? '세로 영상 추가' : '이미지 추가'}
+              {editingGalleryIndex !== null 
+                ? (galleryItemType === 'hor' ? '가로 영상 수정' : '세로 영상 수정')
+                : (galleryItemType === 'hor' ? '가로 영상 추가' : galleryItemType === 'ver' ? '세로 영상 추가' : '이미지 추가')
+              }
             </h3>
             <div className="space-y-4">
               <div>
@@ -643,7 +707,13 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
             <div className="flex justify-end gap-2 mt-6">
               <button
                 type="button"
-                onClick={() => setShowGalleryModal(false)}
+                onClick={() => {
+                  setShowGalleryModal(false);
+                  setEditingGalleryIndex(null);
+                  setGalleryItemUrl('');
+                  setGalleryItemTitle('');
+                  setGalleryItemDesc('');
+                }}
                 className="px-4 py-2 border border-[#e5e7eb] rounded-[8px] text-[14px] text-[#6b7280]"
               >
                 취소
@@ -653,8 +723,78 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
                 onClick={handleAddGalleryItem}
                 className="px-4 py-2 bg-[#3071a5] text-white rounded-[8px] text-[14px]"
               >
-                추가
+                {editingGalleryIndex !== null ? '수정' : '추가'}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 마크다운 가이드 모달 */}
+      {showGuide && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowGuide(false)}>
+          <div className="bg-white rounded-[12px] w-[500px] max-h-[80vh] overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[#e5e7eb]">
+              <h3 className="text-[18px] font-bold text-[#1f2937]">마크다운 가이드</h3>
+              <button onClick={() => setShowGuide(false)} className="p-1 text-[#9ca3af] hover:text-[#1f2937]">
+                <X size={20} />
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto max-h-[60vh]">
+              <table className="w-full text-[14px]">
+                <thead>
+                  <tr className="border-b border-[#e5e7eb]">
+                    <th className="text-left py-2 text-[#6b7280] font-medium">입력</th>
+                    <th className="text-left py-2 text-[#6b7280] font-medium">결과</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#f3f4f6]">
+                  <tr>
+                    <td className="py-3 font-mono text-[#374151]"># 제목</td>
+                    <td className="py-3 text-[20px] font-bold">제목</td>
+                  </tr>
+                  <tr>
+                    <td className="py-3 font-mono text-[#374151]">## 소제목</td>
+                    <td className="py-3 text-[18px] font-bold">소제목</td>
+                  </tr>
+                  <tr>
+                    <td className="py-3 font-mono text-[#374151]">### 작은제목</td>
+                    <td className="py-3 text-[16px] font-semibold">작은제목</td>
+                  </tr>
+                  <tr>
+                    <td className="py-3 font-mono text-[#374151]">**굵게**</td>
+                    <td className="py-3"><strong>굵게</strong></td>
+                  </tr>
+                  <tr>
+                    <td className="py-3 font-mono text-[#374151]">*기울임*</td>
+                    <td className="py-3"><em>기울임</em></td>
+                  </tr>
+                  <tr>
+                    <td className="py-3 font-mono text-[#374151]">~~취소선~~</td>
+                    <td className="py-3"><s>취소선</s></td>
+                  </tr>
+                  <tr>
+                    <td className="py-3 font-mono text-[#374151]">[링크](URL)</td>
+                    <td className="py-3"><span className="text-[#3071a5] underline">링크</span></td>
+                  </tr>
+                  <tr>
+                    <td className="py-3 font-mono text-[#374151]">- 목록</td>
+                    <td className="py-3">• 목록</td>
+                  </tr>
+                  <tr>
+                    <td className="py-3 font-mono text-[#374151]">1. 번호목록</td>
+                    <td className="py-3">1. 번호목록</td>
+                  </tr>
+                  <tr>
+                    <td className="py-3 font-mono text-[#374151]">&gt; 인용문</td>
+                    <td className="py-3 border-l-4 border-[#3071a5] pl-2 text-[#6b7280]">인용문</td>
+                  </tr>
+                  <tr>
+                    <td className="py-3 font-mono text-[#374151]">---</td>
+                    <td className="py-3"><hr className="border-[#e5e7eb]" /></td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>

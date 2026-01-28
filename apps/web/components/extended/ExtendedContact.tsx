@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import { Send, Phone, Mail, MapPin, MessageCircle, Clock } from 'lucide-react';
+import ExtendedFooter from './ExtendedFooter';
+import ExtendedSNS from './ExtendedSNS';
 
 export default function ExtendedContact() {
   const [formData, setFormData] = useState({
@@ -38,12 +40,15 @@ export default function ExtendedContact() {
 
   return (
     <div>
+      {/* SNS */}
+      <ExtendedSNS />
+
       {/* 헤더 */}
       <div className="mb-8">
         <span className="text-[#3071a5] text-sm font-semibold tracking-wider uppercase">
-          Contact Us
+          Connect
         </span>
-        <h1 className="text-3xl font-bold text-gray-800 mt-1">문의하기</h1>
+        <h1 className="text-3xl font-bold text-gray-800 mt-1">정보&문의</h1>
         <p className="text-gray-600 mt-2">
           프로젝트에 대해 상담해 드립니다.<br />
           아래 양식을 작성해 주시면 빠른 시일 내에 연락드리겠습니다.
@@ -186,11 +191,8 @@ export default function ExtendedContact() {
             </div>
           </div>
 
-          <div className="bg-gray-100 rounded-2xl p-6 text-sm text-gray-500">
-            <p>사업자등록번호: 502-86-43421</p>
-            <p>통신판매업신고: 2025-강원강릉-0209호</p>
-            <p className="mt-3">© 2025 Nine Bridge Co., Ltd.</p>
-          </div>
+          {/* 푸터 */}
+          <ExtendedFooter />
         </div>
       </div>
     </div>

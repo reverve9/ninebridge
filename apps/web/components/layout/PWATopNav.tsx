@@ -11,8 +11,8 @@ interface PWATopNavProps {
 const navItems = [
   { id: 'home', label: 'HOME', labelKo: '나인브릿지' },
   { id: 'works', label: 'WORX', labelKo: '포트폴리오' },
-  { id: 'notice', label: 'NOTICE', labelKo: '공지사항' },
-  { id: 'contact', label: 'CONTACT', labelKo: '문의하기' },
+  { id: 'notice', label: 'NEWS', labelKo: '소식&공지' },
+  { id: 'contact', label: 'CONNECT', labelKo: '정보&문의' },
 ];
 
 export default function PWATopNav({ onMenuSelect, activeMenu = 'home' }: PWATopNavProps) {

@@ -57,10 +57,10 @@ export default function PWANoticePreview({ notices }: PWANoticePreviewProps) {
     <div className="min-h-full bg-white">
       {/* 헤더 */}
       <div className="bg-[#3071a5] text-white px-4 h-[60px] flex items-center">
-        <span className="text-[14px] font-medium">NOTICE 미리보기</span>
+        <span className="text-[14px] font-medium">NEWS 미리보기</span>
       </div>
 
-      <PageTitle title="NOTICE" subtitle="공지사항" />
+      <PageTitle title="NEWS" subtitle="소식&공지" />
 
       {/* 카테고리 탭 */}
       <div className="px-4 pb-3">

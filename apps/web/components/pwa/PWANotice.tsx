@@ -8,7 +8,6 @@ import { Notice } from '@/lib/types';
 import { getPublishedNotices, incrementViewCount } from '@/lib/notices';
 import { Pin, Paperclip, ExternalLink, X, Eye } from 'lucide-react';
 import MarkdownRenderer from '@/components/common/MarkdownRenderer';
-import PWAFooter from '@/components/pwa/PWAFooter';
 
 const categories = [
   { id: 'all', label: '전체' },
@@ -105,11 +104,6 @@ export default function PWANotice({ onSelectNotice, selectedNoticeId, isPreview 
     return () => pwaWrapper.removeEventListener('scroll', handleScroll);
   }, [loadingMore, hasMore]);
 
-  const getCategoryCount = (catId: string) => {
-    if (catId === 'all') return notices.length;
-    return notices.filter(n => n.category === catId).length;
-  };
-
   const formatDateTime = (dateStr: string) => {
     const date = new Date(dateStr);
     return date.toLocaleDateString('ko-KR', {
@@ -155,23 +149,20 @@ export default function PWANotice({ onSelectNotice, selectedNoticeId, isPreview 
 
   return (
     <div ref={containerRef} className="relative min-h-full">
-      <PageTitle title="NOTICE" subtitle="공지사항" />
+      <PageTitle title="NEWS" subtitle="소식&공지" />
 
-      {/* 카테고리 탭 - WORX 스타일과 통일 (px-4 py-3, text-[14px]) */}
+      {/* 카테고리 탭 - 우측 정렬 */}
       <div className="px-4 py-3">
-        <div className="flex gap-1 flex-wrap">
-          {categories.map((cat) => {
-            const count = getCategoryCount(cat.id);
-            return (
-              <TabButton
-                key={cat.id}
-                active={activeCategory === cat.id}
-                onClick={() => setActiveCategory(cat.id)}
-              >
-                {cat.label} <span className="opacity-70">{count}</span>
-              </TabButton>
-            );
-          })}
+        <div className="flex gap-1 flex-wrap justify-end">
+          {categories.map((cat) => (
+            <TabButton
+              key={cat.id}
+              active={activeCategory === cat.id}
+              onClick={() => setActiveCategory(cat.id)}
+            >
+              {cat.label}
+            </TabButton>
+          ))}
         </div>
       </div>
 
@@ -189,8 +180,8 @@ export default function PWANotice({ onSelectNotice, selectedNoticeId, isPreview 
                 <div
                   key={notice.id}
                   onClick={() => handleNoticeClick(notice)}
-                  className={`bg-white rounded-[12px] border p-4 transition-all cursor-pointer hover:bg-[#f0f0f0]
-                    ${isSelected ? 'border-[#384155] shadow-sm' : 'border-[#e5e7eb]'}`}
+                  className={`rounded-[12px] border border-[#e5e7eb] p-4 transition-all cursor-pointer
+                    ${isSelected ? 'bg-[#f0f0f0]' : 'bg-white hover:bg-[#f0f0f0]'}`}
                 >
                   {/* 고정 + 배지 + 제목 (한 줄) */}
                   <div className="flex items-center gap-2 mb-1">
@@ -310,9 +301,6 @@ export default function PWANotice({ onSelectNotice, selectedNoticeId, isPreview 
           </div>
         </div>
       )}
-
-      {/* 푸터 */}
-      <PWAFooter />
     </div>
   );
 }

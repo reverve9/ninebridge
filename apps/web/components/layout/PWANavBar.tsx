@@ -9,11 +9,8 @@ interface PWANavBarProps {
 
 // 2x2 그리드 아이콘 컴포넌트
 function GridIcon({ activeIndex, hoverIndex }: { activeIndex: number; hoverIndex: number }) {
-  // activeIndex: 활성화된 박스 인덱스 (0~3), -1이면 없음
-  // hoverIndex: 호버된 박스 인덱스 (0~3), -1이면 없음
-  
   return (
-    <div className="grid grid-cols-2 gap-[2px]">
+    <div className="grid grid-cols-2 gap-[3px]">
       {[0, 1, 2, 3].map((index) => {
         const isActive = activeIndex === index;
         const isHovered = hoverIndex === index && activeIndex === -1;
@@ -21,8 +18,8 @@ function GridIcon({ activeIndex, hoverIndex }: { activeIndex: number; hoverIndex
         return (
           <div
             key={index}
-            className={`w-[7px] h-[7px] transition-all duration-700 ease-out origin-center
-              ${isActive || isHovered ? 'bg-[#b87a5a]' : 'bg-[#d1d5db]'}
+            className={`w-[9px] h-[9px] transition-all duration-700 ease-out origin-center
+              ${isActive || isHovered ? 'bg-[#b87a5a]' : 'bg-[#9ca3af]'}
               ${isHovered ? 'rotate-45' : ''}`}
           />
         );
@@ -53,17 +50,11 @@ export default function PWANavBar({ onMenuSelect, activeMenu = 'home' }: PWANavB
     return () => window.removeEventListener('resize', updatePosition);
   }, []);
 
-  // 메뉴 아이템 - 박스 위치 매핑
-  // ┌───┬───┐
-  // │ 0 │ 1 │  0: HOME, 1: WORKS
-  // ├───┼───┤
-  // │ 2 │ 3 │  2: NOTICE, 3: CONTACT
-  // └───┴───┘
   const navItems = [
     { id: 'home', label: 'HOME', boxIndex: 0 },
     { id: 'works', label: 'WORX', boxIndex: 1 },
-    { id: 'notice', label: 'NOTICE', boxIndex: 2 },
-    { id: 'contact', label: 'CONTACT', boxIndex: 3 },
+    { id: 'notice', label: 'NEWS', boxIndex: 2 },
+    { id: 'contact', label: 'CONNECT', boxIndex: 3 },
   ];
 
   const handleClick = (id: string) => {
@@ -92,7 +83,7 @@ export default function PWANavBar({ onMenuSelect, activeMenu = 'home' }: PWANavB
                 className={`flex flex-col items-center justify-center gap-[6px] py-1 rounded-xl transition-all duration-200 w-[72px]
                   ${isActive 
                     ? 'text-[#b87a5a] scale-[1.2]' 
-                    : 'text-gray-400 hover:text-[#b87a5a] hover:scale-[1.2]'
+                    : 'text-gray-500 hover:text-[#b87a5a] hover:scale-[1.2]'
                   }`}
               >
                 <GridIcon 

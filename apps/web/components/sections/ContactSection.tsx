@@ -32,9 +32,9 @@ export default function ContactSection() {
       {/* 섹션 헤더 */}
       <div className="mb-8 text-center">
         <span className="text-[#3071a5] text-sm font-semibold tracking-wider uppercase">
-          Contact Us
+          Connect
         </span>
-        <h2 className="text-2xl font-bold text-gray-800 mt-1">문의하기</h2>
+        <h2 className="text-2xl font-bold text-gray-800 mt-1">정보&문의</h2>
         <p className="text-gray-600 mt-2">
           프로젝트에 대해 상담해 드립니다
         </p>

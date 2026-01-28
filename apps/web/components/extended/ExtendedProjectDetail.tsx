@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Project, GalleryItem } from '@/lib/types';
 import { ProjectBadge } from '@/components/common/Badge';
+import MarkdownRenderer from '@/components/common/MarkdownRenderer';
 
 interface ExtendedProjectDetailProps {
   project: Project;
@@ -116,21 +117,15 @@ export default function ExtendedProjectDetail({ project, onBack }: ExtendedProje
                       }}
                     />
                   </div>
-                  <div className={`absolute inset-0 flex items-center justify-center transition-opacity ${isHoveringMain ? 'opacity-100' : 'opacity-0'}`}>
+                  <div className={`absolute inset-0 bg-black/30 flex items-center justify-center transition-opacity ${isHoveringMain ? 'opacity-100' : 'opacity-0'}`}>
                     <div className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-lg">
-                      <svg className="w-7 h-7 text-[#1f2937] ml-1" fill="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-13 h-13 text-[#E62117] ml-0.3" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M8 5v14l11-7z"/>
                       </svg>
                     </div>
                   </div>
                 </div>
               )
-            ) : currentItem?.type === 'img' ? (
-              <img
-                src={currentItem.url}
-                alt={currentItem.title || project.title}
-                className="w-full h-full object-cover"
-              />
             ) : (
               <div className="w-full h-full bg-[#f3f4f6] flex items-center justify-center text-[#9ca3af]">
                 영상 없음
@@ -139,37 +134,81 @@ export default function ExtendedProjectDetail({ project, onBack }: ExtendedProje
           </div>
 
           {/* 갤러리 썸네일 */}
-          {gallery.length > 1 && (
-            <div className="flex gap-2 overflow-x-auto pb-2">
-              {gallery.map((item, index) => {
-                const itemYoutubeId = (item.type === 'hor' || item.type === 'ver') ? getYoutubeId(item.url) : null;
-                const thumbUrl = itemYoutubeId 
-                  ? `https://img.youtube.com/vi/${itemYoutubeId}/mqdefault.jpg`
-                  : item.url;
-                
-                return (
-                  <button
-                    key={index}
-                    onClick={() => {
-                      setCurrentGalleryIndex(index);
-                      setIsYoutubePlaying(false);
-                    }}
-                    className={`w-20 h-20 flex-shrink-0 rounded-[8px] overflow-hidden border-2 transition-all
-                      ${currentGalleryIndex === index ? 'border-[#384155]' : 'border-transparent hover:border-[#5b7cae]'}`}
-                  >
-                    <img
-                      src={thumbUrl}
-                      alt={item.title || `Gallery ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                  </button>
-                );
-              })}
-            </div>
-          )}
+          {gallery.length > 1 && (() => {
+            const videoItems = gallery.map((item, idx) => ({ ...item, originalIndex: idx })).filter(item => item.type === 'hor' || item.type === 'ver');
+            const imageItems = gallery.map((item, idx) => ({ ...item, originalIndex: idx })).filter(item => item.type === 'img');
+            
+            return (
+              <div className="space-y-4">
+                {/* PLAYLIST - 영상 */}
+                {videoItems.length > 0 && (
+                  <div>
+                    <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-2">Playlist</p>
+                    <div className="flex gap-3 overflow-x-auto pb-2">
+                      {videoItems.map((item) => {
+                        const itemYoutubeId = getYoutubeId(item.url);
+                        const thumbUrl = `https://img.youtube.com/vi/${itemYoutubeId}/mqdefault.jpg`;
+                        
+                        return (
+                          <button
+                            key={item.originalIndex}
+                            onClick={() => {
+                              setCurrentGalleryIndex(item.originalIndex);
+                              setIsYoutubePlaying(false);
+                            }}
+                            className={`w-[100px] flex-shrink-0 transition-all ${currentGalleryIndex === item.originalIndex ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}
+                          >
+                            <div className={`w-[100px] h-[100px] rounded-[6px] overflow-hidden relative border-2 transition-all
+                              ${currentGalleryIndex === item.originalIndex ? 'border-[#384155]' : 'border-transparent'}`}>
+                              <img
+                                src={thumbUrl}
+                                alt={item.title || `Video ${item.originalIndex + 1}`}
+                                className="w-full h-full object-cover"
+                              />
+                              {/* 오버레이 - 하단 그라데이션 + 제목 */}
+                              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+                                <p className="text-[11px] text-white truncate">{item.title || '제목 없음'}</p>
+                              </div>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
 
-          {/* 정보 영역 */}
-          <div className="space-y-4">
+                {/* GALLERY - 이미지 */}
+                {imageItems.length > 0 && (
+                  <div>
+                    <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-2">Gallery</p>
+                    <div className="flex gap-3 overflow-x-auto pb-2">
+                      {imageItems.map((item) => (
+                        <button
+                          key={item.originalIndex}
+                          onClick={() => {
+                            setCurrentGalleryIndex(item.originalIndex);
+                            setIsYoutubePlaying(false);
+                          }}
+                          className={`w-[100px] h-[100px] flex-shrink-0 rounded-[6px] overflow-hidden border-2 transition-all
+                            ${currentGalleryIndex === item.originalIndex ? 'border-[#384155]' : 'border-transparent'} 
+                            ${currentGalleryIndex === item.originalIndex ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}
+                        >
+                          <img
+                            src={item.url}
+                            alt={item.title || `Image ${item.originalIndex + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })()}
+
+          {/* 정보 영역 - 회색 박스 */}
+          <div className="bg-[#f5f5f5] p-6 space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-1">Client</p>
@@ -187,18 +226,14 @@ export default function ExtendedProjectDetail({ project, onBack }: ExtendedProje
             </div>
             {project.content && (
               <div>
-                <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-1">Description</p>
-                <p className="text-[15px] text-[#374151] leading-relaxed whitespace-pre-wrap">
-                  {project.content}
-                </p>
+                <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-2">Description</p>
+                <MarkdownRenderer content={project.content} />
               </div>
             )}
             {project.details && (
               <div>
-                <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-1">Details</p>
-                <p className="text-[15px] text-[#374151] leading-relaxed whitespace-pre-wrap">
-                  {project.details}
-                </p>
+                <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-2">Details</p>
+                <MarkdownRenderer content={project.details} />
               </div>
             )}
             {project.tags && project.tags.length > 0 && (
@@ -206,7 +241,7 @@ export default function ExtendedProjectDetail({ project, onBack }: ExtendedProje
                 <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-2">Tags</p>
                 <div className="flex gap-2 flex-wrap">
                   {project.tags.map((tag) => (
-                    <span key={tag} className="text-[13px] text-[#6b7280] bg-[#f3f4f6] px-3 py-1 rounded-full">
+                    <span key={tag} className="text-[13px] text-[#6b7280] bg-white px-3 py-1 rounded-full">
                       #{tag}
                     </span>
                   ))}
@@ -282,7 +317,7 @@ export default function ExtendedProjectDetail({ project, onBack }: ExtendedProje
                 />
                 <div className={`absolute inset-0 bg-black/30 flex items-center justify-center transition-opacity ${isHoveringMain ? 'opacity-100' : 'opacity-0'}`}>
                   <div className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-lg">
-                    <svg className="w-7 h-7 text-[#1f2937] ml-1" fill="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-13 h-13 text-[#E62117] ml-0.3" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M8 5v14l11-7z"/>
                     </svg>
                   </div>
@@ -297,37 +332,81 @@ export default function ExtendedProjectDetail({ project, onBack }: ExtendedProje
         </div>
 
         {/* 갤러리 썸네일 */}
-        {gallery.length > 1 && (
-          <div className="flex gap-2 overflow-x-auto pb-2">
-            {gallery.map((item, index) => {
-              const itemYoutubeId = (item.type === 'hor' || item.type === 'ver') ? getYoutubeId(item.url) : null;
-              const thumbUrl = itemYoutubeId 
-                ? `https://img.youtube.com/vi/${itemYoutubeId}/mqdefault.jpg`
-                : item.url;
-              
-              return (
-                <button
-                  key={index}
-                  onClick={() => {
-                    setCurrentGalleryIndex(index);
-                    setIsYoutubePlaying(false);
-                  }}
-                  className={`w-20 h-20 flex-shrink-0 rounded-[8px] overflow-hidden border-2 transition-all
-                    ${currentGalleryIndex === index ? 'border-[#384155]' : 'border-transparent hover:border-[#5b7cae]'}`}
-                >
-                  <img
-                    src={thumbUrl}
-                    alt={item.title || `Gallery ${index + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                </button>
-              );
-            })}
-          </div>
-        )}
+        {gallery.length > 1 && (() => {
+          const videoItems = gallery.map((item, idx) => ({ ...item, originalIndex: idx })).filter(item => item.type === 'hor' || item.type === 'ver');
+          const imageItems = gallery.map((item, idx) => ({ ...item, originalIndex: idx })).filter(item => item.type === 'img');
+          
+          return (
+            <div className="space-y-4">
+              {/* PLAYLIST - 영상 */}
+              {videoItems.length > 0 && (
+                <div>
+                  <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-2">Playlist</p>
+                  <div className="flex gap-3 overflow-x-auto pb-2">
+                    {videoItems.map((item) => {
+                      const itemYoutubeId = getYoutubeId(item.url);
+                      const thumbUrl = `https://img.youtube.com/vi/${itemYoutubeId}/mqdefault.jpg`;
+                      
+                      return (
+                        <button
+                          key={item.originalIndex}
+                          onClick={() => {
+                            setCurrentGalleryIndex(item.originalIndex);
+                            setIsYoutubePlaying(false);
+                          }}
+                          className={`w-[100px] flex-shrink-0 transition-all ${currentGalleryIndex === item.originalIndex ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}
+                        >
+                          <div className={`w-[100px] h-[100px] rounded-[6px] overflow-hidden relative border-2 transition-all
+                            ${currentGalleryIndex === item.originalIndex ? 'border-[#384155]' : 'border-transparent'}`}>
+                            <img
+                              src={thumbUrl}
+                              alt={item.title || `Video ${item.originalIndex + 1}`}
+                              className="w-full h-full object-cover"
+                            />
+                            {/* 오버레이 - 하단 그라데이션 + 제목 */}
+                            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+                              <p className="text-[11px] text-white truncate">{item.title || '제목 없음'}</p>
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
-        {/* 정보 영역 */}
-        <div className="space-y-4">
+              {/* GALLERY - 이미지 */}
+              {imageItems.length > 0 && (
+                <div>
+                  <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-2">Gallery</p>
+                  <div className="flex gap-3 overflow-x-auto pb-2">
+                    {imageItems.map((item) => (
+                      <button
+                        key={item.originalIndex}
+                        onClick={() => {
+                          setCurrentGalleryIndex(item.originalIndex);
+                          setIsYoutubePlaying(false);
+                        }}
+                        className={`w-[100px] h-[100px] flex-shrink-0 rounded-[6px] overflow-hidden border-2 transition-all
+                          ${currentGalleryIndex === item.originalIndex ? 'border-[#384155]' : 'border-transparent'} 
+                          ${currentGalleryIndex === item.originalIndex ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}
+                      >
+                        <img
+                          src={item.url}
+                          alt={item.title || `Image ${item.originalIndex + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })()}
+
+        {/* 정보 영역 - 회색 박스 */}
+        <div className="bg-[#f5f5f5] p-6 space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-1">Client</p>
@@ -345,18 +424,14 @@ export default function ExtendedProjectDetail({ project, onBack }: ExtendedProje
           </div>
           {project.content && (
             <div>
-              <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-1">Description</p>
-              <p className="text-[15px] text-[#374151] leading-relaxed whitespace-pre-wrap">
-                {project.content}
-              </p>
+              <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-2">Description</p>
+              <MarkdownRenderer content={project.content} />
             </div>
           )}
           {project.details && (
             <div>
-              <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-1">Details</p>
-              <p className="text-[15px] text-[#374151] leading-relaxed whitespace-pre-wrap">
-                {project.details}
-              </p>
+              <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-2">Details</p>
+              <MarkdownRenderer content={project.details} />
             </div>
           )}
           {project.tags && project.tags.length > 0 && (
@@ -364,7 +439,7 @@ export default function ExtendedProjectDetail({ project, onBack }: ExtendedProje
               <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-2">Tags</p>
               <div className="flex gap-2 flex-wrap">
                 {project.tags.map((tag) => (
-                  <span key={tag} className="text-[13px] text-[#6b7280] bg-[#f3f4f6] px-3 py-1 rounded-full">
+                  <span key={tag} className="text-[13px] text-[#6b7280] bg-white px-3 py-1 rounded-full">
                     #{tag}
                   </span>
                 ))}
@@ -377,7 +452,7 @@ export default function ExtendedProjectDetail({ project, onBack }: ExtendedProje
     );
   }
 
-  // 이미지 레이아웃 (일단 가로영상과 동일)
+  // 이미지 레이아웃
   return (
     <div className="bg-white rounded-[12px] border border-[#e5e7eb] px-10 py-6">
       <div className="space-y-6">
@@ -389,158 +464,153 @@ export default function ExtendedProjectDetail({ project, onBack }: ExtendedProje
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
-        <h2 className="text-[21px] text-[#1f2937] flex-1 truncate" style={{ fontFamily: 'S-CoreDream', fontWeight: 900, letterSpacing: '-0.03em' }}>{project.title}</h2>
-        <div className="flex gap-2 flex-shrink-0">
-          {project.categories.map((cat) => (
-            <ProjectBadge key={cat} category={cat} size="md" />
-          ))}
+            </svg>
+          </button>
+          <h2 className="text-[21px] text-[#1f2937] flex-1 truncate" style={{ fontFamily: 'S-CoreDream', fontWeight: 900, letterSpacing: '-0.03em' }}>{project.title}</h2>
+          <div className="flex gap-2 flex-shrink-0">
+            {project.categories.map((cat) => (
+              <ProjectBadge key={cat} category={cat} size="md" />
+            ))}
+          </div>
         </div>
-      </div>
 
-      {/* 메인 영상/이미지 */}
-      <div 
-        className="w-full aspect-video rounded-[12px] overflow-hidden relative"
-        onMouseEnter={() => setIsHoveringMain(true)}
-        onMouseLeave={() => setIsHoveringMain(false)}
-      >
-        {youtubeId ? (
-          isYoutubePlaying ? (
-            <>
-              <iframe
-                src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0`}
-                title={currentItem?.title || project.title}
-                className="w-full h-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-              <button
-                onClick={() => setIsYoutubePlaying(false)}
-                className="absolute top-4 right-4 w-10 h-10 bg-black/60 backdrop-blur-sm text-white rounded-full flex items-center justify-center hover:bg-black/80 transition-all hover:scale-105"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </>
+        {/* 메인 이미지 */}
+        <div className="w-full aspect-video rounded-[12px] overflow-hidden relative">
+          {currentItem?.url ? (
+            <img
+              src={currentItem.url}
+              alt={currentItem.title || project.title}
+              className="w-full h-full object-cover"
+            />
+          ) : project.thumbnail ? (
+            <img
+              src={project.thumbnail}
+              alt={project.title}
+              className="w-full h-full object-cover"
+            />
           ) : (
-            <div 
-              className="relative w-full h-full cursor-pointer group"
-              onClick={() => setIsYoutubePlaying(true)}
-            >
-              <img
-                src={`https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`}
-                alt={currentItem?.title || project.title}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`;
-                }}
-              />
-              <div className={`absolute inset-0 bg-black/30 flex items-center justify-center transition-opacity ${isHoveringMain ? 'opacity-100' : 'opacity-0'}`}>
-                <div className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-lg">
-                  <svg className="w-7 h-7 text-[#1f2937] ml-1" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z"/>
-                  </svg>
+            <div className="w-full h-full bg-[#f3f4f6] flex items-center justify-center text-[#9ca3af]">
+              이미지 없음
+            </div>
+          )}
+        </div>
+
+        {/* 갤러리 썸네일 */}
+        {gallery.length > 1 && (() => {
+          const videoItems = gallery.map((item, idx) => ({ ...item, originalIndex: idx })).filter(item => item.type === 'hor' || item.type === 'ver');
+          const imageItems = gallery.map((item, idx) => ({ ...item, originalIndex: idx })).filter(item => item.type === 'img');
+          
+          return (
+            <div className="space-y-4">
+              {/* PLAYLIST - 영상 */}
+              {videoItems.length > 0 && (
+                <div>
+                  <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-2">Playlist</p>
+                  <div className="flex gap-3 overflow-x-auto pb-2">
+                    {videoItems.map((item) => {
+                      const itemYoutubeId = getYoutubeId(item.url);
+                      const thumbUrl = `https://img.youtube.com/vi/${itemYoutubeId}/mqdefault.jpg`;
+                      
+                      return (
+                        <button
+                          key={item.originalIndex}
+                          onClick={() => {
+                            setCurrentGalleryIndex(item.originalIndex);
+                            setIsYoutubePlaying(false);
+                          }}
+                          className={`w-[100px] flex-shrink-0 transition-all ${currentGalleryIndex === item.originalIndex ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}
+                        >
+                          <div className={`w-[100px] h-[100px] rounded-[6px] overflow-hidden relative border-2 transition-all
+                            ${currentGalleryIndex === item.originalIndex ? 'border-[#384155]' : 'border-transparent'}`}>
+                            <img
+                              src={thumbUrl}
+                              alt={item.title || `Video ${item.originalIndex + 1}`}
+                              className="w-full h-full object-cover"
+                            />
+                            {/* 오버레이 - 하단 그라데이션 + 제목 */}
+                            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+                              <p className="text-[11px] text-white truncate">{item.title || '제목 없음'}</p>
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
+              )}
+
+              {/* GALLERY - 이미지 */}
+              {imageItems.length > 0 && (
+                <div>
+                  <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-2">Gallery</p>
+                  <div className="flex gap-3 overflow-x-auto pb-2">
+                    {imageItems.map((item) => (
+                      <button
+                        key={item.originalIndex}
+                        onClick={() => {
+                          setCurrentGalleryIndex(item.originalIndex);
+                          setIsYoutubePlaying(false);
+                        }}
+                        className={`w-[100px] h-[100px] flex-shrink-0 rounded-[6px] overflow-hidden border-2 transition-all
+                          ${currentGalleryIndex === item.originalIndex ? 'border-[#384155]' : 'border-transparent'} 
+                          ${currentGalleryIndex === item.originalIndex ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}
+                      >
+                        <img
+                          src={item.url}
+                          alt={item.title || `Image ${item.originalIndex + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })()}
+
+        {/* 정보 영역 - 회색 박스 */}
+        <div className="bg-[#f5f5f5] p-6 space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-1">Client</p>
+              <p className="text-[15px] text-[#1f2937]">{project.client || '-'}</p>
+            </div>
+            <div>
+              <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-1">Date</p>
+              <p className="text-[15px] text-[#1f2937]">
+                {project.date_start 
+                  ? `${project.date_start}${project.date_end ? ` - ${project.date_end}` : ''}`
+                  : '-'
+                }
+              </p>
+            </div>
+          </div>
+          {project.content && (
+            <div>
+              <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-2">Description</p>
+              <MarkdownRenderer content={project.content} />
+            </div>
+          )}
+          {project.details && (
+            <div>
+              <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-2">Details</p>
+              <MarkdownRenderer content={project.details} />
+            </div>
+          )}
+          {project.tags && project.tags.length > 0 && (
+            <div>
+              <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-2">Tags</p>
+              <div className="flex gap-2 flex-wrap">
+                {project.tags.map((tag) => (
+                  <span key={tag} className="text-[13px] text-[#6b7280] bg-white px-3 py-1 rounded-full">
+                    #{tag}
+                  </span>
+                ))}
               </div>
             </div>
-          )
-        ) : currentItem?.type === 'img' ? (
-          <img
-            src={currentItem.url}
-            alt={currentItem.title || project.title}
-            className="w-full h-full object-cover"
-          />
-        ) : project.thumbnail ? (
-          <img
-            src={project.thumbnail}
-            alt={project.title}
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <div className="w-full h-full bg-[#f3f4f6] flex items-center justify-center text-[#9ca3af]">
-            이미지 없음
-          </div>
-        )}
-      </div>
-
-      {/* 갤러리 썸네일 */}
-      {gallery.length > 1 && (
-        <div className="flex gap-2 overflow-x-auto pb-2">
-          {gallery.map((item, index) => {
-            const itemYoutubeId = (item.type === 'hor' || item.type === 'ver') ? getYoutubeId(item.url) : null;
-            const thumbUrl = itemYoutubeId 
-              ? `https://img.youtube.com/vi/${itemYoutubeId}/mqdefault.jpg`
-              : item.url;
-            
-            return (
-              <button
-                key={index}
-                onClick={() => {
-                  setCurrentGalleryIndex(index);
-                  setIsYoutubePlaying(false);
-                }}
-                className={`w-20 h-20 flex-shrink-0 rounded-[8px] overflow-hidden border-2 transition-all
-                  ${currentGalleryIndex === index ? 'border-[#384155]' : 'border-transparent hover:border-[#5b7cae]'}`}
-              >
-                <img
-                  src={thumbUrl}
-                  alt={item.title || `Gallery ${index + 1}`}
-                  className="w-full h-full object-cover"
-                />
-              </button>
-            );
-          })}
+          )}
         </div>
-      )}
-
-      {/* 정보 영역 */}
-      <div className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-1">Client</p>
-            <p className="text-[15px] text-[#1f2937]">{project.client || '-'}</p>
-          </div>
-          <div>
-            <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-1">Date</p>
-            <p className="text-[15px] text-[#1f2937]">
-              {project.date_start 
-                ? `${project.date_start}${project.date_end ? ` - ${project.date_end}` : ''}`
-                : '-'
-              }
-            </p>
-          </div>
-        </div>
-        {project.content && (
-          <div>
-            <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-1">Description</p>
-            <p className="text-[15px] text-[#374151] leading-relaxed whitespace-pre-wrap">
-              {project.content}
-            </p>
-          </div>
-        )}
-        {project.details && (
-          <div>
-            <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-1">Details</p>
-            <p className="text-[15px] text-[#374151] leading-relaxed whitespace-pre-wrap">
-              {project.details}
-            </p>
-          </div>
-        )}
-        {project.tags && project.tags.length > 0 && (
-          <div>
-            <p className="text-[12px] text-[#9ca3af] uppercase tracking-wide mb-2">Tags</p>
-            <div className="flex gap-2 flex-wrap">
-              {project.tags.map((tag) => (
-                <span key={tag} className="text-[13px] text-[#6b7280] bg-[#f3f4f6] px-3 py-1 rounded-full">
-                  #{tag}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
       </div>
     </div>
   );

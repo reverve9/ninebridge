@@ -5,6 +5,8 @@ import { Notice } from '@/lib/types';
 import { getPublishedNotices, incrementViewCount } from '@/lib/notices';
 import { Pin, Paperclip, ExternalLink, ChevronDown, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
 import MarkdownRenderer from '@/components/common/MarkdownRenderer';
+import ExtendedFooter from './ExtendedFooter';
+import ExtendedSNS from './ExtendedSNS';
 
 const categoryConfig: Record<'notice' | 'press' | 'recruit', { label: string; color: string }> = {
   notice: { label: '공지사항', color: 'text-[#dc2626]' },
@@ -128,6 +130,9 @@ export default function ExtendedNotice({ selectedNoticeId }: ExtendedNoticeProps
 
   return (
     <div className="space-y-6">
+      {/* SNS */}
+      <ExtendedSNS />
+
       {(['notice', 'press', 'recruit'] as const).map((category) => {
           const config = categoryConfig[category];
           const items = groupedNotices[category];
@@ -270,6 +275,9 @@ export default function ExtendedNotice({ selectedNoticeId }: ExtendedNoticeProps
           등록된 게시글이 없습니다.
         </div>
       )}
+
+      {/* 푸터 */}
+      <ExtendedFooter />
     </div>
   );
 }

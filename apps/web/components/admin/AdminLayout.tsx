@@ -13,8 +13,8 @@ interface AdminLayoutProps {
 const adminTabs = [
   { id: 'home', label: 'HOME', path: '/admin/home' },
   { id: 'works', label: 'WORX', path: '/admin/projects' },
-  { id: 'notice', label: 'NOTICE', path: '/admin/notices' },
-  { id: 'contact', label: 'CONTACT', path: '/admin/contact' },
+  { id: 'notice', label: 'NEWS', path: '/admin/notices' },
+  { id: 'contact', label: 'CONNECT', path: '/admin/contact' },
 ];
 
 export default function AdminLayout({ children, preview, showPreview = true, activeTab }: AdminLayoutProps) {

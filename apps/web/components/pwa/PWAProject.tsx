@@ -6,7 +6,6 @@ import { TabButton, TagButton } from '@/components/common/Button';
 import { Project } from '@/lib/types';
 import { getPublishedProjects } from '@/lib/projects';
 import { X } from 'lucide-react';
-import PWAFooter from '@/components/pwa/PWAFooter';
 
 interface PWAProjectProps {
   onProjectSelect?: (projectId: string) => void;
@@ -62,12 +61,6 @@ export default function PWAProject({ onProjectSelect, isPreview = false, externa
   // 유튜브 ID 추출
   const getYoutubeId = (url: string) => {
     return url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?]+)/)?.[1];
-  };
-
-  // 카테고리별 개수
-  const getCategoryCount = (catId: string) => {
-    if (catId === 'all') return projects.length;
-    return projects.filter(p => p.categories.includes(catId)).length;
   };
 
   // 현재 카테고리의 프로젝트
@@ -128,21 +121,18 @@ export default function PWAProject({ onProjectSelect, isPreview = false, externa
     <div className="relative h-full">
       <PageTitle title="WORX" subtitle="포트폴리오" />
       
-      {/* 카테고리 탭 */}
+      {/* 카테고리 탭 - 우측 정렬 */}
       <div className="px-4 py-3">
-        <div className="flex gap-1 flex-wrap">
-          {categories.map((cat) => {
-            const count = getCategoryCount(cat.id);
-            return (
-              <TabButton
-                key={cat.id}
-                active={activeCategory === cat.id}
-                onClick={() => handleCategoryChange(cat.id)}
-              >
-                {cat.label} <span className="opacity-70">{count}</span>
-              </TabButton>
-            );
-          })}
+        <div className="flex gap-1 flex-wrap justify-end">
+          {categories.map((cat) => (
+            <TabButton
+              key={cat.id}
+              active={activeCategory === cat.id}
+              onClick={() => handleCategoryChange(cat.id)}
+            >
+              {cat.label}
+            </TabButton>
+          ))}
         </div>
       </div>
 
@@ -352,9 +342,6 @@ export default function PWAProject({ onProjectSelect, isPreview = false, externa
           </div>
         </div>
       )}
-
-      {/* 푸터 */}
-      <PWAFooter />
     </div>
   );
 }

@@ -85,7 +85,7 @@ export function TabButton({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`px-3 py-1.5 text-[14px] rounded-[4px] transition-colors border ${getStyles()} ${className}`}
+      className={`px-2.5 py-1 text-[12px] rounded-[4px] transition-colors border ${getStyles()} ${className}`}
     >
       {children}
     </button>

@@ -7,12 +7,10 @@ export default function MobileHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const menuItems = [
-    { label: '홈', href: '/' },
-    { label: '개발', href: '#development' },
-    { label: '행사기획', href: '#event' },
-    { label: '마케팅', href: '#marketing' },
-    { label: '영상/사진', href: '#media' },
-    { label: '문의하기', href: '#contact' },
+    { label: 'HOME', href: '/' },
+    { label: 'WORX', href: '#works' },
+    { label: 'NEWS', href: '#news' },
+    { label: 'CONNECT', href: '#connect' },
   ];
 
   return (

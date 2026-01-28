@@ -16,8 +16,8 @@ export default function ExtendedHome() {
   }, []);
 
   return (
-    <div className="fixed top-0 left-[530px] w-[750px] h-screen flex items-center">
-      <div className="pl-[150px] mt-[120px]">
+    <div className="h-screen flex justify-center" style={{ alignItems: 'center', paddingTop: '10vh' }}>
+      <div>
         {/* 로고 영역 */}
         <div className="mb-8">
           <Image

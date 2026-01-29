@@ -47,13 +47,13 @@ export default function ExtendedProjectDetail({ project, onBack }: ExtendedProje
           <div className="flex items-center gap-4">
             <button
               onClick={onBack}
-              className="w-10 h-10 bg-white border border-[#e5e7eb] text-[#666] rounded-full flex items-center justify-center hover:bg-[#f5f5f5] transition-all flex-shrink-0"
+              className="w-10 h-10 bg-[#f5f5f5] text-[#666] rounded-full flex items-center justify-center hover:bg-[#e5e5e5] transition-all flex-shrink-0"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
-            <h2 className="text-[21px] text-[#1f2937] flex-1 truncate" style={{ fontFamily: 'S-CoreDream', fontWeight: 900, letterSpacing: '-0.03em' }}>{project.title}</h2>
+            <h2 className="text-[19px] text-[#1f2937] flex-1 truncate" style={{ fontFamily: 'S-CoreDream', fontWeight: 900, letterSpacing: '-0.03em' }}>{project.title}</h2>
             <div className="flex gap-2 flex-shrink-0">
               {project.categories.map((cat) => (
                 <ProjectBadge key={cat} category={cat} size="md" />
@@ -112,6 +112,36 @@ export default function ExtendedProjectDetail({ project, onBack }: ExtendedProje
               <div className="w-full h-full bg-[#f3f4f6] flex items-center justify-center text-[#9ca3af]">
                 No video available
               </div>
+            )}
+            
+            {/* 좌우 화살표 - 갤러리 2개 이상일 때만 */}
+            {gallery.length > 1 && (
+              <>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentGalleryIndex(prev => prev === 0 ? gallery.length - 1 : prev - 1);
+                    setIsYoutubePlaying(false);
+                  }}
+                  className={`absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 rounded-full flex items-center justify-center shadow-md text-[#666] hover:bg-white transition-all ${isHoveringMain ? 'opacity-100' : 'opacity-0'}`}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentGalleryIndex(prev => prev === gallery.length - 1 ? 0 : prev + 1);
+                    setIsYoutubePlaying(false);
+                  }}
+                  className={`absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 rounded-full flex items-center justify-center shadow-md text-[#666] hover:bg-white transition-all ${isHoveringMain ? 'opacity-100' : 'opacity-0'}`}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </>
             )}
           </div>
 
@@ -245,19 +275,19 @@ export default function ExtendedProjectDetail({ project, onBack }: ExtendedProje
           <div className="flex items-center gap-4">
             <button
               onClick={onBack}
-              className="w-10 h-10 bg-white border border-[#e5e7eb] text-[#666] rounded-full flex items-center justify-center hover:bg-[#f5f5f5] transition-all flex-shrink-0"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          <h2 className="text-[21px] text-[#1f2937] flex-1 truncate" style={{ fontFamily: 'S-CoreDream', fontWeight: 900, letterSpacing: '-0.03em' }}>{project.title}</h2>
-          <div className="flex gap-2 flex-shrink-0">
-            {project.categories.map((cat) => (
-              <ProjectBadge key={cat} category={cat} size="md" />
-            ))}
+              className="w-10 h-10 bg-[#f5f5f5] text-[#666] rounded-full flex items-center justify-center hover:bg-[#e5e5e5] transition-all flex-shrink-0"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <h2 className="text-[19px] text-[#1f2937] flex-1 truncate" style={{ fontFamily: 'S-CoreDream', fontWeight: 900, letterSpacing: '-0.03em' }}>{project.title}</h2>
+            <div className="flex gap-2 flex-shrink-0">
+              {project.categories.map((cat) => (
+                <ProjectBadge key={cat} category={cat} size="md" />
+              ))}
+            </div>
           </div>
-        </div>
 
         {/* 메인 영상 */}
         <div 
@@ -310,6 +340,36 @@ export default function ExtendedProjectDetail({ project, onBack }: ExtendedProje
             <div className="w-full h-full bg-[#f3f4f6] flex items-center justify-center text-[#9ca3af]">
               영상 없음
             </div>
+          )}
+          
+          {/* 좌우 화살표 - 갤러리 2개 이상일 때만 */}
+          {gallery.length > 1 && (
+            <>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCurrentGalleryIndex(prev => prev === 0 ? gallery.length - 1 : prev - 1);
+                  setIsYoutubePlaying(false);
+                }}
+                className={`absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 rounded-full flex items-center justify-center shadow-md text-[#666] hover:bg-white transition-all ${isHoveringMain ? 'opacity-100' : 'opacity-0'}`}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCurrentGalleryIndex(prev => prev === gallery.length - 1 ? 0 : prev + 1);
+                  setIsYoutubePlaying(false);
+                }}
+                className={`absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 rounded-full flex items-center justify-center shadow-md text-[#666] hover:bg-white transition-all ${isHoveringMain ? 'opacity-100' : 'opacity-0'}`}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </>
           )}
         </div>
 
@@ -442,13 +502,13 @@ export default function ExtendedProjectDetail({ project, onBack }: ExtendedProje
         <div className="flex items-center gap-4">
           <button
             onClick={onBack}
-            className="w-10 h-10 bg-white border border-[#e5e7eb] text-[#666] rounded-full flex items-center justify-center hover:bg-[#f5f5f5] transition-all flex-shrink-0"
+            className="w-10 h-10 bg-[#f5f5f5] text-[#666] rounded-full flex items-center justify-center hover:bg-[#e5e5e5] transition-all flex-shrink-0"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
-          <h2 className="text-[21px] text-[#1f2937] flex-1 truncate" style={{ fontFamily: 'S-CoreDream', fontWeight: 900, letterSpacing: '-0.03em' }}>{project.title}</h2>
+          <h2 className="text-[19px] text-[#1f2937] flex-1 truncate" style={{ fontFamily: 'S-CoreDream', fontWeight: 900, letterSpacing: '-0.03em' }}>{project.title}</h2>
           <div className="flex gap-2 flex-shrink-0">
             {project.categories.map((cat) => (
               <ProjectBadge key={cat} category={cat} size="md" />
@@ -457,7 +517,9 @@ export default function ExtendedProjectDetail({ project, onBack }: ExtendedProje
         </div>
 
         {/* 메인 이미지 */}
-        <div className="w-full aspect-video rounded-[12px] overflow-hidden relative">
+        <div 
+          className="w-full aspect-video rounded-[12px] overflow-hidden relative group"
+        >
           {currentItem?.url ? (
             <img
               src={currentItem.url}
@@ -474,6 +536,34 @@ export default function ExtendedProjectDetail({ project, onBack }: ExtendedProje
             <div className="w-full h-full bg-[#f3f4f6] flex items-center justify-center text-[#9ca3af]">
               이미지 없음
             </div>
+          )}
+          
+          {/* 좌우 화살표 - 갤러리 2개 이상일 때만 */}
+          {gallery.length > 1 && (
+            <>
+              <button
+                onClick={() => {
+                  setCurrentGalleryIndex(prev => prev === 0 ? gallery.length - 1 : prev - 1);
+                  setIsYoutubePlaying(false);
+                }}
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 rounded-full flex items-center justify-center shadow-md text-[#666] hover:bg-white transition-all opacity-0 group-hover:opacity-100"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <button
+                onClick={() => {
+                  setCurrentGalleryIndex(prev => prev === gallery.length - 1 ? 0 : prev + 1);
+                  setIsYoutubePlaying(false);
+                }}
+                className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 rounded-full flex items-center justify-center shadow-md text-[#666] hover:bg-white transition-all opacity-0 group-hover:opacity-100"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </>
           )}
         </div>
 

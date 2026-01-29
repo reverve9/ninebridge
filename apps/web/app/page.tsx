@@ -13,11 +13,13 @@ export default function HomePage() {
   const [activeMenu, setActiveMenu] = useState('home');
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
   const [selectedNotice, setSelectedNotice] = useState<string | null>(null);
+  const [projectFilter, setProjectFilter] = useState<{ category?: string; tag?: string } | null>(null);
 
   const handleMenuSelect = (menu: string) => {
     setActiveMenu(menu);
     setSelectedProject(null);
     setSelectedNotice(null);
+    setProjectFilter(null);
   };
 
   const handleProjectSelect = (projectId: string) => {
@@ -28,18 +30,24 @@ export default function HomePage() {
     setSelectedNotice(noticeId);
   };
 
+  const handleGoToProjects = (filter: { category?: string; tag?: string }) => {
+    setActiveMenu('works');
+    setProjectFilter(filter);
+    setSelectedProject(null);
+  };
+
   const renderPWAContent = () => {
     switch (activeMenu) {
       case 'home':
-        return <PWAHome onMenuSelect={handleMenuSelect} />;
+        return <PWAHome onMenuSelect={handleMenuSelect} onGoToProjects={handleGoToProjects} />;
       case 'works':
-        return <PWAProject onProjectSelect={handleProjectSelect} />;
+        return <PWAProject onProjectSelect={handleProjectSelect} initialFilter={projectFilter} />;
       case 'notice':
         return <PWANotice onSelectNotice={handleNoticeSelect} selectedNoticeId={selectedNotice} />;
       case 'contact':
         return <PWAContact />;
       default:
-        return <PWAHome onMenuSelect={handleMenuSelect} />;
+        return <PWAHome onMenuSelect={handleMenuSelect} onGoToProjects={handleGoToProjects} />;
     }
   };
 

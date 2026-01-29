@@ -17,6 +17,7 @@ interface HomeSettings {
 interface PWAHomeProps {
   onMenuSelect?: (menu: string) => void;
   onBusinessAreaSelect?: (areaId: string) => void;
+  onGoToProjects?: (filter: { category?: string; tag?: string }) => void;
   isPreview?: boolean;
   settings?: HomeSettings;
 }
@@ -57,7 +58,7 @@ const businessAreas = [
   },
 ];
 
-export default function PWAHome({ onMenuSelect, onBusinessAreaSelect, isPreview = false, settings: externalSettings }: PWAHomeProps) {
+export default function PWAHome({ onMenuSelect, onBusinessAreaSelect, onGoToProjects, isPreview = false, settings: externalSettings }: PWAHomeProps) {
   const [dbSettings, setDbSettings] = useState<HomeSettings | null>(null);
   const [liveExpanded, setLiveExpanded] = useState(false);
   const [platformExpanded, setPlatformExpanded] = useState(false);
@@ -378,7 +379,27 @@ export default function PWAHome({ onMenuSelect, onBusinessAreaSelect, isPreview 
       </section>
 
       {/* 주력분야 상세 - 자동 슬라이더 */}
-      <section className="bg-white">
+      <section className="bg-white relative">
+        {/* 좌측 화살표 */}
+        <button
+          onClick={() => setActiveTab(activeTab === 'platform' ? 'live' : 'platform')}
+          className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-white/80 rounded-full shadow-md text-[#9ca3af] hover:text-[#5b7cae] transition-colors"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        
+        {/* 우측 화살표 */}
+        <button
+          onClick={() => setActiveTab(activeTab === 'platform' ? 'live' : 'platform')}
+          className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-white/80 rounded-full shadow-md text-[#9ca3af] hover:text-[#5b7cae] transition-colors"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+        
         {/* 슬라이더 콘텐츠 */}
         <div className="relative overflow-hidden">
           <div 
@@ -386,7 +407,7 @@ export default function PWAHome({ onMenuSelect, onBusinessAreaSelect, isPreview 
             style={{ transform: activeTab === 'platform' ? 'translateX(0)' : 'translateX(-100%)' }}
           >
             {/* Platform 콘텐츠 */}
-            <div className="min-w-full px-[30px] py-16">
+            <div className="min-w-full px-[50px] py-16">
               {/* 로고 통합 이미지 */}
               <div className="flex justify-center mb-8">
                 <img src="/logo_platform.png" alt="Platform 기술스택" className="w-full max-w-[440px]" />
@@ -411,21 +432,19 @@ export default function PWAHome({ onMenuSelect, onBusinessAreaSelect, isPreview 
                 <p>기획 단계에서 먼저 제안하고 설계합니다</p>
               </div>
               
-              {/* 인디케이터 */}
-              <div className="flex justify-center gap-2 mt-10">
+              {/* 바로가기 버튼 */}
+              <div className="flex justify-center mt-10">
                 <button
-                  onClick={() => setActiveTab('platform')}
-                  className={`w-2 h-2 rounded-full transition-all ${activeTab === 'platform' ? 'bg-[#5b7cae] w-6' : 'bg-gray-300'}`}
-                />
-                <button
-                  onClick={() => setActiveTab('live')}
-                  className={`w-2 h-2 rounded-full transition-all ${activeTab === 'live' ? 'bg-[#b87a5a] w-6' : 'bg-gray-300'}`}
-                />
+                  onClick={() => onGoToProjects?.({ category: 'platform' })}
+                  className="px-3 py-1.5 bg-[#5b7cae] text-white text-[13px] rounded-[6px] hover:bg-[#4a6b9d] transition-all"
+                >
+                  프로젝트 보기 →
+                </button>
               </div>
             </div>
             
             {/* Live Commerce 콘텐츠 */}
-            <div className="min-w-full px-[30px] py-16">
+            <div className="min-w-full px-[50px] py-16">
               {/* 로고들 */}
               <div className="flex justify-center items-center gap-12 mb-8">
                 <img src="/naver_live_logo.png" alt="네이버 쇼핑 LIVE" className="h-[30px]" />
@@ -448,19 +467,17 @@ export default function PWAHome({ onMenuSelect, onBusinessAreaSelect, isPreview 
                 <p>'네이버 쇼핑라이브' 뿐만 아니라</p>
                 <p>유튜브 라이브, 인스타그램 등의 SNS 마케팅 확장을 통해</p>
                 <p>단순한 방송 판매가 아닌 브랜드를 설계하고 </p>
-                  <p>고객의 신뢰를 기반으로 하는 마케팅 구조를 만들어 드립니다</p>
+                <p>고객의 신뢰를 기반으로 하는 마케팅 구조를 만들어 드립니다</p>
               </div>
               
-              {/* 인디케이터 */}
-              <div className="flex justify-center gap-2 mt-10">
+              {/* 바로가기 버튼 */}
+              <div className="flex justify-center mt-10">
                 <button
-                  onClick={() => setActiveTab('platform')}
-                  className={`w-2 h-2 rounded-full transition-all ${activeTab === 'platform' ? 'bg-[#5b7cae] w-6' : 'bg-gray-300'}`}
-                />
-                <button
-                  onClick={() => setActiveTab('live')}
-                  className={`w-2 h-2 rounded-full transition-all ${activeTab === 'live' ? 'bg-[#b87a5a] w-6' : 'bg-gray-300'}`}
-                />
+                  onClick={() => onGoToProjects?.({ tag: '라이브커머스' })}
+                  className="px-3 py-1.5 bg-[#5b7cae] text-white text-[13px] rounded-[6px] hover:bg-[#4a6b9d] transition-all"
+                >
+                  프로젝트 보기 →
+                </button>
               </div>
             </div>
           </div>

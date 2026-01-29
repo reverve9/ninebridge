@@ -42,7 +42,7 @@ export default function ExtendedContent({ activeMenu, selectedProject, selectedN
   };
 
   return (
-    <div className="min-h-full">
+    <div className="min-h-full overflow-visible">
       {renderContent()}
     </div>
   );

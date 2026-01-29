@@ -11,6 +11,7 @@ interface PWAProjectProps {
   onProjectSelect?: (projectId: string) => void;
   isPreview?: boolean;
   externalProjects?: Project[];
+  initialFilter?: { category?: string; tag?: string } | null;
 }
 
 const categories = [
@@ -21,15 +22,29 @@ const categories = [
   { id: 'etc', label: '기타' },
 ];
 
-export default function PWAProject({ onProjectSelect, isPreview = false, externalProjects }: PWAProjectProps) {
-  const [activeCategory, setActiveCategory] = useState('all');
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+export default function PWAProject({ onProjectSelect, isPreview = false, externalProjects, initialFilter }: PWAProjectProps) {
+  const [activeCategory, setActiveCategory] = useState(initialFilter?.category || 'all');
+  const [selectedTags, setSelectedTags] = useState<string[]>(initialFilter?.tag ? [initialFilter.tag] : []);
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalProject, setModalProject] = useState<Project | null>(null);
   const [isYoutubePlaying, setIsYoutubePlaying] = useState(false);
   const [isMobile, setIsMobile] = useState(true);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+
+  // initialFilter 변경 시 적용
+  useEffect(() => {
+    if (initialFilter) {
+      if (initialFilter.category) {
+        setActiveCategory(initialFilter.category);
+        setSelectedTags([]);
+      }
+      if (initialFilter.tag) {
+        setActiveCategory('all');
+        setSelectedTags([initialFilter.tag]);
+      }
+    }
+  }, [initialFilter]);
 
   useEffect(() => {
     if (isPreview && externalProjects) {
@@ -136,7 +151,9 @@ export default function PWAProject({ onProjectSelect, isPreview = false, externa
         </div>
       </div>
 
-      {/* 태그 필터 - 전체 탭이 아닐 때만 */}
+      {/* 태그 필터 */}
+      {/* 카테고리 선택 시: 해당 카테고리의 모든 태그 표시 */}
+      {/* 전체 탭 + 선택된 태그 있을 때: 선택된 태그만 표시 */}
       {activeCategory !== 'all' && availableTags.length > 0 && (
         <div className="px-4 pb-2">
           <div className="flex gap-1.5 flex-wrap">
@@ -144,6 +161,21 @@ export default function PWAProject({ onProjectSelect, isPreview = false, externa
               <TagButton
                 key={tag}
                 active={selectedTags.includes(tag)}
+                onClick={() => handleTagToggle(tag)}
+              >
+                #{tag}
+              </TagButton>
+            ))}
+          </div>
+        </div>
+      )}
+      {activeCategory === 'all' && selectedTags.length > 0 && (
+        <div className="px-4 pb-2">
+          <div className="flex gap-1.5 flex-wrap">
+            {selectedTags.map((tag) => (
+              <TagButton
+                key={tag}
+                active={true}
                 onClick={() => handleTagToggle(tag)}
               >
                 #{tag}

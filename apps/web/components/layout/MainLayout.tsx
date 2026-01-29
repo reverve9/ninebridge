@@ -17,33 +17,41 @@ const taglines: Record<string, string> = {
 
 export default function MainLayout({ pwaContent, extendedContent, activeMenu = 'home' }: MainLayoutProps) {
   return (
-    <div className="h-screen bg-[#f5f5f5] overflow-hidden">
-      {/* 모바일: PWA만 보임 (~767px) */}
-      {/* 데스크탑: PWA + 확장 콘텐츠 (768px~) */}
-      
-      {/* 모바일: 중앙정렬 / 768~1279: 좌측정렬 / 1280~: 중앙정렬 */}
-      <div className="flex justify-center md:justify-start xl:justify-center h-screen">
-        {/* 전체 컨테이너 */}
-        {/* 모바일 500px 미만: 100% / 500px~767px: 500px 고정 / 768px~: 1280px */}
-        <div className="flex w-full min-[500px]:w-[500px] md:w-[1280px]">
+    <div className="h-screen bg-[#dde7f2] overflow-hidden">
+      {/* 3컬럼 구조: [좌측 사이드] | [1280 고정] | [우측 사이드] */}
+      <div className="flex h-screen">
+        
+        {/* 좌측 사이드 영역 - 나중에 배너/콘텐츠 추가 가능 */}
+        <div className="hidden xl:flex flex-1 min-w-0">
+          {/* PWA 좌측 음영 레이어 */}
+          <div className="ml-auto w-[120px] h-full bg-gradient-to-r from-transparent via-black/[0.04] to-black/[0.12]" />
+        </div>
+        
+        {/* 가운데 고정 영역 (1280px) */}
+        <div className="flex w-full min-[500px]:w-[500px] md:w-[1280px] flex-shrink-0">
           
           {/* 좌측 PWA 영역 */}
-          {/* 모바일: 100% or 500px / 데스크탑: 500px */}
-          <div id="pwa-wrapper" className="w-full md:w-[500px] flex-shrink-0 h-screen overflow-y-auto">
-            <div className="bg-white min-h-screen shadow-[0_0_40px_rgba(0,0,0,0.08)] relative overflow-x-hidden">
+          <div id="pwa-wrapper" className="w-full md:w-[500px] flex-shrink-0 h-screen overflow-y-auto shadow-[2px_0_4px_rgba(0,0,0,0.04),4px_0_8px_rgba(0,0,0,0.04),8px_0_16px_rgba(0,0,0,0.04),16px_0_32px_rgba(0,0,0,0.03)]">
+            <div className="bg-white min-h-screen relative overflow-x-hidden">
               {pwaContent}
             </div>
           </div>
           
           {/* 우측 확장 콘텐츠 영역 - 768px 이상에서만 보임, 780px 고정 */}
           <div className="hidden md:block w-[780px] flex-shrink-0 h-screen overflow-y-auto">
-            {/* 콘텐츠 - 좌측 30px, 우측 0 */}
-            <div className="pl-[30px] pr-0 pt-[25px] pb-[50px]">
+            {/* 콘텐츠 - 좌측 60px, 우측 0 */}
+            <div className="pl-[60px] pr-0 pt-[25px] pb-[50px]">
               {extendedContent}
             </div>
           </div>
           
         </div>
+        
+        {/* 우측 사이드 영역 - 나중에 배너/콘텐츠 추가 가능 */}
+        <div className="hidden xl:block flex-1 min-w-0">
+          {/* 현재 비워둠 */}
+        </div>
+        
       </div>
     </div>
   );

@@ -38,7 +38,7 @@ export default function ExtendedProjectDetail({ project, onBack }: ExtendedProje
   // 레이아웃 타입 결정: ver(세로영상), hor(가로영상), img(이미지)
   const layoutType = currentItem?.type || 'img';
 
-  // 세로영상 레이아웃 (가로영상과 동일한 구조, 영상만 블러배경 처리)
+  // 세로영상 레이아웃 (가로영상과 동일한 구조로 처리)
   if (layoutType === 'ver') {
     return (
       <div className="bg-white rounded-[12px] border border-[#e5e7eb] px-10 py-6">
@@ -61,34 +61,25 @@ export default function ExtendedProjectDetail({ project, onBack }: ExtendedProje
             </div>
           </div>
 
-          {/* 메인 영상 - 블러 배경 + 세로영상 */}
+          {/* 메인 영상 - 가로영상과 동일한 구조 */}
           <div 
-            className="w-full aspect-video rounded-[12px] overflow-hidden relative bg-black"
+            className="w-full aspect-video rounded-[12px] overflow-hidden relative"
             onMouseEnter={() => setIsHoveringMain(true)}
             onMouseLeave={() => setIsHoveringMain(false)}
           >
             {youtubeId ? (
               isYoutubePlaying ? (
                 <>
-                  {/* 블러 배경 - 썸네일 이미지 확대해서 꽉 채우고 블러 */}
-                  <img
-                    src={`https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`}
-                    alt=""
-                    className="absolute top-0 left-1/2 -translate-x-1/2 w-[320%] h-full object-cover blur-xl brightness-90"
+                  <iframe
+                    src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0`}
+                    title={currentItem?.title || project.title}
+                    className="w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
                   />
-                  {/* 메인 세로 영상 */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <iframe
-                      src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0`}
-                      title={currentItem?.title || project.title}
-                      className="h-full aspect-[9/16]"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    />
-                  </div>
                   <button
                     onClick={() => setIsYoutubePlaying(false)}
-                    className="absolute top-4 right-4 w-10 h-10 bg-black/60 backdrop-blur-sm text-white rounded-full flex items-center justify-center hover:bg-black/80 transition-all hover:scale-105 z-10"
+                    className="absolute top-4 right-4 w-10 h-10 bg-black/60 backdrop-blur-sm text-white rounded-full flex items-center justify-center hover:bg-black/80 transition-all hover:scale-105"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -100,23 +91,14 @@ export default function ExtendedProjectDetail({ project, onBack }: ExtendedProje
                   className="relative w-full h-full cursor-pointer group"
                   onClick={() => setIsYoutubePlaying(true)}
                 >
-                  {/* 블러 배경 썸네일 - 확대해서 꽉 채우고 블러 */}
                   <img
                     src={`https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`}
-                    alt=""
-                    className="absolute top-0 left-1/2 -translate-x-1/2 w-[320%] h-full object-cover blur-xl brightness-90"
+                    alt={currentItem?.title || project.title}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`;
+                    }}
                   />
-                  {/* 메인 세로 썸네일 */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <img
-                      src={`https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`}
-                      alt={currentItem?.title || project.title}
-                      className="h-full aspect-[9/16] object-cover rounded-lg"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`;
-                      }}
-                    />
-                  </div>
                   <div className={`absolute inset-0 bg-black/30 flex items-center justify-center transition-opacity ${isHoveringMain ? 'opacity-100' : 'opacity-0'}`}>
                     <div className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-lg">
                       <svg className="w-13 h-13 text-[#E62117] ml-0.3" fill="currentColor" viewBox="0 0 24 24">
@@ -128,7 +110,7 @@ export default function ExtendedProjectDetail({ project, onBack }: ExtendedProje
               )
             ) : (
               <div className="w-full h-full bg-[#f3f4f6] flex items-center justify-center text-[#9ca3af]">
-                영상 없음
+                No video available
               </div>
             )}
           </div>

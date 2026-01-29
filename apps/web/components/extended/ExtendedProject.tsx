@@ -29,11 +29,12 @@ const categoryLabels: Record<string, string> = {
 // Featured 슬라이더 컴포넌트
 interface FeaturedSliderProps {
   projects: Project[];
+  allProjects: Project[];
   onProjectClick: (project: Project) => void;
   getYoutubeId: (url: string) => string | undefined;
 }
 
-function FeaturedSlider({ projects, onProjectClick, getYoutubeId }: FeaturedSliderProps) {
+function FeaturedSlider({ projects, allProjects, onProjectClick, getYoutubeId }: FeaturedSliderProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
@@ -65,6 +66,15 @@ function FeaturedSlider({ projects, onProjectClick, getYoutubeId }: FeaturedSlid
     setCurrentIndex(idx);
   };
 
+  // 연관 프로젝트 가져오기
+  const getRelatedProjects = (project: Project) => {
+    if (!project.related_projects || project.related_projects.length === 0) return [];
+    return project.related_projects
+      .map(id => allProjects.find(p => p.id === id))
+      .filter(Boolean)
+      .slice(0, 5) as Project[];
+  };
+
   // 무한루프를 위해 첫번째 슬라이드를 끝에 복제
   const slidesWithClone = projects.length > 0 ? [...projects, projects[0]] : [];
 
@@ -84,105 +94,101 @@ function FeaturedSlider({ projects, onProjectClick, getYoutubeId }: FeaturedSlid
         >
           {slidesWithClone.map((project, idx) => {
             if (!project) return null;
-            // 메인 썸네일 가져오기
-            const mainItem = project.gallery?.find(item => item.is_main) || project.gallery?.[0];
-            const mainThumbnail = mainItem 
-              ? (mainItem.type === 'hor' || mainItem.type === 'ver')
-                ? `https://img.youtube.com/vi/${getYoutubeId(mainItem.url)}/maxresdefault.jpg`
-                : mainItem.url
-              : project.thumbnail;
-            const youtubeId = mainItem && (mainItem.type === 'hor' || mainItem.type === 'ver') 
-              ? getYoutubeId(mainItem.url) 
-              : null;
-
-            // 갤러리 썸네일들 (메인 제외, 최대 6개)
-            const galleryThumbnails = (project.gallery || [])
-              .filter(item => !item.is_main)
-              .slice(0, 6)
-              .map(item => {
-                if (item.type === 'hor' || item.type === 'ver') {
-                  const ytId = getYoutubeId(item.url);
-                  return ytId ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg` : null;
-                }
-                return item.url;
-              })
-              .filter(Boolean);
+            
+            // 대표 프로젝트용 썸네일 (3:2) 또는 일반 썸네일
+            const featuredThumbnail = project.featured_thumbnail || project.thumbnail;
+            
+            // 연관 프로젝트
+            const relatedProjects = getRelatedProjects(project);
 
             return (
               <div 
                 key={`${project.id}-${idx}`}
-                className="flex cursor-pointer flex-shrink-0 w-full"
-                onClick={() => onProjectClick(project)}
+                className="flex flex-shrink-0 w-full gap-4"
               >
-                {/* 좌측 2/3: 메인 썸네일 */}
-              <div className="w-2/3 relative">
-                <div className="aspect-video overflow-hidden rounded-[8px] bg-[#f3f4f6]">
-                  {mainThumbnail ? (
-                    <img
-                      src={mainThumbnail}
-                      alt={project.title}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        if (youtubeId) {
-                          (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`;
-                        }
-                      }}
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-[#9ca3af] text-[14px]">
-                      이미지
-                    </div>
-                  )}
-                  {/* 유튜브 재생 아이콘 */}
-                  {youtubeId && (
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                      <div className="w-14 h-14 bg-black/40 rounded-full flex items-center justify-center">
-                        <svg className="w-7 h-7 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M8 5v14l11-7z"/>
-                        </svg>
+                {/* 좌측 2/3: 메인 썸네일 + 정보 */}
+                <div 
+                  className="w-2/3 cursor-pointer"
+                  onClick={() => onProjectClick(project)}
+                >
+                  {/* 3:2 비율 썸네일 */}
+                  <div className="relative aspect-[3/2] overflow-hidden rounded-[8px] bg-[#f3f4f6]">
+                    {featuredThumbnail ? (
+                      <img
+                        src={featuredThumbnail}
+                        alt={project.title}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-[#9ca3af] text-[14px]">
+                        이미지
                       </div>
+                    )}
+                  </div>
+                  
+                  {/* 하단 정보 */}
+                  <div className="mt-3">
+                    {/* 타이틀 + 클라이언트/제작일 */}
+                    <div className="flex items-baseline gap-2">
+                      <h3 className="text-[15px] font-bold text-[#1f2937] line-clamp-1">{project.title}</h3>
+                      <span className="text-[14px] font-[100] text-[#000] flex-shrink-0">
+                        {project.client && <span>{project.client}</span>}
+                        {project.client && project.date_start && <span> · </span>}
+                        {project.date_start && <span>{project.date_start}</span>}
+                      </span>
                     </div>
-                  )}
-                  {/* 카테고리 배지 */}
-                  <div className="absolute top-3 left-3 flex gap-1">
-                    {project.categories.map((cat) => (
-                      <ProjectBadge key={cat} category={cat} size="sm" />
-                    ))}
                   </div>
                 </div>
-              </div>
 
-              {/* 우측 1/3: 정보 + 갤러리 썸네일 */}
-              <div className="w-1/3 pl-4 flex flex-col">
-                {/* 타이틀 */}
-                <h3 className="text-[18px] font-bold text-[#1f2937] mb-1 line-clamp-2">{project.title}</h3>
-                
-                {/* 클라이언트 | 날짜 */}
-                <p className="text-[13px] text-[#9ca3af] mb-3">
-                  {project.client && <span>{project.client}</span>}
-                  {project.client && project.date_start && <span> | </span>}
-                  {project.date_start && <span>{project.date_start}</span>}
-                </p>
-
-                {/* 갤러리 썸네일 그리드 */}
-                {galleryThumbnails.length > 0 && (
-                  <div className="grid grid-cols-3 gap-1.5 mt-auto">
-                    {galleryThumbnails.map((thumb, thumbIdx) => (
-                      <div key={thumbIdx} className="aspect-square rounded-[4px] overflow-hidden bg-[#f3f4f6]">
-                        <img
-                          src={thumb as string}
-                          alt=""
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                )}
+                {/* 우측 1/3: Related Projects */}
+                <div className="w-1/3 flex flex-col">
+                  {relatedProjects.length > 0 ? (
+                    <div className="space-y-2">
+                      {relatedProjects.map((related) => (
+                        <div
+                          key={related.id}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onProjectClick(related);
+                          }}
+                          className="flex gap-3 cursor-pointer hover:bg-[#f9fafb] rounded-[6px] p-1 -m-1 transition-colors"
+                        >
+                          {/* 썸네일 */}
+                          <div className="w-[50px] h-[50px] flex-shrink-0 rounded-[4px] overflow-hidden bg-[#f3f4f6]">
+                            {related.thumbnail ? (
+                              <img
+                                src={related.thumbnail}
+                                alt={related.title}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-[#9ca3af] text-[10px]">
+                                이미지
+                              </div>
+                            )}
+                          </div>
+                          {/* 정보 */}
+                          <div className="flex-1 min-w-0 flex flex-col justify-center">
+                            <h4 className="text-[13px] font-medium text-[#1f2937] line-clamp-1">{related.title}</h4>
+                            <p className="text-[11px] text-[#9ca3af] line-clamp-1">
+                              {related.client && <span>{related.client}</span>}
+                              {related.client && related.date_start && <span> · </span>}
+                              {related.date_start && <span>{related.date_start}</span>}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex-1 flex items-center justify-center text-[#9ca3af] text-[13px]">
+                      연관 프로젝트 없음
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
       </div>
 
       {/* Dot Indicator */}
@@ -342,7 +348,8 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
       {/* Featured - 슬라이드 카드 */}
       {featuredProjects.length > 0 && (
         <FeaturedSlider 
-          projects={featuredProjects} 
+          projects={featuredProjects}
+          allProjects={projects}
           onProjectClick={(project) => project.has_detail && setSelectedProject(project)}
           getYoutubeId={getYoutubeId}
         />

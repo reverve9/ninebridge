@@ -121,9 +121,9 @@ export default function PWAProject({ onProjectSelect, isPreview = false, externa
     <div className="relative h-full">
       <PageTitle title="WORX" subtitle="포트폴리오" />
       
-      {/* 카테고리 탭 - 우측 정렬 */}
+      {/* 카테고리 탭 - 좌측 정렬 */}
       <div className="px-4 py-3">
-        <div className="flex gap-1 flex-wrap justify-end">
+        <div className="flex gap-1 flex-wrap justify-start">
           {categories.map((cat) => (
             <TabButton
               key={cat.id}

@@ -23,7 +23,8 @@ interface ExtendedNoticeProps {
 export default function ExtendedNotice({ selectedNoticeId }: ExtendedNoticeProps) {
   const [notices, setNotices] = useState<Notice[]>([]);
   const [loading, setLoading] = useState(true);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+  const [initialExpanded, setInitialExpanded] = useState(false);
   const [currentPage, setCurrentPage] = useState<Record<string, number>>({
     notice: 1,
     press: 1,
@@ -34,11 +35,24 @@ export default function ExtendedNotice({ selectedNoticeId }: ExtendedNoticeProps
     loadNotices();
   }, []);
 
+  // 최초 로드 시 is_expanded가 true인 게시글들 열기, 없으면 첫 번째 열기
+  useEffect(() => {
+    if (!initialExpanded && notices.length > 0 && !selectedNoticeId) {
+      const expandedNotices = notices.filter(n => n.is_expanded);
+      if (expandedNotices.length > 0) {
+        setExpandedIds(new Set(expandedNotices.map(n => n.id)));
+      } else {
+        setExpandedIds(new Set([notices[0].id]));
+      }
+      setInitialExpanded(true);
+    }
+  }, [notices, initialExpanded, selectedNoticeId]);
+
   // selectedNoticeId 변경시 해당 게시글 열기 + 스크롤
   useEffect(() => {
     if (!selectedNoticeId) return;
     
-    setExpandedId(selectedNoticeId);
+    setExpandedIds(prev => new Set([...prev, selectedNoticeId]));
     
     // 약간의 딜레이 후 스크롤 (DOM 업데이트 대기)
     setTimeout(() => {
@@ -92,15 +106,19 @@ export default function ExtendedNotice({ selectedNoticeId }: ExtendedNoticeProps
       return;
     }
 
-    if (expandedId === notice.id) {
-      setExpandedId(null);
+    if (expandedIds.has(notice.id)) {
+      setExpandedIds(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(notice.id);
+        return newSet;
+      });
     } else {
       // 조회수 증가
       await incrementViewCount(notice.id);
       setNotices(prev => prev.map(n => 
         n.id === notice.id ? { ...n, view_count: (n.view_count || 0) + 1 } : n
       ));
-      setExpandedId(notice.id);
+      setExpandedIds(prev => new Set([...prev, notice.id]));
     }
   };
 
@@ -178,7 +196,7 @@ export default function ExtendedNotice({ selectedNoticeId }: ExtendedNoticeProps
               {/* 게시글 리스트 */}
               <div>
                 {paginatedItems.map((notice, index) => {
-                  const isExpanded = expandedId === notice.id;
+                  const isExpanded = expandedIds.has(notice.id);
                   const isLast = index === paginatedItems.length - 1;
 
                   return (

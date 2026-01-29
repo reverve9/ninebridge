@@ -34,6 +34,7 @@ export default function NoticeForm({ notice, isEdit = false }: NoticeFormProps) 
     link: notice?.link || '',
     is_published: notice?.is_published || false,
     is_pinned: notice?.is_pinned || false,
+    is_expanded: notice?.is_expanded || false,
     order: notice?.order || 0,
   });
 
@@ -48,6 +49,7 @@ export default function NoticeForm({ notice, isEdit = false }: NoticeFormProps) 
     link: form.link,
     is_published: true,
     is_pinned: form.is_pinned,
+    is_expanded: form.is_expanded,
     view_count: notice?.view_count || 0,
     order: form.order,
     created_at: notice?.created_at || new Date().toISOString(),
@@ -166,6 +168,7 @@ export default function NoticeForm({ notice, isEdit = false }: NoticeFormProps) 
         link: form.link || null,
         is_published: form.is_published,
         is_pinned: form.is_pinned,
+        is_expanded: form.is_expanded,
         order: form.order,
       };
 
@@ -345,6 +348,16 @@ export default function NoticeForm({ notice, isEdit = false }: NoticeFormProps) 
                   className="w-5 h-5 rounded border-[#e5e7eb] text-[#f59e0b] focus:ring-[#f59e0b]"
                 />
                 <label className="text-[14px] text-[#374151]">📌 상단 고정</label>
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  name="is_expanded"
+                  checked={form.is_expanded}
+                  onChange={handleCheckbox}
+                  className="w-5 h-5 rounded border-[#e5e7eb] text-[#10b981] focus:ring-[#10b981]"
+                />
+                <label className="text-[14px] text-[#374151]">📂 기본 펼침</label>
               </div>
             </div>
           </div>

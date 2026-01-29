@@ -24,7 +24,7 @@ export default function PWAFooter({ onCertClick }: PWAFooterProps) {
   const hasSns = settings.sns_kakao || settings.sns_instagram || settings.sns_youtube || settings.sns_facebook;
 
   return (
-    <footer className="bg-white mt-[60px] px-4 pb-4">
+    <footer className="bg-white mt-[60px] pb-4">
       {/* 회색 박스 */}
       <div className="bg-[#f5f5f5]">
         {/* 메인 영역 */}

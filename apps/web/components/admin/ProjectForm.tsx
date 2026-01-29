@@ -11,6 +11,7 @@ import PWAPreview from '@/components/admin/PWAPreview';
 interface ProjectFormProps {
   project?: Project;
   isEdit?: boolean;
+  allProjects?: Project[];
 }
 
 const categoryOptions = [
@@ -20,17 +21,20 @@ const categoryOptions = [
   { id: 'etc', label: '기타' },
 ];
 
-export default function ProjectForm({ project, isEdit = false }: ProjectFormProps) {
+export default function ProjectForm({ project, isEdit = false, allProjects = [] }: ProjectFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [tagInput, setTagInput] = useState('');
   const [showGuide, setShowGuide] = useState(false);
+  const [relatedSearch, setRelatedSearch] = useState('');
+  const [showRelatedDropdown, setShowRelatedDropdown] = useState(false);
   const [form, setForm] = useState({
     title: project?.title || '',
     description: project?.description || '',
     content: project?.content || '',
     details: project?.details || '',
     thumbnail: project?.thumbnail || '',
+    featured_thumbnail: project?.featured_thumbnail || '',
     categories: project?.categories || [],
     tags: project?.tags || [],
     client: project?.client || '',
@@ -38,6 +42,7 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
     date_end: project?.date_end || '',
     link: project?.link || '',
     gallery: project?.gallery || [],
+    related_projects: project?.related_projects || [],
     is_published: project?.is_published || false,
     is_featured: project?.is_featured || false,
     has_detail: project?.has_detail ?? true,
@@ -60,6 +65,7 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
     content: form.content,
     details: form.details,
     thumbnail: form.thumbnail,
+    featured_thumbnail: form.featured_thumbnail,
     categories: form.categories,
     tags: form.tags,
     client: form.client,
@@ -67,6 +73,7 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
     date_end: form.date_end,
     link: form.link,
     gallery: form.gallery,
+    related_projects: form.related_projects,
     is_published: true,
     is_featured: form.is_featured,
     has_detail: form.has_detail,
@@ -232,6 +239,7 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
         content: form.content || null,
         details: form.details || null,
         thumbnail: form.thumbnail || null,
+        featured_thumbnail: form.featured_thumbnail || null,
         categories: form.categories,
         tags: form.tags,
         client: form.client || null,
@@ -239,6 +247,7 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
         date_end: form.date_end || null,
         link: form.link || null,
         gallery: form.gallery,
+        related_projects: form.related_projects,
         is_published: form.is_published,
         is_featured: form.is_featured,
         has_detail: form.has_detail,
@@ -472,9 +481,9 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
             </div>
           </div>
 
-          {/* 썸네일 (리스트용) */}
+          {/* 썸네일 (리스트용 1:1) */}
           <div className="bg-white rounded-[12px] p-6">
-            <h2 className="text-[16px] font-semibold text-[#1f2937] mb-4">썸네일 (리스트용)</h2>
+            <h2 className="text-[16px] font-semibold text-[#1f2937] mb-4">썸네일 (리스트용 1:1)</h2>
             {form.thumbnail ? (
               <div className="relative w-[200px] h-[200px]">
                 <img src={form.thumbnail} alt="썸네일" className="w-full h-full object-cover rounded-[8px]" />
@@ -491,6 +500,45 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
                 <Upload size={24} className="text-[#9ca3af] mb-2" />
                 <span className="text-[13px] text-[#9ca3af]">이미지 업로드</span>
                 <input type="file" accept="image/*" onChange={handleThumbnailUpload} className="hidden" />
+              </label>
+            )}
+          </div>
+
+          {/* 대표 프로젝트용 썸네일 (3:2) */}
+          <div className="bg-white rounded-[12px] p-6">
+            <h2 className="text-[16px] font-semibold text-[#1f2937] mb-2">대표 프로젝트용 썸네일 (3:2)</h2>
+            <p className="text-[13px] text-[#9ca3af] mb-4">⭐ 대표 프로젝트 체크 시 이 썸네일이 사용됩니다.</p>
+            {form.featured_thumbnail ? (
+              <div className="relative w-[300px] h-[200px]">
+                <img src={form.featured_thumbnail} alt="대표 썸네일" className="w-full h-full object-cover rounded-[8px]" />
+                <button
+                  type="button"
+                  onClick={() => setForm(prev => ({ ...prev, featured_thumbnail: '' }))}
+                  className="absolute top-2 right-2 p-1 bg-black/50 rounded-full text-white hover:bg-black/70"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            ) : (
+              <label className="flex flex-col items-center justify-center w-[300px] h-[200px] border-2 border-dashed border-[#e5e7eb] rounded-[8px] cursor-pointer hover:border-[#3071a5] transition-colors">
+                <Upload size={24} className="text-[#9ca3af] mb-2" />
+                <span className="text-[13px] text-[#9ca3af]">3:2 비율 이미지 업로드</span>
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    try {
+                      const url = await uploadImage(file, 'featured');
+                      setForm(prev => ({ ...prev, featured_thumbnail: url }));
+                    } catch (error) {
+                      console.error('썸네일 업로드 실패:', error);
+                      alert('썸네일 업로드에 실패했습니다.');
+                    }
+                  }} 
+                  className="hidden" 
+                />
               </label>
             )}
           </div>
@@ -589,6 +637,110 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
               </label>
             </div>
           </div>
+
+          {/* Related Projects (대표 프로젝트용) */}
+          {form.is_featured && (
+            <div className="bg-white rounded-[12px] p-6">
+              <h2 className="text-[16px] font-semibold text-[#1f2937] mb-2">연관 프로젝트</h2>
+              <p className="text-[13px] text-[#9ca3af] mb-4">대표 프로젝트 우측에 표시될 연관 프로젝트를 선택하세요 (최대 5개)</p>
+              
+              {/* 선택된 프로젝트 */}
+              {form.related_projects.length > 0 && (
+                <div className="space-y-2 mb-4">
+                  {form.related_projects.map((relatedId) => {
+                    const relatedProject = allProjects.find(p => p.id === relatedId);
+                    return (
+                      <div key={relatedId} className="flex items-center justify-between px-3 py-2 bg-[#f3f4f6] rounded-[8px]">
+                        <div className="flex items-center gap-3">
+                          {relatedProject?.thumbnail && (
+                            <img src={relatedProject.thumbnail} alt="" className="w-8 h-8 rounded object-cover" />
+                          )}
+                          <span className="text-[13px] text-[#374151]">
+                            {relatedProject?.title || `ID: ${relatedId.slice(0, 8)}...`}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setForm(prev => ({
+                            ...prev,
+                            related_projects: prev.related_projects.filter(id => id !== relatedId)
+                          }))}
+                          className="text-[#9ca3af] hover:text-[#ef4444]"
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              
+              {/* 프로젝트 검색 */}
+              {form.related_projects.length < 5 && (
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={relatedSearch}
+                    onChange={(e) => {
+                      setRelatedSearch(e.target.value);
+                      setShowRelatedDropdown(e.target.value.length > 0);
+                    }}
+                    onFocus={() => relatedSearch.length > 0 && setShowRelatedDropdown(true)}
+                    className="w-full px-4 py-2 border border-[#e5e7eb] rounded-[8px] text-[14px] focus:outline-none focus:border-[#3071a5]"
+                    placeholder="프로젝트 제목 또는 클라이언트로 검색..."
+                  />
+                  
+                  {/* 드롭다운 */}
+                  {showRelatedDropdown && (
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-[#e5e7eb] rounded-[8px] shadow-lg max-h-[200px] overflow-y-auto z-10">
+                      {allProjects
+                        .filter(p => 
+                          p.id !== project?.id && 
+                          !form.related_projects.includes(p.id) &&
+                          (p.title.toLowerCase().includes(relatedSearch.toLowerCase()) ||
+                           p.client?.toLowerCase().includes(relatedSearch.toLowerCase()))
+                        )
+                        .slice(0, 10)
+                        .map(p => (
+                          <button
+                            key={p.id}
+                            type="button"
+                            onClick={() => {
+                              setForm(prev => ({
+                                ...prev,
+                                related_projects: [...prev.related_projects, p.id]
+                              }));
+                              setRelatedSearch('');
+                              setShowRelatedDropdown(false);
+                            }}
+                            className="w-full flex items-center gap-3 px-3 py-2 hover:bg-[#f3f4f6] text-left transition-colors"
+                          >
+                            {p.thumbnail ? (
+                              <img src={p.thumbnail} alt="" className="w-8 h-8 rounded object-cover" />
+                            ) : (
+                              <div className="w-8 h-8 rounded bg-[#e5e7eb]" />
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <p className="text-[13px] text-[#374151] truncate">{p.title}</p>
+                              {p.client && <p className="text-[11px] text-[#9ca3af] truncate">{p.client}</p>}
+                            </div>
+                          </button>
+                        ))
+                      }
+                      {allProjects.filter(p => 
+                        p.id !== project?.id && 
+                        !form.related_projects.includes(p.id) &&
+                        (p.title.toLowerCase().includes(relatedSearch.toLowerCase()) ||
+                         p.client?.toLowerCase().includes(relatedSearch.toLowerCase()))
+                      ).length === 0 && (
+                        <div className="px-3 py-2 text-[13px] text-[#9ca3af]">검색 결과 없음</div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* 기타 설정 */}
           <div className="bg-white rounded-[12px] p-6">

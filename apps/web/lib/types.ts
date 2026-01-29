@@ -13,6 +13,7 @@ export interface Project {
   content: string | null;
   details: string | null;
   thumbnail: string | null;
+  featured_thumbnail: string | null;
   categories: string[];
   tags: string[];
   client: string | null;
@@ -20,6 +21,7 @@ export interface Project {
   date_end: string | null;
   link: string | null;
   gallery: GalleryItem[];
+  related_projects: string[];
   is_published: boolean;
   is_featured: boolean;
   has_detail: boolean;
@@ -48,6 +50,7 @@ export interface Notice {
   link: string | null;
   is_published: boolean;
   is_pinned: boolean;
+  is_expanded: boolean;
   view_count: number;
   order: number;
   created_at: string;

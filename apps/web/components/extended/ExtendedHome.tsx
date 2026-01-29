@@ -16,7 +16,7 @@ export default function ExtendedHome() {
   }, []);
 
   return (
-    <div className="h-screen flex justify-center" style={{ alignItems: 'center', paddingTop: '10vh' }}>
+    <div className="h-full flex justify-center" style={{ alignItems: 'start', paddingTop: 'calc(55vh - 200px)' }}>
       <div>
         {/* 로고 영역 */}
         <div className="mb-8">

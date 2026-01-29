@@ -42,7 +42,10 @@ export default function ExtendedNotice({ selectedNoticeId }: ExtendedNoticeProps
       if (expandedNotices.length > 0) {
         setExpandedIds(new Set(expandedNotices.map(n => n.id)));
       } else {
-        setExpandedIds(new Set([notices[0].id]));
+        const firstNotice = notices[0];
+        if (firstNotice) {
+          setExpandedIds(new Set([firstNotice.id]));
+        }
       }
       setInitialExpanded(true);
     }

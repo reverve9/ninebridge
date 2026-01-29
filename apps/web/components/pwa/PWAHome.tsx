@@ -235,7 +235,7 @@ export default function PWAHome({ onMenuSelect, onBusinessAreaSelect, onGoToProj
             className={`absolute inset-0 bg-[#5b7cae] p-6 transition-all duration-300 ${
               liveExpanded ? 'opacity-0 pointer-events-none' : 'opacity-100'
             }`}
-            style={{ backgroundImage: 'url(/platform.png)', backgroundSize: 'cover', backgroundPosition: 'center' }}
+            style={{ backgroundImage: 'url(/platform.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}
           >
             {/* + 버튼 */}
             <button 
@@ -250,16 +250,6 @@ export default function PWAHome({ onMenuSelect, onBusinessAreaSelect, onGoToProj
                 <div className="absolute w-[4px] h-[24px] bg-white rounded-sm" />
               </div>
             </button>
-            
-            {/* 기본 콘텐츠 */}
-            <div className="pt-12">
-              <h3 className="font-raleway text-[24px] font-[300] text-white tracking-[1px] mb-4">
-                platform
-              </h3>
-              <p className="text-white/80 text-[14px]">
-                내용 추가 예정
-              </p>
-            </div>
           </div>
           
           {/* Live Commerce 확장 오버레이 - 좌측에 표시 */}
@@ -267,7 +257,7 @@ export default function PWAHome({ onMenuSelect, onBusinessAreaSelect, onGoToProj
             className={`absolute inset-0 p-6 pt-6 transition-all duration-300 ${
               liveExpanded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full pointer-events-none'
             }`}
-            style={{ backgroundImage: 'url(/livecommerce.png)', backgroundSize: 'cover', backgroundPosition: 'center' }}
+            style={{ backgroundImage: 'url(/platform.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}
           >
             <div className="absolute inset-0 bg-gray-100/80" />
             <div className="relative z-10 text-[14px]">
@@ -308,7 +298,7 @@ export default function PWAHome({ onMenuSelect, onBusinessAreaSelect, onGoToProj
             className={`absolute inset-0 bg-[#d4b89c] p-6 transition-all duration-300 ${
               platformExpanded ? 'opacity-0 pointer-events-none' : 'opacity-100'
             }`}
-            style={{ backgroundImage: 'url(/livecommerce.png)', backgroundSize: 'cover', backgroundPosition: 'center' }}
+            style={{ backgroundImage: 'url(/livecommerce.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}
           >
             {/* + 버튼 */}
             <button 
@@ -323,19 +313,6 @@ export default function PWAHome({ onMenuSelect, onBusinessAreaSelect, onGoToProj
                 <div className="absolute w-[4px] h-[24px] bg-white rounded-sm" />
               </div>
             </button>
-            
-            {/* 기본 콘텐츠 */}
-            <div className="pt-12">
-              <h3 className="font-raleway text-[24px] font-[300] text-white tracking-[1px] mb-4">
-                live commerce
-              </h3>
-              <p className="text-white font-bold text-[18px] mb-1">
-                <span className="bg-[#3fae2a] px-1">N 쇼핑</span> LIVE 서비스 구성
-              </p>
-              <p className="text-white/80 text-[14px]">
-                기획부터 송출까지 통합 서비스 제공
-              </p>
-            </div>
           </div>
           
           {/* Platform 확장 오버레이 - 우측에 표시 */}
@@ -343,7 +320,7 @@ export default function PWAHome({ onMenuSelect, onBusinessAreaSelect, onGoToProj
             className={`absolute inset-0 p-6 pt-6 transition-all duration-300 ${
               platformExpanded ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full pointer-events-none'
             }`}
-            style={{ backgroundImage: 'url(/platform.png)', backgroundSize: 'cover', backgroundPosition: 'center' }}
+            style={{ backgroundImage: 'url(/livecommerce.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}
           >
             <div className="absolute inset-0 bg-gray-100/80" />
             <div className="relative z-10 text-[14px]">
@@ -410,7 +387,7 @@ export default function PWAHome({ onMenuSelect, onBusinessAreaSelect, onGoToProj
             <div className="min-w-full px-[50px] py-16">
               {/* 로고 통합 이미지 */}
               <div className="flex justify-center mb-8">
-                <img src="/logo_platform.png" alt="Platform 기술스택" className="w-full max-w-[440px]" />
+                <img src="/logo_platform.jpg" alt="Platform 기술스택" className="w-full max-w-[440px]" />
               </div>
               
               {/* 카테고리 */}

@@ -28,7 +28,7 @@ export default function MainLayout({ pwaContent, extendedContent, activeMenu = '
         </div>
         
         {/* 가운데 고정 영역 (1280px) */}
-        <div className="flex w-full min-[500px]:w-[500px] md:w-[1280px] flex-shrink-0">
+        <div className="flex w-full min-[500px]:w-[500px] md:w-[1280px] flex-shrink-0 mx-auto md:mx-0">
           
           {/* 좌측 PWA 영역 */}
           <div id="pwa-wrapper" className="w-full md:w-[500px] flex-shrink-0 h-screen overflow-y-auto shadow-[2px_0_4px_rgba(0,0,0,0.04),4px_0_8px_rgba(0,0,0,0.04),8px_0_16px_rgba(0,0,0,0.04),16px_0_32px_rgba(0,0,0,0.03)]">

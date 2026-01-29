@@ -138,7 +138,7 @@ export default function ExtendedNotice({ selectedNoticeId }: ExtendedNoticeProps
 
   const handlePageChange = (category: 'notice' | 'press' | 'recruit', page: number) => {
     setCurrentPage(prev => ({ ...prev, [category]: page }));
-    setExpandedId(null);
+    setExpandedIds(new Set());
   };
 
   if (loading) {

@@ -266,8 +266,10 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
     return mainItem.url || project.thumbnail;
   };
 
-  // 대표 프로젝트
-  const featuredProjects = projects.filter(p => p.is_featured);
+  // 대표 프로젝트 (랜덤 순서)
+  const featuredProjects = projects
+    .filter(p => p.is_featured)
+    .sort(() => Math.random() - 0.5);
 
   // 년도별 그룹핑 (최신순)
   const projectsByYear = projects.reduce((acc, project) => {

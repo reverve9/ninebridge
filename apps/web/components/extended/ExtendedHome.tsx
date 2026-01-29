@@ -25,7 +25,7 @@ export default function ExtendedHome() {
             alt="NINE BRIDGE"
             width={400}
             height={240}
-            className="w-[400px] h-auto"
+            style={{ width: '400px', height: 'auto' }}
             priority
           />
           <p className="text-[16px] font-light text-[#000] mt-2 tracking-wide">주식회사 나인브릿지</p>

@@ -25,9 +25,11 @@ export default function ProjectForm({ project, isEdit = false, allProjects = [] 
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [tagInput, setTagInput] = useState('');
+  const [isComposing, setIsComposing] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
   const [relatedSearch, setRelatedSearch] = useState('');
   const [showRelatedDropdown, setShowRelatedDropdown] = useState(false);
+  
   const [form, setForm] = useState({
     title: project?.title || '',
     description: project?.description || '',
@@ -403,7 +405,14 @@ export default function ProjectForm({ project, isEdit = false, allProjects = [] 
                 type="text"
                 value={tagInput}
                 onChange={(e) => setTagInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !isComposing) {
+                    e.preventDefault();
+                    handleAddTag();
+                  }
+                }}
+                onCompositionStart={() => setIsComposing(true)}
+                onCompositionEnd={() => setIsComposing(false)}
                 className="flex-1 px-4 py-2 border border-[#e5e7eb] rounded-[8px] text-[14px] focus:outline-none focus:border-[#3071a5]"
                 placeholder="태그 입력 후 Enter"
               />

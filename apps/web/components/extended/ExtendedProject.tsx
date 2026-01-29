@@ -36,7 +36,7 @@ interface FeaturedSliderProps {
 
 function FeaturedSlider({ projects, allProjects, onProjectClick, getYoutubeId }: FeaturedSliderProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isJumping, setIsJumping] = useState(false);
 
   // 10초 자동 슬라이드 (무한루프, 한 방향)
   useEffect(() => {
@@ -50,15 +50,20 @@ function FeaturedSlider({ projects, allProjects, onProjectClick, getYoutubeId }:
   }, [projects.length, currentIndex]);
 
   const handleNext = () => {
-    setIsTransitioning(true);
     setCurrentIndex((prev) => prev + 1);
   };
 
   const handleTransitionEnd = () => {
-    setIsTransitioning(false);
     // 마지막 복제 슬라이드에서 첫번째로 점프 (애니메이션 없이)
     if (currentIndex >= projects.length) {
+      setIsJumping(true);
       setCurrentIndex(0);
+      // 다음 프레임에서 점프 상태 해제
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setIsJumping(false);
+        });
+      });
     }
   };
 
@@ -86,7 +91,7 @@ function FeaturedSlider({ projects, allProjects, onProjectClick, getYoutubeId }:
       <div className="overflow-hidden">
         {/* 슬라이드 컨테이너 */}
         <div 
-          className={`flex ${isTransitioning || currentIndex < projects.length ? 'transition-transform duration-500 ease-in-out' : ''}`}
+          className={`flex ${!isJumping ? 'transition-transform duration-500 ease-in-out' : ''}`}
           style={{ 
             transform: `translateX(-${currentIndex * 100}%)`
           }}

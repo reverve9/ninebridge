@@ -387,7 +387,7 @@ export default function PWAHome({ onMenuSelect, onBusinessAreaSelect, onGoToProj
             <div className="min-w-full px-[50px] py-16">
               {/* 로고 통합 이미지 */}
               <div className="flex justify-center mb-8">
-                <img src="/logo_platform.jpg" alt="Platform 기술스택" className="w-full max-w-[440px]" />
+                <img src="/logo_platform.png" alt="Platform 기술스택" className="w-full max-w-[440px]" />
               </div>
               
               {/* 카테고리 */}

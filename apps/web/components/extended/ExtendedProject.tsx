@@ -86,7 +86,7 @@ function FeaturedSlider({ projects, allProjects, onProjectClick, getYoutubeId }:
   if (projects.length === 0) return null;
 
   return (
-    <div className="bg-white rounded-[12px] border border-[#e5e7eb] p-4">
+    <div className="bg-white rounded-[12px] py-[30px] px-4">
       {/* 슬라이드 래퍼 */}
       <div className="overflow-hidden">
         {/* 슬라이드 컨테이너 */}
@@ -136,7 +136,7 @@ function FeaturedSlider({ projects, allProjects, onProjectClick, getYoutubeId }:
                     {/* 타이틀 + 클라이언트/제작일 */}
                     <div className="flex items-baseline gap-2">
                       <h3 className="text-[15px] font-bold text-[#1f2937] line-clamp-1">{project.title}</h3>
-                      <span className="text-[14px] font-[100] text-[#000] flex-shrink-0">
+                      <span className="text-[13px] font-[100] text-[#000000] flex-shrink-0">
                         {project.client && <span>{project.client}</span>}
                         {project.client && project.date_start && <span> · </span>}
                         {project.date_start && <span>{project.date_start}</span>}
@@ -223,6 +223,7 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [visibleCount, setVisibleCount] = useState(10);
 
   useEffect(() => {
     loadProjects();
@@ -271,8 +272,19 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
     .filter(p => p.is_featured)
     .sort(() => Math.random() - 0.5);
 
-  // 년도별 그룹핑 (최신순)
-  const projectsByYear = projects.reduce((acc, project) => {
+  // 전체 프로젝트를 연도순 정렬 (플랫 리스트)
+  const allProjectsSorted = [...projects].sort((a, b) => {
+    const yearA = a.date_start?.split('/')[0] || '0';
+    const yearB = b.date_start?.split('/')[0] || '0';
+    return Number(yearB) - Number(yearA);
+  });
+
+  // 보여줄 프로젝트
+  const visibleProjects = allProjectsSorted.slice(0, visibleCount);
+  const hasMore = allProjectsSorted.length > visibleCount;
+
+  // 보여줄 프로젝트를 연도별로 그룹핑
+  const projectsByYear = visibleProjects.reduce((acc, project) => {
     const year = project.date_start?.split('/')[0] || '기타';
     if (!acc[year]) acc[year] = [];
     acc[year].push(project);
@@ -363,26 +375,27 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
       )}
 
       {/* All Projects - 연도별 그룹 */}
-      {sortedYears.map((year) => (
-        <div key={year}>
-          {/* 연도 헤더 */}
-          <div className="flex items-center justify-start mb-0 pl-[20px]">
-            <span className="text-[15px] font-[500] text-[#333333]">{year}</span>
-          </div>
-          
-          {/* 2열 그리드 */}
-          <div className="grid grid-cols-2 gap-3">
-            {(projectsByYear[year] || []).map((project) => (
-              <div
-                key={project.id}
-                onClick={() => project.has_detail && setSelectedProject(project)}
-                className={`rounded-[12px] border border-[#e5e7eb] overflow-hidden transition-all
-                  ${project.has_detail ? 'cursor-pointer bg-white hover:bg-[#f0f0f0]' : 'cursor-default bg-white'}`}
-              >
+        <div className="bg-white rounded-[12px] py-[30px] px-4">
+          {sortedYears.map((year, idx) => (
+            <div key={year} className={idx > 0 ? 'pt-[30px]' : ''}>
+              {/* 연도 헤더 */}
+              <div className="flex items-center justify-end mb-[10px] pr-[16px]">
+                <span className="text-[13px] font-[300] text-white bg-[#333] rounded-[2px] px-2 py-0.5">{year}</span>
+              </div>
+              
+              {/* 2열 그리드 */}
+              <div className="grid grid-cols-2 gap-[10px]">
+                {(projectsByYear[year] || []).map((project) => (
+                  <div
+                    key={project.id}
+                    onClick={() => project.has_detail && setSelectedProject(project)}
+                    className={`rounded-[8px] overflow-hidden transition-all
+                      ${project.has_detail ? 'cursor-pointer hover:bg-[#f5f5f5]' : 'cursor-default'}`}
+                >
                 {/* 썸네일 + 정보 */}
-                <div className="flex gap-3 p-3">
-                  {/* 썸네일 90x90 */}
-                  <div className="w-[80px] h-[80px] flex-shrink-0 rounded-full overflow-hidden bg-[#f3f4f6]">
+                <div className="flex gap-2.5 p-2.5 items-center">
+                  {/* 썸네일 64x64 */}
+                  <div className="w-[64px] h-[64px] flex-shrink-0 rounded-full overflow-hidden bg-[#f3f4f6]">
                     {project.thumbnail ? (
                       <img
                         src={project.thumbnail}
@@ -390,7 +403,7 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-[#9ca3af] text-[12px]">
+                      <div className="w-full h-full flex items-center justify-center text-[#9ca3af] text-[10px]">
                         이미지
                       </div>
                     )}
@@ -400,13 +413,13 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
                   <div className="flex-1 min-w-0 flex flex-col justify-center">
                     {/* 타이틀 + 배지 */}
                     <div className="flex items-center gap-2">
-                      <h3 className="text-[15px] font-[500] text-[#1f2937] truncate flex-1">{project.title}</h3>
+                      <h3 className="text-[14px] font-[600] text-[#1f2937] truncate flex-1">{project.title}</h3>
                       {project.categories[0] && (
                         <ProjectBadge category={project.categories[0]} size="sm" className="flex-shrink-0" />
                       )}
                     </div>
                     {/* 클라이언트 | 날짜 */}
-                    <p className="text-[12px] text-[#9ca3af] mt-0 truncate">
+                    <p className="text-[11px] text-[#9ca3af] mt-0 truncate">
                       {project.client && <span>{project.client}</span>}
                       {project.client && project.date_start && <span> | </span>}
                       {project.date_start && (
@@ -415,15 +428,15 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
                     </p>
                     {/* 디스크립션 */}
                     {project.description && (
-                      <p className="text-[14px] text-[#6b7280] mt-0.5 line-clamp-1">{project.description}</p>
+                      <p className="text-[12px] text-[#6b7280] mt-0.5 line-clamp-1">{project.description}</p>
                     )}
                     {/* 태그 */}
 {project.tags && project.tags.length > 0 && (
-  <div className="flex gap-1.5 mt-0 flex-wrap">
-    {project.tags.slice(0, 3).map((tag) => (
+  <div className="flex gap-1 mt-0 overflow-hidden whitespace-nowrap">
+    {project.tags.map((tag) => (
       <span 
         key={tag} 
-        className="text-[12px]"
+        className="text-[11px] flex-shrink-0"
         style={{ 
           color: project.categories[0] === 'platform' ? '#5b7cae' 
                : project.categories[0] === 'contents' ? '#b87a5a'
@@ -434,28 +447,28 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
         #{tag}
       </span>
     ))}
-    {project.tags.length > 3 && (
-      <span 
-        className="text-[12px]"
-        style={{ 
-          color: project.categories[0] === 'platform' ? '#5b7cae' 
-               : project.categories[0] === 'contents' ? '#b87a5a'
-               : project.categories[0] === 'marketing' ? '#6b9b7a'
-               : '#7c8a96'
-        }}
-      >
-        +{project.tags.length - 3}
-      </span>
-    )}
   </div>
 )}
                   </div>
                 </div>
               </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+        
+        {/* 더보기 버튼 */}
+        {hasMore && (
+          <div className="flex justify-center pt-[20px]">
+            <button
+              onClick={() => setVisibleCount(prev => prev + 6)}
+              className="px-6 py-2 text-[14px] text-[#666] bg-[#f5f5f5] rounded-[8px] hover:bg-[#e8e8e8] transition-all"
+            >
+              더보기
+            </button>
+          </div>
+        )}
+      </div>
 
       {/* 푸터 */}
       <ExtendedFooter />

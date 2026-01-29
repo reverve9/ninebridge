@@ -59,7 +59,7 @@ export function Badge({
   
   return (
     <span 
-      className={`inline-flex items-center rounded-full font-medium ${colorStyles.bg} ${colorStyles.text} ${sizeStyles[size]} ${className}`}
+      className={`inline-flex items-center rounded-[4px] font-medium ${colorStyles.bg} ${colorStyles.text} ${sizeStyles[size]} ${className}`}
     >
       {children}
     </span>

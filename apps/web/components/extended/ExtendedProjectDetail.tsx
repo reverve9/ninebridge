@@ -53,7 +53,7 @@ export default function ExtendedProjectDetail({ project, onBack }: ExtendedProje
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
-            <h2 className="text-[19px] text-[#1f2937] flex-1 truncate" style={{ fontFamily: 'S-CoreDream', fontWeight: 900, letterSpacing: '-0.03em' }}>{project.title}</h2>
+            <h2 className="text-[19px] text-[#1f2937] flex-1 truncate" style={{ fontFamily: 'S-CoreDream', fontWeight: 500, letterSpacing: '-0.03em' }}>{project.title}</h2>
             <div className="flex gap-2 flex-shrink-0">
               {project.categories.map((cat) => (
                 <ProjectBadge key={cat} category={cat} size="md" />
@@ -168,9 +168,9 @@ export default function ExtendedProjectDetail({ project, onBack }: ExtendedProje
                               setCurrentGalleryIndex(item.originalIndex);
                               setIsYoutubePlaying(false);
                             }}
-                            className={`w-[100px] flex-shrink-0 transition-all ${currentGalleryIndex === item.originalIndex ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}
+                            className={`w-[80px] flex-shrink-0 transition-all ${currentGalleryIndex === item.originalIndex ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}
                           >
-                            <div className={`w-[100px] h-[100px] rounded-[6px] overflow-hidden relative border-2 transition-all
+                            <div className={`w-[80px] h-[80px] rounded-[8px] overflow-hidden relative border-2 transition-all
                               ${currentGalleryIndex === item.originalIndex ? 'border-[#384155]' : 'border-transparent'}`}>
                               <img
                                 src={thumbUrl}
@@ -201,7 +201,7 @@ export default function ExtendedProjectDetail({ project, onBack }: ExtendedProje
                             setCurrentGalleryIndex(item.originalIndex);
                             setIsYoutubePlaying(false);
                           }}
-                          className={`w-[100px] h-[100px] flex-shrink-0 rounded-[6px] overflow-hidden border-2 transition-all
+                          className={`w-[80px] h-[80px] flex-shrink-0 rounded-[8px] overflow-hidden border-2 transition-all
                             ${currentGalleryIndex === item.originalIndex ? 'border-[#384155]' : 'border-transparent'} 
                             ${currentGalleryIndex === item.originalIndex ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}
                         >
@@ -281,7 +281,7 @@ export default function ExtendedProjectDetail({ project, onBack }: ExtendedProje
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
-            <h2 className="text-[19px] text-[#1f2937] flex-1 truncate" style={{ fontFamily: 'S-CoreDream', fontWeight: 900, letterSpacing: '-0.03em' }}>{project.title}</h2>
+            <h2 className="text-[19px] text-[#1f2937] flex-1 truncate" style={{ fontFamily: 'S-CoreDream', fontWeight: 500, letterSpacing: '-0.03em' }}>{project.title}</h2>
             <div className="flex gap-2 flex-shrink-0">
               {project.categories.map((cat) => (
                 <ProjectBadge key={cat} category={cat} size="md" />
@@ -396,9 +396,9 @@ export default function ExtendedProjectDetail({ project, onBack }: ExtendedProje
                             setCurrentGalleryIndex(item.originalIndex);
                             setIsYoutubePlaying(false);
                           }}
-                          className={`w-[100px] flex-shrink-0 transition-all ${currentGalleryIndex === item.originalIndex ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}
+                          className={`w-[80px] flex-shrink-0 transition-all ${currentGalleryIndex === item.originalIndex ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}
                         >
-                          <div className={`w-[100px] h-[100px] rounded-[6px] overflow-hidden relative border-2 transition-all
+                          <div className={`w-[80px] h-[80px] rounded-[8px] overflow-hidden relative border-2 transition-all
                             ${currentGalleryIndex === item.originalIndex ? 'border-[#384155]' : 'border-transparent'}`}>
                             <img
                               src={thumbUrl}
@@ -429,7 +429,7 @@ export default function ExtendedProjectDetail({ project, onBack }: ExtendedProje
                           setCurrentGalleryIndex(item.originalIndex);
                           setIsYoutubePlaying(false);
                         }}
-                        className={`w-[100px] h-[100px] flex-shrink-0 rounded-[6px] overflow-hidden border-2 transition-all
+                        className={`w-[80px] h-[80px] flex-shrink-0 rounded-[8px] overflow-hidden border-2 transition-all
                           ${currentGalleryIndex === item.originalIndex ? 'border-[#384155]' : 'border-transparent'} 
                           ${currentGalleryIndex === item.originalIndex ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}
                       >
@@ -508,7 +508,7 @@ export default function ExtendedProjectDetail({ project, onBack }: ExtendedProje
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
-          <h2 className="text-[19px] text-[#1f2937] flex-1 truncate" style={{ fontFamily: 'S-CoreDream', fontWeight: 900, letterSpacing: '-0.03em' }}>{project.title}</h2>
+          <h2 className="text-[19px] text-[#1f2937] flex-1 truncate" style={{ fontFamily: 'S-CoreDream', fontWeight: 500, letterSpacing: '-0.03em' }}>{project.title}</h2>
           <div className="flex gap-2 flex-shrink-0">
             {project.categories.map((cat) => (
               <ProjectBadge key={cat} category={cat} size="md" />
@@ -590,9 +590,9 @@ export default function ExtendedProjectDetail({ project, onBack }: ExtendedProje
                             setCurrentGalleryIndex(item.originalIndex);
                             setIsYoutubePlaying(false);
                           }}
-                          className={`w-[100px] flex-shrink-0 transition-all ${currentGalleryIndex === item.originalIndex ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}
+                          className={`w-[80px] flex-shrink-0 transition-all ${currentGalleryIndex === item.originalIndex ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}
                         >
-                          <div className={`w-[100px] h-[100px] rounded-[6px] overflow-hidden relative border-2 transition-all
+                          <div className={`w-[80px] h-[80px] rounded-[8px] overflow-hidden relative border-2 transition-all
                             ${currentGalleryIndex === item.originalIndex ? 'border-[#384155]' : 'border-transparent'}`}>
                             <img
                               src={thumbUrl}
@@ -623,7 +623,7 @@ export default function ExtendedProjectDetail({ project, onBack }: ExtendedProje
                           setCurrentGalleryIndex(item.originalIndex);
                           setIsYoutubePlaying(false);
                         }}
-                        className={`w-[100px] h-[100px] flex-shrink-0 rounded-[6px] overflow-hidden border-2 transition-all
+                        className={`w-[80px] h-[80px] flex-shrink-0 rounded-[8px] overflow-hidden border-2 transition-all
                           ${currentGalleryIndex === item.originalIndex ? 'border-[#384155]' : 'border-transparent'} 
                           ${currentGalleryIndex === item.originalIndex ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}
                       >

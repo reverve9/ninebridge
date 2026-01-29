@@ -17,7 +17,7 @@ const taglines: Record<string, string> = {
 
 export default function MainLayout({ pwaContent, extendedContent, activeMenu = 'home' }: MainLayoutProps) {
   return (
-    <div className="h-screen bg-[#d5e2f3] overflow-hidden">
+    <div className="h-screen bg-[#f3f3f3] overflow-hidden">
       {/* 3컬럼 구조: [좌측 사이드] | [1280 고정] | [우측 사이드] */}
       <div className="flex h-screen">
         
@@ -31,10 +31,14 @@ export default function MainLayout({ pwaContent, extendedContent, activeMenu = '
         <div className="flex w-full min-[500px]:w-[500px] md:w-[1280px] flex-shrink-0 mx-auto md:mx-0">
           
           {/* 좌측 PWA 영역 */}
-          <div id="pwa-wrapper" className="w-full md:w-[500px] flex-shrink-0 h-screen overflow-y-auto shadow-[2px_0_4px_rgba(0,0,0,0.04),4px_0_8px_rgba(0,0,0,0.04),8px_0_16px_rgba(0,0,0,0.04),16px_0_32px_rgba(0,0,0,0.03)]">
-            <div className="bg-white min-h-screen relative overflow-x-hidden">
-              {pwaContent}
+          <div className="relative w-full md:w-[500px] flex-shrink-0 h-screen shadow-2xl z-10">
+            <div id="pwa-wrapper" className="w-full h-full overflow-y-auto">
+              <div className="bg-white min-h-screen relative overflow-x-hidden">
+                {pwaContent}
+              </div>
             </div>
+            {/* PWA 우측 음영 레이어 - 데스크탑에서는 60px만 (Extended 영역 침범 안함) */}
+            <div className="hidden md:block absolute top-0 left-full w-[60px] h-full bg-gradient-to-r from-black/[0.12] via-black/[0.04] to-transparent pointer-events-none" />
           </div>
           
           {/* 우측 확장 콘텐츠 영역 - 768px 이상에서만 보임, 780px 고정 */}

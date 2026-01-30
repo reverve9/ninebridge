@@ -151,11 +151,14 @@ export default function ExtendedNotice({ selectedNoticeId }: ExtendedNoticeProps
 
   return (
     <div className="space-y-6">
-      {/* SNS */}
-      <ExtendedSNS />
-
       {/* 노티스 전체 박스 */}
       <div className="bg-white rounded-[12px] py-[30px] px-[40px] border border-[#e5e7eb]">
+        {/* SNS */}
+        <ExtendedSNS />
+        
+        {/* SNS와 노티스 구분선 */}
+        <div className="border-t border-[#e5e7eb] my-[30px]" />
+        
         {(['notice', 'press', 'recruit'] as const).map((category, categoryIdx) => {
           const config = categoryConfig[category];
           const items = groupedNotices[category];

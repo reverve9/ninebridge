@@ -362,11 +362,14 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
   // 목록 표시
   return (
     <div className="space-y-[30px]">
-      {/* SNS */}
-      <ExtendedSNS />
-
       {/* 프로젝트 전체 박스 */}
       <div className="bg-white rounded-[12px] py-[30px] px-[40px] border border-[#e5e7eb]">
+        {/* SNS */}
+        <ExtendedSNS />
+        
+        {/* SNS와 Featured 구분선 */}
+        <div className="border-t border-[#e5e7eb] my-[30px]" />
+        
         {/* Featured - 슬라이드 카드 */}
         {featuredProjects.length > 0 && (
           <FeaturedSlider 
@@ -377,7 +380,7 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
           />
         )}
 
-        {/* 구분선 */}
+        {/* Featured와 All 구분선 */}
         {featuredProjects.length > 0 && sortedYears.length > 0 && (
           <div className="border-t border-[#e5e7eb] my-[40px]" />
         )}

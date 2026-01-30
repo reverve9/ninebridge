@@ -154,7 +154,9 @@ export default function ExtendedNotice({ selectedNoticeId }: ExtendedNoticeProps
       {/* SNS */}
       <ExtendedSNS />
 
-      {(['notice', 'press', 'recruit'] as const).map((category) => {
+      {/* 노티스 전체 박스 */}
+      <div className="bg-white rounded-[12px] py-[30px] px-[40px] border border-[#e5e7eb]">
+        {(['notice', 'press', 'recruit'] as const).map((category, categoryIdx) => {
           const config = categoryConfig[category];
           const items = groupedNotices[category];
           const paginatedItems = getPaginatedItems(category);
@@ -164,54 +166,56 @@ export default function ExtendedNotice({ selectedNoticeId }: ExtendedNoticeProps
           if (items.length === 0) return null;
 
           return (
-            <div key={category} className="bg-white rounded-[12px] border border-[#e5e7eb] overflow-hidden">
+            <div key={category}>
+              {categoryIdx > 0 && (
+                <div className="border-t border-[#e5e7eb] my-[40px]" />
+              )}
               {/* 카테고리 헤더 */}
-              <div className="flex items-center justify-between px-5 py-4 border-b border-[#e5e7eb] bg-[#f9fafb]">
-                <div className={`flex items-center gap-2 ${config.color}`}>
-                  <h2 className="text-[16px] font-semibold">{config.label}</h2>
-                  <span className="text-[13px] text-[#9ca3af] ml-1">({items.length})</span>
+              <div className="flex items-center justify-end mb-[10px] pr-[16px]">
+                <div className="flex items-center gap-2">
+                  <span className="text-[13px] font-[300] text-white bg-[#333] rounded-[2px] px-2 py-0.5">{config.label}</span>
+                  <span className="text-[12px] text-[#9ca3af]">({items.length})</span>
+                  
+                  {/* 페이지네이션 - 5개 초과시만 표시 */}
+                  {totalPages > 1 && (
+                    <div className="flex items-center gap-1 ml-2">
+                      <button
+                        onClick={() => handlePageChange(category, page - 1)}
+                        disabled={page === 1}
+                        className="p-1 text-[#9ca3af] hover:text-[#3071a5] disabled:opacity-30 disabled:cursor-not-allowed"
+                      >
+                        <ChevronLeft size={16} />
+                      </button>
+                      <span className="text-[12px] text-[#6b7280]">
+                        {page}/{totalPages}
+                      </span>
+                      <button
+                        onClick={() => handlePageChange(category, page + 1)}
+                        disabled={page === totalPages}
+                        className="p-1 text-[#9ca3af] hover:text-[#3071a5] disabled:opacity-30 disabled:cursor-not-allowed"
+                      >
+                        <ChevronRight size={16} />
+                      </button>
+                    </div>
+                  )}
                 </div>
-                
-                {/* 페이지네이션 - 5개 초과시만 표시 */}
-                {totalPages > 1 && (
-                  <div className="flex items-center gap-1">
-                    <button
-                      onClick={() => handlePageChange(category, page - 1)}
-                      disabled={page === 1}
-                      className="p-1 text-[#9ca3af] hover:text-[#3071a5] disabled:opacity-30 disabled:cursor-not-allowed"
-                    >
-                      <ChevronLeft size={18} />
-                    </button>
-                    <span className="text-[13px] text-[#6b7280] px-2">
-                      {page} / {totalPages}
-                    </span>
-                    <button
-                      onClick={() => handlePageChange(category, page + 1)}
-                      disabled={page === totalPages}
-                      className="p-1 text-[#9ca3af] hover:text-[#3071a5] disabled:opacity-30 disabled:cursor-not-allowed"
-                    >
-                      <ChevronRight size={18} />
-                    </button>
-                  </div>
-                )}
               </div>
 
               {/* 게시글 리스트 */}
-              <div>
+              <div className="space-y-[10px]">
                 {paginatedItems.map((notice, index) => {
                   const isExpanded = expandedIds.has(notice.id);
-                  const isLast = index === paginatedItems.length - 1;
 
                   return (
                     <div 
                       key={notice.id} 
                       id={`notice-${notice.id}`}
-                      className={!isLast ? 'border-b border-[#e5e7eb]' : ''}
+                      className="rounded-[8px] overflow-hidden"
                     >
                       {/* 게시글 헤더 (클릭 영역) */}
                       <div
                         onClick={() => handleToggle(notice)}
-                        className="w-full px-5 py-4 flex items-center gap-3 hover:bg-[#f9fafb] transition-colors text-left cursor-pointer"
+                        className="w-full px-4 py-3 flex items-center gap-3 hover:bg-[#f5f5f5] transition-colors text-left cursor-pointer rounded-[8px]"
                       >
                         {/* 펼침 아이콘 */}
                         <ChevronDown 
@@ -223,7 +227,7 @@ export default function ExtendedNotice({ selectedNoticeId }: ExtendedNoticeProps
                         {notice.is_pinned && <Pin size={14} className="text-[#f59e0b] flex-shrink-0" />}
 
                         {/* 제목 */}
-                        <span className="flex-1 text-[14px] text-[#1f2937] truncate">
+                        <span className="flex-1 text-[15px] font-[500] text-[#1f2937] truncate">
                           {notice.title}
                         </span>
 
@@ -252,10 +256,10 @@ export default function ExtendedNotice({ selectedNoticeId }: ExtendedNoticeProps
 
                       {/* 펼침 내용 */}
                       {isExpanded && (
-                        <div className="px-5 pb-5 pt-2 bg-[#fafafa] border-t border-[#e5e7eb]">
+                        <div className="ml-[34px] px-5 pb-5 pt-2 bg-[#fafafa] rounded-b-[8px]">
                           {/* 내용 - 마크다운 렌더링 */}
                           {notice.content && (
-                            <div className="mb-4">
+                            <div className="mb-4 text-[13px]">
                               <MarkdownRenderer content={notice.content} />
                             </div>
                           )}
@@ -290,6 +294,7 @@ export default function ExtendedNotice({ selectedNoticeId }: ExtendedNoticeProps
             </div>
           );
         })}
+      </div>
 
       {notices.length === 0 && (
         <div className="text-center py-12 text-[#9ca3af]">

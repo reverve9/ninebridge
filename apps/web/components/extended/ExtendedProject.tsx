@@ -86,7 +86,7 @@ function FeaturedSlider({ projects, allProjects, onProjectClick, getYoutubeId }:
   if (projects.length === 0) return null;
 
   return (
-    <div className="bg-white rounded-[12px] py-[30px] px-4 border border-[#e5e7eb]">
+    <div>
       {/* 슬라이드 래퍼 */}
       <div className="overflow-hidden">
         {/* 슬라이드 컨테이너 */}
@@ -156,7 +156,7 @@ function FeaturedSlider({ projects, allProjects, onProjectClick, getYoutubeId }:
                             e.stopPropagation();
                             onProjectClick(related);
                           }}
-                          className="flex gap-3 cursor-pointer hover:bg-[#f9fafb] rounded-[6px] p-1 -m-1 transition-colors"
+                          className="flex gap-3 cursor-pointer hover:bg-[#f5f5f5] rounded-[6px] p-1 -m-1 transition-colors"
                         >
                           {/* 썸네일 */}
                           <div className="w-[50px] h-[50px] flex-shrink-0 rounded-[4px] overflow-hidden bg-[#f3f4f6]">
@@ -272,9 +272,8 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
     .filter(p => p.is_featured)
     .sort(() => Math.random() - 0.5);
 
-  // 전체 프로젝트를 연도순 정렬 (대표 프로젝트 제외)
+  // 전체 프로젝트를 연도순 정렬
   const allProjectsSorted = [...projects]
-    .filter(p => !p.is_featured)
     .sort((a, b) => {
       const yearA = a.date_start?.split('/')[0] || '0';
       const yearB = b.date_start?.split('/')[0] || '0';
@@ -366,24 +365,30 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
       {/* SNS */}
       <ExtendedSNS />
 
-      {/* Featured - 슬라이드 카드 */}
-      {featuredProjects.length > 0 && (
-        <FeaturedSlider 
-          projects={featuredProjects}
-          allProjects={projects}
-          onProjectClick={(project) => project.has_detail && setSelectedProject(project)}
-          getYoutubeId={getYoutubeId}
-        />
-      )}
+      {/* 프로젝트 전체 박스 */}
+      <div className="bg-white rounded-[12px] py-[30px] px-[40px] border border-[#e5e7eb]">
+        {/* Featured - 슬라이드 카드 */}
+        {featuredProjects.length > 0 && (
+          <FeaturedSlider 
+            projects={featuredProjects}
+            allProjects={projects}
+            onProjectClick={(project) => project.has_detail && setSelectedProject(project)}
+            getYoutubeId={getYoutubeId}
+          />
+        )}
 
-      {/* All Projects - 연도별 그룹 */}
-        <div className="bg-white rounded-[12px] py-[30px] px-4 border border-[#e5e7eb]">
-          {sortedYears.map((year, idx) => (
-            <div key={year} className={idx > 0 ? 'pt-[30px]' : ''}>
-              {/* 연도 헤더 */}
-              <div className="flex items-center justify-end mb-[10px] pr-[16px]">
-                <span className="text-[13px] font-[300] text-white bg-[#333] rounded-[2px] px-2 py-0.5">{year}</span>
-              </div>
+        {/* 구분선 */}
+        {featuredProjects.length > 0 && sortedYears.length > 0 && (
+          <div className="border-t border-[#e5e7eb] my-[40px]" />
+        )}
+
+        {/* All Projects - 연도별 그룹 */}
+        {sortedYears.map((year, idx) => (
+          <div key={year} className={idx > 0 ? 'mt-[30px]' : ''}>
+            {/* 연도 헤더 */}
+            <div className="flex items-center justify-end mb-[10px] pr-[16px]">
+              <span className="text-[13px] font-[300] text-white bg-[#333] rounded-[2px] px-2 py-0.5">{year}</span>
+            </div>
               
               {/* 2열 그리드 */}
               <div className="grid grid-cols-2 gap-[10px]">

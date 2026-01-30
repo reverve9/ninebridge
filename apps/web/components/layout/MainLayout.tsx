@@ -17,7 +17,7 @@ const taglines: Record<string, string> = {
 
 export default function MainLayout({ pwaContent, extendedContent, activeMenu = 'home' }: MainLayoutProps) {
   return (
-    <div className="h-screen bg-[#f3f3f3] overflow-hidden">
+    <div className="h-screen bg-[#f4ㄹ6ㄹ8] overflow-hidden">
       {/* 3컬럼 구조: [좌측 사이드] | [1280 고정] | [우측 사이드] */}
       <div className="flex h-screen">
         

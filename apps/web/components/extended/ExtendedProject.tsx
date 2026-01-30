@@ -86,7 +86,7 @@ function FeaturedSlider({ projects, allProjects, onProjectClick, getYoutubeId }:
   if (projects.length === 0) return null;
 
   return (
-    <div className="bg-white rounded-[12px] py-[30px] px-4">
+    <div className="bg-white rounded-[12px] py-[30px] px-4 border border-[#e5e7eb]">
       {/* 슬라이드 래퍼 */}
       <div className="overflow-hidden">
         {/* 슬라이드 컨테이너 */}
@@ -272,12 +272,14 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
     .filter(p => p.is_featured)
     .sort(() => Math.random() - 0.5);
 
-  // 전체 프로젝트를 연도순 정렬 (플랫 리스트)
-  const allProjectsSorted = [...projects].sort((a, b) => {
-    const yearA = a.date_start?.split('/')[0] || '0';
-    const yearB = b.date_start?.split('/')[0] || '0';
-    return Number(yearB) - Number(yearA);
-  });
+  // 전체 프로젝트를 연도순 정렬 (대표 프로젝트 제외)
+  const allProjectsSorted = [...projects]
+    .filter(p => !p.is_featured)
+    .sort((a, b) => {
+      const yearA = a.date_start?.split('/')[0] || '0';
+      const yearB = b.date_start?.split('/')[0] || '0';
+      return Number(yearB) - Number(yearA);
+    });
 
   // 보여줄 프로젝트
   const visibleProjects = allProjectsSorted.slice(0, visibleCount);
@@ -375,7 +377,7 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
       )}
 
       {/* All Projects - 연도별 그룹 */}
-        <div className="bg-white rounded-[12px] py-[30px] px-4">
+        <div className="bg-white rounded-[12px] py-[30px] px-4 border border-[#e5e7eb]">
           {sortedYears.map((year, idx) => (
             <div key={year} className={idx > 0 ? 'pt-[30px]' : ''}>
               {/* 연도 헤더 */}

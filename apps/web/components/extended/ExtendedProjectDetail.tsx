@@ -41,7 +41,7 @@ export default function ExtendedProjectDetail({ project, onBack }: ExtendedProje
   // 세로영상 레이아웃 (가로영상과 동일한 구조로 처리)
   if (layoutType === 'ver') {
     return (
-      <div className="bg-white rounded-[12px] border border-[#e5e7eb] px-10 py-6">
+      <div className="bg-white rounded-[12px] border border-[#e5e7eb] px-10 py-6 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_8px_24px_rgba(0,0,0,0.08)]">
         <div className="space-y-6">
           {/* 상단: 뒤로버튼 + 제목 + 카테고리 배지 */}
           <div className="flex items-center gap-4">
@@ -269,7 +269,7 @@ export default function ExtendedProjectDetail({ project, onBack }: ExtendedProje
   // 가로영상 레이아웃
   if (layoutType === 'hor') {
     return (
-      <div className="bg-white rounded-[12px] border border-[#e5e7eb] px-10 py-6">
+      <div className="bg-white rounded-[12px] border border-[#e5e7eb] px-10 py-6 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_8px_24px_rgba(0,0,0,0.08)]">
         <div className="space-y-6">
           {/* 상단: 뒤로버튼 + 제목 + 카테고리 배지 */}
           <div className="flex items-center gap-4">
@@ -496,7 +496,7 @@ export default function ExtendedProjectDetail({ project, onBack }: ExtendedProje
 
   // 이미지 레이아웃
   return (
-    <div className="bg-white rounded-[12px] border border-[#e5e7eb] px-10 py-6">
+    <div className="bg-white rounded-[12px] border border-[#e5e7eb] px-10 py-6 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_8px_24px_rgba(0,0,0,0.08)]">
       <div className="space-y-6">
         {/* 상단: 뒤로버튼 + 제목 + 카테고리 배지 */}
         <div className="flex items-center gap-4">

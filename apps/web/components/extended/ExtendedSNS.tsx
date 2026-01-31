@@ -15,7 +15,7 @@ export default function ExtendedSNS() {
     setSettings(data);
   };
 
-  if (!settings) return null;
+  if (!settings) return <div className="h-[56px]" />;
 
   const hasSns = settings.sns_kakao || settings.sns_instagram || settings.sns_youtube || settings.sns_facebook;
 

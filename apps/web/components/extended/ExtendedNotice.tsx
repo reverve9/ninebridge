@@ -7,6 +7,7 @@ import { Pin, Paperclip, ExternalLink, ChevronDown, Eye, ChevronLeft, ChevronRig
 import MarkdownRenderer from '@/components/common/MarkdownRenderer';
 import ExtendedFooter from './ExtendedFooter';
 import ExtendedSNS from './ExtendedSNS';
+import WhiteBox from '@/components/common/WhiteBox';
 
 const categoryConfig: Record<'notice' | 'press' | 'recruit', { label: string; color: string }> = {
   notice: { label: '공지사항', color: 'text-[#dc2626]' },
@@ -155,7 +156,7 @@ export default function ExtendedNotice({ selectedNoticeId }: ExtendedNoticeProps
       <ExtendedSNS title="NEWS" subtitle="소식&공지" />
 
       {/* 노티스 전체 박스 - macOS 스타일 음영 */}
-      <div className="bg-white rounded-[12px] py-[30px] px-[40px] border border-[#e5e7eb] shadow-[0_2px_8px_rgba(0,0,0,0.04),0_8px_24px_rgba(0,0,0,0.08)]">
+      <WhiteBox>
         {(['notice', 'press', 'recruit'] as const).map((category, categoryIdx) => {
           const config = categoryConfig[category];
           const items = groupedNotices[category];
@@ -294,7 +295,7 @@ export default function ExtendedNotice({ selectedNoticeId }: ExtendedNoticeProps
             </div>
           );
         })}
-      </div>
+      </WhiteBox>
 
       {notices.length === 0 && (
         <div className="text-center py-12 text-[#9ca3af]">

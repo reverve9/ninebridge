@@ -193,3 +193,12 @@ body {
 .safe-area-bottom {
   padding-bottom: env(safe-area-inset-bottom);
 }
+
+/* Extended 영역 화이트박스 */
+.white-box {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 30px 40px;
+  border: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.08);
+}

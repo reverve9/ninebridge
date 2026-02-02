@@ -7,6 +7,7 @@ import { ProjectBadge, PROJECT_CATEGORY_MAP } from '@/components/common/Badge';
 import ExtendedProjectDetail from './ExtendedProjectDetail';
 import ExtendedFooter from './ExtendedFooter';
 import ExtendedSNS from './ExtendedSNS';
+import WhiteBox from '@/components/common/WhiteBox';
 
 interface ExtendedProjectProps {
   selectedProjectId?: string | null;
@@ -366,7 +367,7 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
       <ExtendedSNS title="WORX" subtitle="포트폴리오" />
 
       {/* 프로젝트 전체 박스 - macOS 스타일 음영 */}
-      <div className="bg-white rounded-[12px] py-[30px] px-[40px] border border-[#e5e7eb] shadow-[0_2px_8px_rgba(0,0,0,0.04),0_8px_24px_rgba(0,0,0,0.08)]">
+      <WhiteBox>
         {/* Featured - 슬라이드 카드 */}
         {featuredProjects.length > 0 && (
           <FeaturedSlider 
@@ -475,7 +476,7 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
             </button>
           </div>
         )}
-      </div>
+      </WhiteBox>
 
       {/* 푸터 */}
       <ExtendedFooter />

@@ -27,7 +27,7 @@ export default function ExtendedContent({ activeMenu, selectedProject, selectedN
       case 'notice':
         return <ExtendedNotice selectedNoticeId={selectedNotice} />;
       case 'contact':
-        return <Maintenance size="large" />;
+        return <ExtendedContact />;
       case 'development':
         return <ExtendedDevelopment />;
       case 'event':

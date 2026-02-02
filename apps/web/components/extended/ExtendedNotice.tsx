@@ -152,7 +152,7 @@ export default function ExtendedNotice({ selectedNoticeId }: ExtendedNoticeProps
   return (
     <div className="space-y-6">
       {/* SNS */}
-      <ExtendedSNS />
+      <ExtendedSNS title="NEWS" subtitle="소식&공지" />
 
       {/* 노티스 전체 박스 - macOS 스타일 음영 */}
       <div className="bg-white rounded-[12px] py-[30px] px-[40px] border border-[#e5e7eb] shadow-[0_2px_8px_rgba(0,0,0,0.04),0_8px_24px_rgba(0,0,0,0.08)]">

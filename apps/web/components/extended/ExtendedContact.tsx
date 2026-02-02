@@ -41,7 +41,7 @@ export default function ExtendedContact() {
   return (
     <div>
       {/* SNS */}
-      <ExtendedSNS />
+      <ExtendedSNS title="CONNECT" subtitle="정보&문의" />
 
       {/* 헤더 */}
       <div className="mb-8">

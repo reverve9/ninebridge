@@ -363,7 +363,7 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
   return (
     <div className="space-y-[30px]">
       {/* SNS */}
-      <ExtendedSNS />
+      <ExtendedSNS title="WORX" subtitle="포트폴리오" />
 
       {/* 프로젝트 전체 박스 - macOS 스타일 음영 */}
       <div className="bg-white rounded-[12px] py-[30px] px-[40px] border border-[#e5e7eb] shadow-[0_2px_8px_rgba(0,0,0,0.04),0_8px_24px_rgba(0,0,0,0.08)]">

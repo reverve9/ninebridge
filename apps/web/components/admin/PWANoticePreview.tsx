@@ -3,24 +3,15 @@
 import React, { useState } from 'react';
 import { Notice } from '@/lib/types';
 import PageTitle from '@/components/common/PageTitle';
+import { TabButton } from '@/components/common/Button';
+import { NoticeBadge } from '@/components/common/Badge';
 import { Pin, Paperclip, ExternalLink, Eye } from 'lucide-react';
+import { formatDateTime } from '@/lib/utils';
+import { NOTICE_CATEGORIES } from '@/lib/constants';
 
 interface PWANoticePreviewProps {
   notices: Notice[];
 }
-
-const categoryLabels: Record<'notice' | 'press' | 'recruit', { label: string; color: string }> = {
-  notice: { label: '공지사항', color: 'bg-[#ef4444]/10 text-[#dc2626]' },
-  press: { label: '언론자료', color: 'bg-[#3071a5]/10 text-[#3071a5]' },
-  recruit: { label: '기타', color: 'bg-[#eab308]/10 text-[#ca8a04]' },
-};
-
-const categories = [
-  { id: 'all', label: '전체' },
-  { id: 'notice', label: '공지사항' },
-  { id: 'press', label: '언론자료' },
-  { id: 'recruit', label: '기타' },
-];
 
 export default function PWANoticePreview({ notices }: PWANoticePreviewProps) {
   const [activeCategory, setActiveCategory] = useState('all');
@@ -41,18 +32,6 @@ export default function PWANoticePreview({ notices }: PWANoticePreviewProps) {
     return notices.filter(n => n.category === catId).length;
   };
 
-  const formatDateTime = (dateStr: string) => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('ko-KR', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-    }) + ' ' + date.toLocaleTimeString('ko-KR', {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
-
   return (
     <div className="min-h-full bg-white">
       {/* 헤더 */}
@@ -65,20 +44,16 @@ export default function PWANoticePreview({ notices }: PWANoticePreviewProps) {
       {/* 카테고리 탭 */}
       <div className="px-4 pb-3">
         <div className="flex gap-1 flex-wrap">
-          {categories.map((cat) => {
+          {NOTICE_CATEGORIES.map((cat) => {
             const count = getCategoryCount(cat.id);
             return (
-              <button
+              <TabButton
                 key={cat.id}
+                active={activeCategory === cat.id}
                 onClick={() => setActiveCategory(cat.id)}
-                className={`px-3 py-1.5 text-[13px] rounded-[4px] transition-colors border
-                  ${activeCategory === cat.id
-                    ? 'bg-[#3071a5] text-white border-[#3071a5]'
-                    : 'bg-white text-[#6b7280] border-[#e5e7eb] hover:border-[#3071a5]'
-                  }`}
               >
                 {cat.label} <span className="opacity-70">{count}</span>
-              </button>
+              </TabButton>
             );
           })}
         </div>
@@ -90,7 +65,6 @@ export default function PWANoticePreview({ notices }: PWANoticePreviewProps) {
           <p className="text-[14px] text-[#9ca3af] py-8 text-center">등록된 게시글이 없습니다.</p>
         ) : (
           sortedNotices.map((notice) => {
-            const cat = categoryLabels[notice.category] || categoryLabels.notice;
             return (
               <div
                 key={notice.id}
@@ -99,9 +73,7 @@ export default function PWANoticePreview({ notices }: PWANoticePreviewProps) {
                 {/* 고정 + 배지 + 제목 (한 줄) */}
                 <div className="flex items-center gap-2 mb-2">
                   {notice.is_pinned && <Pin size={14} className="text-[#f59e0b] flex-shrink-0" />}
-                  <span className={`inline-flex items-center px-2 py-0.5 text-[11px] font-medium rounded flex-shrink-0 ${cat.color}`}>
-                    {cat.label}
-                  </span>
+                  <NoticeBadge category={notice.category} size="sm" className="flex-shrink-0" />
                   <h3 className="flex-1 text-[15px] font-medium text-[#1f2937] truncate min-w-0">
                     {notice.title}
                   </h3>

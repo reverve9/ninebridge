@@ -5,6 +5,8 @@ import PageTitle from '@/components/common/PageTitle';
 import { TabButton, TagButton } from '@/components/common/Button';
 import { Project } from '@/lib/types';
 import { getPublishedProjects } from '@/lib/projects';
+import { getYoutubeId } from '@/lib/utils';
+import { PROJECT_CATEGORIES } from '@/lib/constants';
 import { X } from 'lucide-react';
 
 interface PWAProjectProps {
@@ -13,14 +15,6 @@ interface PWAProjectProps {
   externalProjects?: Project[];
   initialFilter?: { category?: string; tag?: string } | null;
 }
-
-const categories = [
-  { id: 'all', label: '전체' },
-  { id: 'platform', label: '플랫폼' },
-  { id: 'marketing', label: '마케팅' },
-  { id: 'contents', label: '콘텐츠' },
-  { id: 'etc', label: '기타' },
-];
 
 export default function PWAProject({ onProjectSelect, isPreview = false, externalProjects, initialFilter }: PWAProjectProps) {
   const [activeCategory, setActiveCategory] = useState(initialFilter?.category || 'all');
@@ -71,11 +65,6 @@ export default function PWAProject({ onProjectSelect, isPreview = false, externa
     } finally {
       setLoading(false);
     }
-  };
-
-  // 유튜브 ID 추출
-  const getYoutubeId = (url: string) => {
-    return url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?]+)/)?.[1];
   };
 
   // 현재 카테고리의 프로젝트
@@ -139,7 +128,7 @@ export default function PWAProject({ onProjectSelect, isPreview = false, externa
       {/* 카테고리 탭 - 좌측 정렬 */}
       <div className="px-4 py-3">
         <div className="flex gap-1 flex-wrap justify-start">
-          {categories.map((cat) => (
+          {PROJECT_CATEGORIES.map((cat) => (
             <TabButton
               key={cat.id}
               active={activeCategory === cat.id}

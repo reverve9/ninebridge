@@ -4,6 +4,7 @@ import React, { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Notice, NoticeInsert, Attachment } from '@/lib/types';
 import { createNotice, updateNotice, uploadNoticeThumbnail, uploadAttachment, deleteAttachment } from '@/lib/notices';
+import { formatFileSize } from '@/lib/utils';
 import { ArrowLeft, Upload, X, Paperclip, Image, HelpCircle } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import PWANoticePreview from '@/components/admin/PWANoticePreview';
@@ -141,12 +142,6 @@ export default function NoticeForm({ notice, isEdit = false }: NoticeFormProps) 
     } catch (error) {
       console.error('첨부파일 삭제 실패:', error);
     }
-  };
-
-  const formatFileSize = (bytes: number) => {
-    if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

@@ -6,13 +6,10 @@ import AdminLayout from '@/components/admin/AdminLayout';
 import PWANotice from '@/components/pwa/PWANotice';
 import { Notice } from '@/lib/types';
 import { getAllNotices, deleteNotice, swapNoticeOrder } from '@/lib/notices';
+import { NOTICE_CATEGORIES } from '@/lib/constants';
+import { NoticeBadge } from '@/components/common/Badge';
+import { TabButton } from '@/components/common/Button';
 import { Plus, Edit, Trash2, ChevronUp, ChevronDown, Pin, ExternalLink } from 'lucide-react';
-
-const categoryLabels: Record<'notice' | 'press' | 'recruit', { label: string; color: string }> = {
-  notice: { label: '공지사항', color: 'bg-[#ef4444]/10 text-[#dc2626]' },
-  press: { label: '언론자료', color: 'bg-[#3071a5]/10 text-[#3071a5]' },
-  recruit: { label: '기타', color: 'bg-[#eab308]/10 text-[#ca8a04]' },
-};
 
 export default function AdminNoticesPage() {
   const router = useRouter();
@@ -100,24 +97,18 @@ export default function AdminNoticesPage() {
 
         {/* 카테고리 필터 */}
         <div className="flex gap-2 mb-4">
-          <button
-            onClick={() => setActiveCategory('all')}
-            className={`px-4 py-2 text-[14px] rounded-[8px] transition-colors
-              ${activeCategory === 'all' ? 'bg-[#1f2937] text-white' : 'bg-white text-[#6b7280] border border-[#e5e7eb]'}`}
-          >
-            전체 ({notices.length})
-          </button>
-          {Object.entries(categoryLabels).map(([key, { label }]) => {
-            const count = notices.filter(n => n.category === key).length;
+          {NOTICE_CATEGORIES.map((cat) => {
+            const count = cat.id === 'all'
+              ? notices.length
+              : notices.filter(n => n.category === cat.id).length;
             return (
-              <button
-                key={key}
-                onClick={() => setActiveCategory(key)}
-                className={`flex items-center gap-2 px-4 py-2 text-[14px] rounded-[8px] transition-colors
-                  ${activeCategory === key ? 'bg-[#1f2937] text-white' : 'bg-white text-[#6b7280] border border-[#e5e7eb]'}`}
+              <TabButton
+                key={cat.id}
+                active={activeCategory === cat.id}
+                onClick={() => setActiveCategory(cat.id)}
               >
-                {label} ({count})
-              </button>
+                {cat.label} ({count})
+              </TabButton>
             );
           })}
         </div>
@@ -142,7 +133,6 @@ export default function AdminNoticesPage() {
               </thead>
               <tbody>
                 {filteredNotices.map((notice, index) => {
-                  const cat = categoryLabels[notice.category];
                   return (
                     <tr key={notice.id} className="border-b border-[#e5e7eb] hover:bg-[#f9fafb]">
                       <td className="px-4 py-3">
@@ -164,9 +154,7 @@ export default function AdminNoticesPage() {
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        <span className={`inline-flex items-center px-2 py-1 text-[12px] rounded ${cat.color}`}>
-                          {cat.label}
-                        </span>
+                        <NoticeBadge category={notice.category} />
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">

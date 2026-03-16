@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Project, GalleryItem } from '@/lib/types';
+import { Project } from '@/lib/types';
 import { getPublishedProjects } from '@/lib/projects';
-import { ProjectBadge, PROJECT_CATEGORY_MAP } from '@/components/common/Badge';
+import { getYoutubeId } from '@/lib/utils';
+import { ProjectBadge } from '@/components/common/Badge';
 import ExtendedProjectDetail from './ExtendedProjectDetail';
 import ExtendedFooter from './ExtendedFooter';
 import ExtendedSNS from './ExtendedSNS';
@@ -248,11 +249,6 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
     } finally {
       setLoading(false);
     }
-  };
-
-  // 유튜브 ID 추출
-  const getYoutubeId = (url: string) => {
-    return url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?]+)/)?.[1];
   };
 
   // 갤러리에서 메인 이미지/영상 URL 가져오기

@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Project, ProjectInsert, GalleryItem } from '@/lib/types';
 import { createProject, updateProject, uploadImage } from '@/lib/projects';
+import { getYoutubeId } from '@/lib/utils';
 import { ArrowLeft, Upload, X, Plus, Star, Play, Image, Monitor, Smartphone, Pencil, HelpCircle } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import PWAPreview from '@/components/admin/PWAPreview';
@@ -218,11 +219,6 @@ export default function ProjectForm({ project, isEdit = false, allProjects = [] 
         is_main: i === index,
       })),
     }));
-  };
-
-  // 유튜브 ID 추출
-  const getYoutubeId = (url: string) => {
-    return url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?]+)/)?.[1];
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

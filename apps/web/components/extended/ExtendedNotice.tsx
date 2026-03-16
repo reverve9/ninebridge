@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Notice } from '@/lib/types';
 import { getPublishedNotices, incrementViewCount } from '@/lib/notices';
+import { formatDateTime, formatFileSize } from '@/lib/utils';
 import { Pin, Paperclip, ExternalLink, ChevronDown, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
 import MarkdownRenderer from '@/components/common/MarkdownRenderer';
 import ExtendedFooter from './ExtendedFooter';
@@ -84,24 +85,6 @@ export default function ExtendedNotice({ selectedNoticeId }: ExtendedNoticeProps
     notice: notices.filter(n => n.category === 'notice'),
     press: notices.filter(n => n.category === 'press'),
     recruit: notices.filter(n => n.category === 'recruit'),
-  };
-
-  const formatDateTime = (dateStr: string) => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('ko-KR', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-    }) + ' ' + date.toLocaleTimeString('ko-KR', {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
-
-  const formatFileSize = (bytes: number) => {
-    if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
   const handleToggle = async (notice: Notice) => {

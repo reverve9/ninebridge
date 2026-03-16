@@ -2,6 +2,10 @@
 
 import React, { useState } from 'react';
 import { Project } from '@/lib/types';
+import { getYoutubeId } from '@/lib/utils';
+import { PROJECT_CATEGORIES } from '@/lib/constants';
+import { ProjectBadge } from '@/components/common/Badge';
+import { TabButton } from '@/components/common/Button';
 import { X } from 'lucide-react';
 import PageTitle from '@/components/common/PageTitle';
 
@@ -10,21 +14,6 @@ interface PWAPreviewProps {
   selectedProject: Project | null;
   onSelectProject: (project: Project | null) => void;
 }
-
-const categories = [
-  { id: 'all', label: '전체' },
-  { id: 'platform', label: '플랫폼' },
-  { id: 'marketing', label: '마케팅' },
-  { id: 'contents', label: '콘텐츠' },
-  { id: 'etc', label: '기타' },
-];
-
-const categoryBadgeMap: Record<string, { label: string; bg: string; text: string }> = {
-  platform: { label: '플랫폼', bg: 'bg-[#3071a5]/10', text: 'text-[#3071a5]' },
-  marketing: { label: '마케팅', bg: 'bg-[#ef4444]/10', text: 'text-[#dc2626]' },
-  contents: { label: '콘텐츠', bg: 'bg-[#eab308]/10', text: 'text-[#ca8a04]' },
-  etc: { label: '기타', bg: 'bg-[#6b7280]/10', text: 'text-[#4b5563]' },
-};
 
 export default function PWAPreview({ projects, selectedProject, onSelectProject }: PWAPreviewProps) {
   const [activeCategory, setActiveCategory] = useState('all');
@@ -52,11 +41,6 @@ export default function PWAPreview({ projects, selectedProject, onSelectProject 
     return `${start} - ${end}`;
   };
 
-  // 유튜브 ID 추출
-  const getYoutubeId = (url: string) => {
-    return url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?]+)/)?.[1];
-  };
-
   return (
     <div className="relative h-full">
       {/* PWA 헤더 */}
@@ -71,18 +55,14 @@ export default function PWAPreview({ projects, selectedProject, onSelectProject 
       {/* 탭 */}
       <div className="px-4 py-3">
         <div className="flex gap-1">
-          {categories.map((cat) => (
-            <button
+          {PROJECT_CATEGORIES.map((cat) => (
+            <TabButton
               key={cat.id}
+              active={activeCategory === cat.id}
               onClick={() => setActiveCategory(cat.id)}
-              className={`px-3 py-1.5 text-[14px] rounded-[4px] transition-colors border
-                ${activeCategory === cat.id
-                  ? 'bg-[#3071a5] text-white border-[#3071a5]'
-                  : 'bg-white text-[#6b7280] border-[#e5e7eb] hover:border-[#3071a5]'
-                }`}
             >
               {cat.label}
-            </button>
+            </TabButton>
           ))}
         </div>
       </div>
@@ -115,14 +95,9 @@ export default function PWAPreview({ projects, selectedProject, onSelectProject 
               <div className="p-3 flex-1 min-w-0">
                 {/* 1행: 배지 */}
                 <div className="flex items-center gap-1">
-                  {project.categories.map((cat) => {
-                    const badge = categoryBadgeMap[cat] || { label: cat, bg: 'bg-[#6b7280]/10', text: 'text-[#4b5563]' };
-                    return (
-                      <span key={cat} className={`text-[11px] font-medium px-2 py-0.5 rounded ${badge.bg} ${badge.text}`}>
-                        {badge.label}
-                      </span>
-                    );
-                  })}
+                  {project.categories.map((cat) => (
+                    <ProjectBadge key={cat} category={cat} size="sm" />
+                  ))}
                 </div>
                 {/* 2행: 제목 */}
                 <h3 className="text-[16px] font-semibold text-[#1f2937] mt-1 truncate">{project.title}</h3>
@@ -170,14 +145,9 @@ export default function PWAPreview({ projects, selectedProject, onSelectProject 
               {/* 정보 */}
               <div className="space-y-3">
                 <div className="flex gap-2 flex-wrap">
-                  {selectedProject.categories.map((cat) => {
-                    const badge = categoryBadgeMap[cat] || { label: cat, bg: 'bg-[#6b7280]/10', text: 'text-[#4b5563]' };
-                    return (
-                      <span key={cat} className={`text-[12px] font-medium px-3 py-1 rounded-full ${badge.bg} ${badge.text}`}>
-                        {badge.label}
-                      </span>
-                    );
-                  })}
+                  {selectedProject.categories.map((cat) => (
+                    <ProjectBadge key={cat} category={cat} />
+                  ))}
                 </div>
                 
                 {selectedProject.client && (

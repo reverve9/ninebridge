@@ -6,15 +6,10 @@ import { TabButton } from '@/components/common/Button';
 import { NoticeBadge } from '@/components/common/Badge';
 import { Notice } from '@/lib/types';
 import { getPublishedNotices, incrementViewCount } from '@/lib/notices';
+import { formatDateTime, formatFileSize } from '@/lib/utils';
+import { NOTICE_CATEGORIES } from '@/lib/constants';
 import { Pin, Paperclip, ExternalLink, X, Eye } from 'lucide-react';
 import MarkdownRenderer from '@/components/common/MarkdownRenderer';
-
-const categories = [
-  { id: 'all', label: '전체' },
-  { id: 'notice', label: '공지사항' },
-  { id: 'press', label: '언론자료' },
-  { id: 'recruit', label: '기타' },
-];
 
 const ITEMS_PER_PAGE = 5;
 
@@ -104,27 +99,13 @@ export default function PWANotice({ onSelectNotice, selectedNoticeId, isPreview 
     return () => pwaWrapper.removeEventListener('scroll', handleScroll);
   }, [loadingMore, hasMore]);
 
-  const formatDateTime = (dateStr: string) => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('ko-KR', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-    }) + ' ' + date.toLocaleTimeString('ko-KR', {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
-
-  const formatFileSize = (bytes: number) => {
-    if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-  };
-
   const handleNoticeClick = async (notice: Notice) => {
     // 조회수 증가
-    await incrementViewCount(notice.id);
+    try {
+      await incrementViewCount(notice.id);
+    } catch (error) {
+      console.error('조회수 증가 실패:', error);
+    }
     
     // 로컬 상태 업데이트
     setNotices(prev => prev.map(n => 
@@ -154,7 +135,7 @@ export default function PWANotice({ onSelectNotice, selectedNoticeId, isPreview 
       {/* 카테고리 탭 - 좌측 정렬 */}
       <div className="px-4 py-3">
         <div className="flex gap-1 flex-wrap justify-start">
-          {categories.map((cat) => (
+          {NOTICE_CATEGORIES.map((cat) => (
             <TabButton
               key={cat.id}
               active={activeCategory === cat.id}

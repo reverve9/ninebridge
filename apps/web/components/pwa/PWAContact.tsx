@@ -22,8 +22,12 @@ export default function PWAContact() {
   }, []);
 
   const loadSettings = async () => {
-    const data = await getSiteSettings();
-    setSettings(data);
+    try {
+      const data = await getSiteSettings();
+      setSettings(data);
+    } catch (error) {
+      console.error('설정 로드 실패:', error);
+    }
   };
 
   return (
@@ -104,7 +108,10 @@ export default function PWAContact() {
                 className="max-w-full max-h-full object-contain grayscale opacity-60"
                 onError={(e) => {
                   (e.target as HTMLImageElement).style.display = 'none';
-                  (e.target as HTMLImageElement).parentElement!.innerHTML = `<span class="text-[10px] text-[#9ca3af]">${partner.name}</span>`;
+                  const fallback = document.createElement('span');
+                  fallback.className = 'text-[10px] text-[#9ca3af]';
+                  fallback.textContent = partner.name;
+                  (e.target as HTMLImageElement).parentElement?.appendChild(fallback);
                 }}
               />
             </div>

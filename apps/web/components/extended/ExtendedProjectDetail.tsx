@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Project, GalleryItem } from '@/lib/types';
 import { ProjectBadge } from '@/components/common/Badge';
+import { getYoutubeId } from '@/lib/utils';
 import MarkdownRenderer from '@/components/common/MarkdownRenderer';
 
 interface ExtendedProjectDetailProps {
@@ -26,10 +27,7 @@ export default function ExtendedProjectDetail({ project, onBack }: ExtendedProje
     }
   }, [project]);
 
-  // 유튜브 ID 추출
-  const getYoutubeId = (url: string) => {
-    return url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?]+)/)?.[1];
-  };
+
 
   const gallery = project.gallery || [];
   const currentItem = gallery[currentGalleryIndex];

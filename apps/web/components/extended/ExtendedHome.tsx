@@ -9,8 +9,12 @@ export default function ExtendedHome() {
 
   useEffect(() => {
     const loadSettings = async () => {
-      const data = await getSiteSettings();
-      setSettings(data);
+      try {
+        const data = await getSiteSettings();
+        setSettings(data);
+      } catch (error) {
+        console.error('설정 로드 실패:', error);
+      }
     };
     loadSettings();
   }, []);

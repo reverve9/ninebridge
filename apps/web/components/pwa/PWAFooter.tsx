@@ -15,8 +15,12 @@ export default function PWAFooter({ onCertClick }: PWAFooterProps) {
   }, []);
 
   const loadSettings = async () => {
-    const data = await getSiteSettings();
-    setSettings(data);
+    try {
+      const data = await getSiteSettings();
+      setSettings(data);
+    } catch (error) {
+      console.error('설정 로드 실패:', error);
+    }
   };
 
   if (!settings) return null;

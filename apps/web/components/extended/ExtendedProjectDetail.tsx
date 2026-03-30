@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Project, GalleryItem } from '@/lib/types';
+import { Project } from '@/lib/types';
 import { ProjectBadge } from '@/components/common/Badge';
 import { getYoutubeId } from '@/lib/utils';
 import MarkdownRenderer from '@/components/common/MarkdownRenderer';

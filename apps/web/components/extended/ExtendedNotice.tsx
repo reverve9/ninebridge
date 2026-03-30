@@ -66,7 +66,6 @@ export default function ExtendedNotice({ selectedNoticeId }: ExtendedNoticeProps
         element.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     }, 100);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedNoticeId]);
 
   const loadNotices = async () => {
@@ -187,7 +186,7 @@ export default function ExtendedNotice({ selectedNoticeId }: ExtendedNoticeProps
 
               {/* 게시글 리스트 */}
               <div className="space-y-[10px]">
-                {paginatedItems.map((notice, index) => {
+                {paginatedItems.map((notice) => {
                   const isExpanded = expandedIds.has(notice.id);
 
                   return (

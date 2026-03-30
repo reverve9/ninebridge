@@ -39,7 +39,7 @@ export default function HomePage() {
   const renderPWAContent = () => {
     switch (activeMenu) {
       case 'home':
-        return <PWAHome onMenuSelect={handleMenuSelect} onGoToProjects={handleGoToProjects} />;
+        return <PWAHome onGoToProjects={handleGoToProjects} />;
       case 'works':
         return <PWAProject onProjectSelect={handleProjectSelect} initialFilter={projectFilter} />;
       case 'notice':
@@ -47,7 +47,7 @@ export default function HomePage() {
       case 'contact':
         return <PWAContact />;
       default:
-        return <PWAHome onMenuSelect={handleMenuSelect} onGoToProjects={handleGoToProjects} />;
+        return <PWAHome onGoToProjects={handleGoToProjects} />;
     }
   };
 
@@ -66,10 +66,9 @@ export default function HomePage() {
   );
 
   return (
-    <MainLayout 
-      pwaContent={pwaContent} 
+    <MainLayout
+      pwaContent={pwaContent}
       extendedContent={extendedContent}
-      activeMenu={activeMenu}
     />
   );
 }

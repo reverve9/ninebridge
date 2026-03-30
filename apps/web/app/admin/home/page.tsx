@@ -70,8 +70,7 @@ export default function AdminHomePage() {
 
   // 미리보기용 컴포넌트
   const PreviewComponent = settings ? (
-    <PWAHome 
-      isPreview={true}
+    <PWAHome
       settings={{
         header_tagline: settings.header_tagline || undefined,
         hero_title: settings.hero_title || undefined,

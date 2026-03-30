@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { ExternalLink, Smartphone, Globe, Monitor, Settings } from 'lucide-react';
+import { Smartphone, Globe, Monitor, Settings } from 'lucide-react';
 
 export default function ExtendedDevelopment() {
   const projects = [

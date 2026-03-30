@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { Project } from '@/lib/types';
-import { getAllProjects, deleteProject, swapProjectOrder } from '@/lib/projects';
+import { getAllProjects, deleteProject } from '@/lib/projects';
 import { Plus, Edit, Trash2, LogOut, Eye, EyeOff, ChevronUp, ChevronDown } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import PWAProject from '@/components/pwa/PWAProject';

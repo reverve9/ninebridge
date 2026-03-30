@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Project } from '@/lib/types';
 import { getPublishedProjects } from '@/lib/projects';
-import { getYoutubeId } from '@/lib/utils';
+
 import { ProjectBadge } from '@/components/common/Badge';
 import ExtendedProjectDetail from './ExtendedProjectDetail';
 import ExtendedFooter from './ExtendedFooter';
@@ -14,29 +14,16 @@ interface ExtendedProjectProps {
   selectedProjectId?: string | null;
 }
 
-const categoryColors: Record<string, { bg: string; text: string }> = {
-  platform: { bg: 'bg-[#384155]', text: 'text-white' },
-  marketing: { bg: 'bg-[#b87a5a]', text: 'text-white' },
-  contents: { bg: 'bg-[#5b7cae]', text: 'text-white' },
-  etc: { bg: 'bg-[#7c8a96]', text: 'text-white' },
-};
 
-const categoryLabels: Record<string, string> = {
-  platform: '플랫폼',
-  marketing: '마케팅',
-  contents: '콘텐츠',
-  etc: '기타',
-};
 
 // Featured 슬라이더 컴포넌트
 interface FeaturedSliderProps {
   projects: Project[];
   allProjects: Project[];
   onProjectClick: (project: Project) => void;
-  getYoutubeId: (url: string) => string | undefined;
 }
 
-function FeaturedSlider({ projects, allProjects, onProjectClick, getYoutubeId }: FeaturedSliderProps) {
+function FeaturedSlider({ projects, allProjects, onProjectClick }: FeaturedSliderProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isJumping, setIsJumping] = useState(false);
 
@@ -251,19 +238,6 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
     }
   };
 
-  // 갤러리에서 메인 이미지/영상 URL 가져오기
-  const getGalleryThumbnail = (project: Project) => {
-    const mainItem = project.gallery?.find(item => item.is_main) || project.gallery?.[0];
-    if (!mainItem) return project.thumbnail;
-    
-    if (mainItem.type === 'hor' || mainItem.type === 'ver') {
-      const youtubeId = getYoutubeId(mainItem.url);
-      return youtubeId ? `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg` : project.thumbnail;
-    }
-    
-    return mainItem.url || project.thumbnail;
-  };
-
   // 대표 프로젝트 (랜덤 순서)
   const featuredProjects = projects
     .filter(p => p.is_featured)
@@ -295,49 +269,6 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
     return Number(b) - Number(a);
   });
 
-  // 썸네일 그리드 컴포넌트
-  const ThumbnailGrid = ({ items }: { items: Project[] }) => (
-    <div className="grid grid-cols-6 gap-2">
-      {items.map((project) => {
-        const mainCategory = project.categories[0] || 'etc';
-        const color = categoryColors[mainCategory] ?? categoryColors.etc;
-        return (
-          <div
-            key={project.id}
-            onClick={() => project.has_detail && setSelectedProject(project)}
-            className={`relative aspect-square overflow-hidden rounded-[6px] group
-              ${project.has_detail ? 'cursor-pointer' : 'cursor-default'}`}
-          >
-            {project.thumbnail ? (
-              <img
-                src={project.thumbnail}
-                alt={project.title}
-                className={`w-full h-full object-cover transition-transform
-                  ${project.has_detail ? 'group-hover:scale-105' : ''}`}
-              />
-            ) : (
-              <div className="w-full h-full bg-[#e5e7eb] flex items-center justify-center text-[#9ca3af] text-[11px]">
-                이미지
-              </div>
-            )}
-            
-            <span className={`absolute top-2 right-2 px-2 py-0.5 text-[10px] font-medium rounded ${color?.bg || 'bg-[#7c8a96]'} ${color?.text || 'text-white'}`}>
-              {categoryLabels[mainCategory] || mainCategory}
-            </span>
-
-            {project.has_detail && (
-              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-2">
-                <p className="text-white text-[12px] font-medium text-center line-clamp-2">
-                  {project.title}
-                </p>
-              </div>
-            )}
-          </div>
-        );
-      })}
-    </div>
-  );
-
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px] text-[#9ca3af]">
@@ -366,11 +297,10 @@ export default function ExtendedProject({ selectedProjectId }: ExtendedProjectPr
       <WhiteBox>
         {/* Featured - 슬라이드 카드 */}
         {featuredProjects.length > 0 && (
-          <FeaturedSlider 
+          <FeaturedSlider
             projects={featuredProjects}
             allProjects={projects}
             onProjectClick={(project) => project.has_detail && setSelectedProject(project)}
-            getYoutubeId={getYoutubeId}
           />
         )}
 

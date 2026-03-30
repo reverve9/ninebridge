@@ -2,10 +2,10 @@
 
 import React, { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { Notice, NoticeInsert, Attachment } from '@/lib/types';
+import { Notice, NoticeInsert } from '@/lib/types';
 import { createNotice, updateNotice, uploadNoticeThumbnail, uploadAttachment, deleteAttachment } from '@/lib/notices';
 import { formatFileSize } from '@/lib/utils';
-import { ArrowLeft, Upload, X, Paperclip, Image, HelpCircle } from 'lucide-react';
+import { ArrowLeft, X, Paperclip, Image, HelpCircle } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import PWANoticePreview from '@/components/admin/PWANoticePreview';
 
@@ -65,19 +65,6 @@ export default function NoticeForm({ notice, isEdit = false }: NoticeFormProps) 
   const handleCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
     setForm(prev => ({ ...prev, [name]: checked }));
-  };
-
-  const handleThumbnailUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    try {
-      const url = await uploadNoticeThumbnail(file);
-      setForm(prev => ({ ...prev, thumbnail: url }));
-    } catch (error) {
-      console.error('썸네일 업로드 실패:', error);
-      alert('썸네일 업로드에 실패했습니다.');
-    }
   };
 
   // 본문에 이미지 삽입

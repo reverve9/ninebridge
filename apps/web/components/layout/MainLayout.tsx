@@ -5,17 +5,9 @@ import React, { ReactNode } from 'react';
 interface MainLayoutProps {
   pwaContent: ReactNode;
   extendedContent: ReactNode;
-  activeMenu?: string;
 }
 
-const taglines: Record<string, string> = {
-  home: '연결의 모든 순간을 디자인합니다',
-  service: '연결의 모든 순간을 디자인합니다',
-  project: '연결의 모든 순간을 디자인합니다',
-  contact: '연결의 모든 순간을 디자인합니다',
-};
-
-export default function MainLayout({ pwaContent, extendedContent, activeMenu = 'home' }: MainLayoutProps) {
+export default function MainLayout({ pwaContent, extendedContent }: MainLayoutProps) {
   return (
     <div className="h-screen bg-[#ffffff] overflow-hidden">
       {/* 3컬럼 구조: [좌측 사이드] | [1280 고정] | [우측 사이드] */}

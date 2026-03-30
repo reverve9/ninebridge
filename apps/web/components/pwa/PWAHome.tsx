@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import PWAFooter from '@/components/pwa/PWAFooter';
-import PWAHeader from '@/components/layout/PWAHeader';
+
 import PageTitle from '@/components/common/PageTitle';
 import { getSiteSettings } from '@/lib/siteSettings';
 import { MonitorSmartphone, FileVideo, ShoppingCart, UsersRound } from 'lucide-react';
@@ -15,10 +15,8 @@ interface HomeSettings {
 }
 
 interface PWAHomeProps {
-  onMenuSelect?: (menu: string) => void;
   onBusinessAreaSelect?: (areaId: string) => void;
   onGoToProjects?: (filter: { category?: string; tag?: string }) => void;
-  isPreview?: boolean;
   settings?: HomeSettings;
 }
 
@@ -58,7 +56,7 @@ const businessAreas = [
   },
 ];
 
-export default function PWAHome({ onMenuSelect, onBusinessAreaSelect, onGoToProjects, isPreview = false, settings: externalSettings }: PWAHomeProps) {
+export default function PWAHome({ onBusinessAreaSelect, onGoToProjects, settings: externalSettings }: PWAHomeProps) {
   const [dbSettings, setDbSettings] = useState<HomeSettings | null>(null);
   const [liveExpanded, setLiveExpanded] = useState(false);
   const [platformExpanded, setPlatformExpanded] = useState(false);
@@ -95,7 +93,6 @@ export default function PWAHome({ onMenuSelect, onBusinessAreaSelect, onGoToProj
   const settings = externalSettings || dbSettings;
 
   // 기본값
-  const headerTagline = settings?.header_tagline || '나인브릿지는 모두의 내일을 연결합니다';
   const heroTitle = settings?.hero_title || 'Connect platform\nCreate experience';
   const heroSubtitle = settings?.hero_subtitle || '콘텐츠, 마케팅, 플랫폼을 연결하는\n디지털 마케팅 전문 기업';
   const heroDescription = settings?.hero_description || '(주)나인브릿지는 플랫폼 기획 및 개발, 영상 및 디자인 콘텐츠 제작, 라이브커머스 운영, 오픈마켓 관리 및 SNS 마케팅까지 마케팅 전반을 아우르는 디지털 마케팅 전문 기업입니다.';

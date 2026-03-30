@@ -9,7 +9,7 @@ import ExtendedMedia from './ExtendedMedia';
 import ExtendedContact from './ExtendedContact';
 import ExtendedProject from './ExtendedProject';
 import ExtendedNotice from './ExtendedNotice';
-import Maintenance from '@/components/common/Maintenance';
+
 
 interface ExtendedContentProps {
   activeMenu: string;
